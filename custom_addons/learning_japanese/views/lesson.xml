@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="lesson_action" model="ir.actions.act_window">
+            <field name="name">Bài</field>
+            <field name="res_model">learning_japanese.lesson</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+               <p class="o_view_nocontent_smiling_face">
+                   Tạo mới bài
+               </p>
+            </field>
+        </record>
+
+        <record id="view_lesson_tree" model="ir.ui.view">
+            <field name="name">learning_japanese.lesson.tree</field>
+            <field name="model">learning_japanese.lesson</field>
+            <field name="arch" type="xml">
+                <tree multi_edit="1" export_xlsx="1" string="Lesson Tree View">
+                    <field name="lesson"/>
+                    <field name="book_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_lesson_form" model="ir.ui.view">
+            <field name="name">learning_japanese.lesson.form</field>
+            <field name="model">learning_japanese.lesson</field>
+            <field name="arch" type="xml">
+                <form string="Lesson Form View">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="lesson"/>
+                                <field name="book_id"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Từ vựng">
+                                <tree>
+                                    <field name="vocabulary_ids"/>
+                                </tree>
+                            </page>
+
+                           <page string="Grammar">
+                                <field name="grammar_ids"
+                                       context="{'default_category': 'grammar'}">
+                                    <tree>
+                                        <field name="title"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+<!--                            <page string="Ví dụ">-->
+<!--                                <tree>-->
+<!--                                    <field name="example_ids"/>-->
+<!--                                </tree>-->
+<!--                            </page>-->
+
+                            <page string="Reading">
+                                <field name="reading_ids"
+                                       context="{'default_category': 'reading'}">
+                                    <tree>
+                                        <field name="title"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                            <page string="Listening">
+                                <field name="listening_ids"
+                                       context="{'default_category': 'listening'}">
+                                    <tree>
+                                        <field name="title"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                            <page string="Writing">
+                                <field name="writing_ids"
+                                       context="{'default_category': 'writing'}">
+                                    <tree>
+                                        <field name="title"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

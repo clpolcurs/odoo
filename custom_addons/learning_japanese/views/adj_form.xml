@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="adj_form_action" model="ir.actions.act_window">
+            <field name="name">Thể tính từ</field>
+            <field name="res_model">learning_japanese.adj_form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+               <p class="o_view_nocontent_smiling_face">
+                   Tạo mới thể tính từ
+               </p>
+            </field>
+        </record>
+
+        <record id="view_adj_form_tree" model="ir.ui.view">
+            <field name="name">learning_japanese.adj_form.tree</field>
+            <field name="model">learning_japanese.adj_form</field>
+            <field name="arch" type="xml">
+                <tree string="Adj Form Tree View">
+                    <field name="adj_form"/>
+                    <field name="description" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_adj_form_form" model="ir.ui.view">
+            <field name="name">learning_japanese.adj_form.form</field>
+            <field name="model">learning_japanese.adj_form</field>
+            <field name="arch" type="xml">
+                <form string="Adj Form Form View">
+                    <sheet>
+                         <div class="oe_title">
+                            <label for="adj_form"/>
+                            <h1><field name="adj_form" default_focus="1"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="description"/>
+                            </group>
+                        </group>
+                        <group string="Chi tiết"/>
+                        <field name="detail" placeholder="Follow format &lt;&lt;kanji&gt;&gt; ..."/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

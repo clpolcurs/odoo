@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="partner_demo_audio_player_widget_view" model="ir.ui.view">
+        <field name="name">res.partner.demo.audio.view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+        	<xpath expr="//notebook[last()]" position="inside">
+        		<page string="Audio Player" name="audio_player_demo">
+        			<group>
+        				<group string="Audio Player">
+        					<field name="demo_audio_field" widget="audio_player"/>
+        				</group>
+        			</group>
+        		</page>
+        	</xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="listening_action" model="ir.actions.act_window">
+            <field name="name">Tổng hợp</field>
+            <field name="res_model">learning_japanese.listening</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+               <p class="o_view_nocontent_smiling_face">
+                   Tạo mới nghe hiểu
+               </p>
+            </field>
+        </record>
+
+        <record id="view_listening_search" model="ir.ui.view">
+            <field name="name">learning_japanese.listening.search</field>
+            <field name="model">learning_japanese.listening</field>
+            <field name="arch" type="xml">
+                <search string="Nghe hiểu">
+                    <field name="title" string="Title" filter_domain="[('title', 'ilike', self)]"/>
+                    <field name="description" string="Diễn giải" filter_domain="[('description', 'ilike', self)]"/>
+                    <field name="content_only_kanji" string="Nội dung" filter_domain="['|', ('content_only_kanji', 'ilike', self), ('content', 'ilike', self)]"/>
+                </search>
+             </field>
+        </record>
+
+        <record id="view_listening_tree" model="ir.ui.view">
+            <field name="name">learning_japanese.listening.tree</field>
+            <field name="model">learning_japanese.listening</field>
+            <field name="arch" type="xml">
+                <tree export_xlsx="1" multi_edit="1" string="Listening Tree View">
+                    <field name="title" optional="show"/>
+                    <field name="description" optional="hide"/>
+                    <field name="content_only_kanji" optional="show"/>
+                    <field name="content" optional="hide"/>
+                    <field name="category" optional="hide"/>
+                    <field name="book_name" optional="hide"/>
+                    <field name="lesson_id" optional="hide"/>
+                    <field name="level" optional="hide"/>
+                    <field name="deadline" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_listening_form" model="ir.ui.view">
+            <field name="name">learning_japanese.listening.form</field>
+            <field name="model">learning_japanese.listening</field>
+            <field name="arch" type="xml">
+                <form string="Listening Form View">
+                    <header>
+<!--                        <button name="action_finalize" string="Finalize" type="object" invisible="is_finalized == True"/>-->
+                        <button name="action_reverse" string="Reverse" type="object" invisible="is_finalized == False"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="title"/>
+                            <h1><field name="title" default_focus="1"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="description" invisible="category != 'grammar'"/>
+                            </group>
+                        </group>
+                        <br/>
+                        <group>
+                            <group>
+                                <field name="lesson_id"/>
+                                <field name="book_name"/>
+                                <field name="category"/>
+
+                            </group>
+                            <group>
+                                <field name="level"/>
+                                <field name="is_finalized" invisible="1"/>
+                                <field name="deadline" invisible="category not in ['writing', 'speaking']"/>
+                                <field name="audio_file" widget="audio_player"/>
+                            </group>
+                        </group>
+
+                       <notebook>
+                            <page string="Nội dung">
+                                <field class="html_field_font_size" name="content_only_kanji"/>
+                            </page>
+
+                             <page string="Chú thích Kanji">
+                                <field class="html_field_font_size" name="content"/>
+                            </page>
+                       </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

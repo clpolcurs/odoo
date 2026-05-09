@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hanviet_action" model="ir.actions.act_window">
+            <field name="name">Hán Việt</field>
+            <field name="res_model">learning_japanese.hanviet</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+               <p class="o_view_nocontent_smiling_face">
+                   Tạo mới Hán Việt
+               </p>
+            </field>
+        </record>
+
+        <record id="view_hanviet_tree" model="ir.ui.view">
+            <field name="name">learning_japanese.hanviet.tree</field>
+            <field name="model">learning_japanese.hanviet</field>
+            <field name="arch" type="xml">
+                <tree export_xlsx="1" string="HanViet Tree View">
+                    <field name="kanji"/>
+                    <field name="han_viet"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_hanviet_form" model="ir.ui.view">
+            <field name="name">learning_japanese.hanviet.form</field>
+            <field name="model">learning_japanese.hanviet</field>
+            <field name="arch" type="xml">
+                <form string="HanViet Form View">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="kanji"/>
+                                <field name="han_viet"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

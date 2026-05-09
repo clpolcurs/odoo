@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="prompt_request_action" model="ir.actions.act_window">
+            <field name="name">Prompt Request</field>
+            <field name="res_model">learning_japanese.prompt_request</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+               <p class="o_view_nocontent_smiling_face">
+                   Tạo mới prompt request
+               </p>
+            </field>
+        </record>
+
+        <record id="view_prompt_request_tree" model="ir.ui.view">
+            <field name="name">learning_japanese.prompt_request.tree</field>
+            <field name="model">learning_japanese.prompt_request</field>
+            <field name="arch" type="xml">
+                <tree export_xlsx="1" multi_edit="1" string="Prompt Request Tree View">
+                    <field name="request" optional="show"/>
+                    <field name="content" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_prompt_request_form" model="ir.ui.view">
+            <field name="name">learning_japanese.prompt_request.form</field>
+            <field name="model">learning_japanese.prompt_request</field>
+            <field name="arch" type="xml">
+                <form string="Prompt Request Form View">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="request"/>
+                            <h1><field name="request" default_focus="1"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="content"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

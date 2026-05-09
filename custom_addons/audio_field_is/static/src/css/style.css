@@ -1,0 +1,7 @@
+.audio_player {
+    position: relative;
+}
+
+.remove-audio-btn {
+  position: absolute;
+}

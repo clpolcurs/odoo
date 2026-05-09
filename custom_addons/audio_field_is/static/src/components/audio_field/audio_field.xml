@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="audio_field_is.AudioField" owl="1">
+        <t t-set="value" t-value="props.record.data[props.name]"/>
+        <t t-if="value">
+            <div class="audio_player" t-ref="AudioFieldComponent">
+                <audio controls="">
+                    <source t-att-src="getUrl()"/>
+                    Your browser does not support the audio element.
+                </audio>
+                <button
+                    t-if="value and state.isValid"
+                    class="remove-audio-btn o_clear_file_button btn btn-light border-0 rounded-circle m-1 p-1"
+                    data-tooltip="Clear"
+                    aria-label="Clear"
+                    t-on-click="onFileRemove">
+                    <i class="fa fa-times fa-fw"/>
+                </button>
+            </div>
+        </t>
+        <t t-else="">
+            <t t-if="!props.readonly">
+                <label class="o_select_file_button btn btn-primary">
+                    <FileUploader
+                        acceptedFileExtensions="props.acceptedFileExtensions"
+                        t-key="props.record.resId"
+                        onUploaded.bind="onFileUploaded">
+                        <t t-set-slot="toggler">
+                            Upload audio file
+                        </t>
+                    </FileUploader>
+                </label>
+            </t>
+        </t>
+    </t>
+</templates>

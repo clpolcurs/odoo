@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="context_tag_action" model="ir.actions.act_window">
+            <field name="name">Chủ đề</field>
+            <field name="res_model">learning_japanese.context_tag</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+               <p class="o_view_nocontent_smiling_face">
+                   Tạo mới chủ đề
+               </p>
+            </field>
+        </record>
+
+        <record id="view_context_tag_tree" model="ir.ui.view">
+            <field name="name">learning_japanese.context_tag.tree</field>
+            <field name="model">learning_japanese.context_tag</field>
+            <field name="arch" type="xml">
+                <tree multi_edit="1" export_xlsx="1" string="Context Tag Tree View">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_context_tag_form" model="ir.ui.view">
+            <field name="name">learning_japanese.context_tag.form</field>
+            <field name="model">learning_japanese.context_tag</field>
+            <field name="arch" type="xml">
+                <form string="Book Form View">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="parent_id"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Từ vựng">
+                                <tree>
+                                    <field name="vocabulary_ids"/>
+                                </tree>
+                            </page>
+                        </notebook>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

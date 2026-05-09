@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="book_action" model="ir.actions.act_window">
+            <field name="name">Giáo trình</field>
+            <field name="res_model">learning_japanese.book</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+               <p class="o_view_nocontent_smiling_face">
+                   Tạo mới giáo trình
+               </p>
+            </field>
+        </record>
+
+        <record id="view_book_tree" model="ir.ui.view">
+            <field name="name">learning_japanese.book.tree</field>
+            <field name="model">learning_japanese.book</field>
+            <field name="arch" type="xml">
+                <tree multi_edit="1" export_xlsx="1" string="Book Tree View">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_book_form" model="ir.ui.view">
+            <field name="name">learning_japanese.book.form</field>
+            <field name="model">learning_japanese.book</field>
+            <field name="arch" type="xml">
+                <form string="Book Form View">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Lessons">
+                                <tree>
+                                    <field name="lesson_ids"/>
+                                </tree>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

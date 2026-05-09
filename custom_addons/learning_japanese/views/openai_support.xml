@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="openai_support_action" model="ir.actions.act_window">
+            <field name="name">OpenAI Support</field>
+            <field name="res_model">learning_japanese.openai_support</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+               <p class="o_view_nocontent_smiling_face">
+                   Tạo mới openai support
+               </p>
+            </field>
+        </record>
+
+        <record id="view_openai_support_tree" model="ir.ui.view">
+            <field name="name">learning_japanese.openai_support.tree</field>
+            <field name="model">learning_japanese.openai_support</field>
+            <field name="arch" type="xml">
+                <tree export_xlsx="1" multi_edit="1" string="OpenAI Support Tree View">
+                    <field name="request_name" optional="show"/>
+                    <field name="content" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_openai_support_form" model="ir.ui.view">
+            <field name="name">learning_japanese.openai_support.form</field>
+            <field name="model">learning_japanese.openai_support</field>
+            <field name="arch" type="xml">
+                <form string="OpenAI Support Form View">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="request_name"/>
+                            <h1><field name="request_name" default_focus="1"/></h1>
+                        </div>
+                        <br/>
+                        <group>
+                            <group>
+                                <field name="prompt_request_id"/>
+                                <field name="llm_id"/>
+                                <field name="is_send_request"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Request Content">
+                                <field class="html_field_font_size" name="content"/>
+                            </page>
+                            <page string="Response">
+                                <field class="html_field_font_size" name="response"/>
+                            </page>
+                       </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,1 @@
+from . import furigana_mixin

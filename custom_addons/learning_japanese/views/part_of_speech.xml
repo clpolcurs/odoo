@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="part_of_speech_action" model="ir.actions.act_window">
+            <field name="name">Từ loại</field>
+            <field name="res_model">learning_japanese.part_of_speech</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+               <p class="o_view_nocontent_smiling_face">
+                   Tạo mới loại từ
+               </p>
+            </field>
+        </record>
+
+        <record id="view_part_of_speech_tree" model="ir.ui.view">
+            <field name="name">learning_japanese.part_of_speech.tree</field>
+            <field name="model">learning_japanese.part_of_speech</field>
+            <field name="arch" type="xml">
+                <tree multi_edit="1" export_xlsx="1" string="Part of Speech Tree View">
+                    <field name="kanji"/>
+                    <field name="higarana"/>
+                    <field name="vietnamese"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_part_of_speech_form" model="ir.ui.view">
+            <field name="name">learning_japanese.part_of_speech.form</field>
+            <field name="model">learning_japanese.part_of_speech</field>
+            <field name="arch" type="xml">
+                <form string="Part of Speech Form View">
+                    <sheet>
+                        <group class="col-4">
+                            <group>
+                                <field name="kanji"/>
+                            </group>
+                        </group>
+                        <group class="col-4">
+                            <group>
+                                <field name="higarana"/>
+                            </group>
+                        </group>
+                        <group class="col-4">
+                            <group>
+                                <field name="vietnamese"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Từ vựng">
+                                <tree>
+                                    <field name="vocabulary_ids"/>
+                                </tree>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
