@@ -3,7 +3,6 @@ import re
 
 from typing import Any
 
-from pre_commit import store
 from pykakasi import kakasi
 import openai
 import logging
