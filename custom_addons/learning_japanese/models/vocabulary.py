@@ -3,6 +3,7 @@ import re
 
 from typing import Any
 
+from pre_commit import store
 from pykakasi import kakasi
 import openai
 import logging
@@ -791,32 +792,32 @@ class Vocabulary(models.Model):
             self.katakana = "".join([item["kana"] for item in result])
             self.romanji = " ".join([item["hepburn"] for item in result]).capitalize()
 
-            (
-                vietnamese_meaning,
-                example_1,
-                example_2,
-                example_3,
-            ) = self.generate_response_from_transcript(self.vocabulary)
-
-            self.vietnamese = vietnamese_meaning.lower()
-
-            # 1. Escape the characters to handle the << >> markers safely[cite: 1, 3]
-            safe_ex1 = html.escape(example_1)
-            safe_ex2 = html.escape(example_2)
-            safe_ex3 = html.escape(example_3)
-
-            # 2. Use regex to find the Japanese period and add a line break
-            # This looks for "。" and replaces it with "。<br/>"
-            formatted_ex1 = re.sub(r'\{\{', r'<br/>{{', safe_ex1)
-            formatted_ex2 = re.sub(r'\{\{', r'<br/>{{', safe_ex2)
-            formatted_ex3 = re.sub(r'\{\{', r'<br/>{{', safe_ex3)
-
-            # 3. Assign to the field to trigger the FuriganaMixin
-            self.content_only_kanji = (
-                f"<p>{formatted_ex1}</p></br>"
-                f"<p>{formatted_ex2}</p></br>"
-                f"<p>{formatted_ex3}</p>"
-            )
+            # (
+            #     vietnamese_meaning,
+            #     example_1,
+            #     example_2,
+            #     example_3,
+            # ) = self.generate_response_from_transcript(self.vocabulary)
+            #
+            # self.vietnamese = vietnamese_meaning.lower()
+            #
+            # # 1. Escape the characters to handle the << >> markers safely[cite: 1, 3]
+            # safe_ex1 = html.escape(example_1)
+            # safe_ex2 = html.escape(example_2)
+            # safe_ex3 = html.escape(example_3)
+            #
+            # # 2. Use regex to find the Japanese period and add a line break
+            # # This looks for "。" and replaces it with "。<br/>"
+            # formatted_ex1 = re.sub(r'\{\{', r'<br/>{{', safe_ex1)
+            # formatted_ex2 = re.sub(r'\{\{', r'<br/>{{', safe_ex2)
+            # formatted_ex3 = re.sub(r'\{\{', r'<br/>{{', safe_ex3)
+            #
+            # # 3. Assign to the field to trigger the FuriganaMixin
+            # self.content_only_kanji = (
+            #     f"<p>{formatted_ex1}</p></br>"
+            #     f"<p>{formatted_ex2}</p></br>"
+            #     f"<p>{formatted_ex3}</p>"
+            # )
 
     @api.onchange("nhom_dong_tu")
     def _onchange_nhom_dong_tu(self):
