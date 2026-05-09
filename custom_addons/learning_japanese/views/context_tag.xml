@@ -26,7 +26,7 @@
             <field name="name">learning_japanese.context_tag.form</field>
             <field name="model">learning_japanese.context_tag</field>
             <field name="arch" type="xml">
-                <form string="Book Form View">
+                <form string="Context Tag Form View">
                     <sheet>
                         <group>
                             <group>

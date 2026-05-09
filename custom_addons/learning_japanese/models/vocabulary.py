@@ -322,7 +322,7 @@ class PartOfSpeech(models.Model):
     )
     vocabulary_ids = fields.One2many(
         comodel_name="learning_japanese.vocabulary",
-        inverse_name="part_of_speach_id",
+        inverse_name="part_of_speech_id",
         string="Vocabularies",
     )
 
@@ -347,7 +347,7 @@ class ContextTag(models.Model):
     _name = "learning_japanese.context_tag"
     _description = "Context Tag"
     _order = "name"
-    _rec_name = "complete_name"
+    _rec_name = "name"
     _parent_store = True
 
     name = fields.Char()
@@ -390,7 +390,7 @@ class ContextTag(models.Model):
                 )
             else:
                 context_tag.complete_name = context_tag.name
-
+    #
     @api.depends("parent_path")
     def _compute_master_context_tag_id(self):
         for context_tag in self:
@@ -416,7 +416,7 @@ class Vocabulary(models.Model):
     _order = "id desc"
     _inherit = ["learning_japanese.furigana.mixin"]
 
-    part_of_speach_id = fields.Many2one(
+    part_of_speech_id = fields.Many2one(
         comodel_name="learning_japanese.part_of_speech",
         string="Từ loại",
         # auto_join=True,
@@ -480,12 +480,11 @@ class Vocabulary(models.Model):
     the_y_chi = fields.Char(string="Thể ý chí", copy=False)
     the_cam_chi = fields.Char(string="Thể cấm chỉ", copy=False)
 
-    _constraints = [
-        models.Constraint(
+    _check_unique_vocabulary = models.Constraint(
             "UNIQUE(vocabulary, vietnamese)",
             "Từ mới và nghĩa không được trùng nhau",
-        ),
-    ]
+    )
+
 
     def get_openai_key(self) -> str:
         return self.env["ir.config_parameter"].sudo().get_param("openai.api_key")
@@ -749,7 +748,7 @@ class Vocabulary(models.Model):
     def _onchange_vocabulary(self):
         if self.vocabulary:
             if self.vocabulary[-2:] == "ます":
-                self.part_of_speach_id = self.get_part_of_speech(
+                self.part_of_speech_id = self.get_part_of_speech(
                     "learning_japanese.part_of_speech",
                     ("combination", "=", "動詞 - どうし - Động từ"),
                 )
@@ -757,20 +756,20 @@ class Vocabulary(models.Model):
                 self.get_cac_the_dong_tu(nhom_dong_tu)
 
             elif self.vocabulary[-1] == "い":
-                self.part_of_speach_id = self.get_part_of_speech(
+                self.part_of_speech_id = self.get_part_of_speech(
                     "learning_japanese.part_of_speech",
                     ("combination", "=", "い形容詞 - いけいようし - Tính từ い"),
                 )
                 self.get_cac_the_dong_tu()
 
             elif self.vocabulary[-3:] == "「な」":
-                self.part_of_speach_id = self.get_part_of_speech(
+                self.part_of_speech_id = self.get_part_of_speech(
                     "learning_japanese.part_of_speech",
                     ("combination", "=", "な形容詞 - なけいようし - Tính từ な"),
                 )
                 self.get_cac_the_dong_tu()
             else:
-                self.part_of_speach_id = self.get_part_of_speech(
+                self.part_of_speech_id = self.get_part_of_speech(
                     "learning_japanese.part_of_speech",
                     ("combination", "=", "名詞 - めいし - Danh từ"),
                 )
@@ -792,32 +791,32 @@ class Vocabulary(models.Model):
             self.katakana = "".join([item["kana"] for item in result])
             self.romanji = " ".join([item["hepburn"] for item in result]).capitalize()
 
-            # (
-            #     vietnamese_meaning,
-            #     example_1,
-            #     example_2,
-            #     example_3,
-            # ) = self.generate_response_from_transcript(self.vocabulary)
-            #
-            # self.vietnamese = vietnamese_meaning.lower()
-            #
-            # # 1. Escape the characters to handle the << >> markers safely[cite: 1, 3]
-            # safe_ex1 = html.escape(example_1)
-            # safe_ex2 = html.escape(example_2)
-            # safe_ex3 = html.escape(example_3)
-            #
-            # # 2. Use regex to find the Japanese period and add a line break
-            # # This looks for "。" and replaces it with "。<br/>"
-            # formatted_ex1 = re.sub(r'\{\{', r'<br/>{{', safe_ex1)
-            # formatted_ex2 = re.sub(r'\{\{', r'<br/>{{', safe_ex2)
-            # formatted_ex3 = re.sub(r'\{\{', r'<br/>{{', safe_ex3)
-            #
-            # # 3. Assign to the field to trigger the FuriganaMixin
-            # self.content_only_kanji = (
-            #     f"<p>{formatted_ex1}</p></br>"
-            #     f"<p>{formatted_ex2}</p></br>"
-            #     f"<p>{formatted_ex3}</p>"
-            # )
+            (
+                vietnamese_meaning,
+                example_1,
+                example_2,
+                example_3,
+            ) = self.generate_response_from_transcript(self.vocabulary)
+
+            self.vietnamese = vietnamese_meaning.lower()
+
+            # 1. Escape the characters to handle the << >> markers safely[cite: 1, 3]
+            safe_ex1 = html.escape(example_1)
+            safe_ex2 = html.escape(example_2)
+            safe_ex3 = html.escape(example_3)
+
+            # 2. Use regex to find the Japanese period and add a line break
+            # This looks for "。" and replaces it with "。<br/>"
+            formatted_ex1 = re.sub(r'\{\{', r'<br/>{{', safe_ex1)
+            formatted_ex2 = re.sub(r'\{\{', r'<br/>{{', safe_ex2)
+            formatted_ex3 = re.sub(r'\{\{', r'<br/>{{', safe_ex3)
+
+            # 3. Assign to the field to trigger the FuriganaMixin
+            self.content_only_kanji = (
+                f"<p>{formatted_ex1}</p></br>"
+                f"<p>{formatted_ex2}</p></br>"
+                f"<p>{formatted_ex3}</p>"
+            )
 
     @api.onchange("nhom_dong_tu")
     def _onchange_nhom_dong_tu(self):

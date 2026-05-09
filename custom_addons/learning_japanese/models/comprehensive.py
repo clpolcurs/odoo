@@ -15,7 +15,7 @@ class Comprehensive(models.Model):
     lesson_id = fields.Many2one(
         comodel_name="learning_japanese.lesson",
         string="Lesson",
-        auto_join=True,
+        # auto_join=True,
     )
     book_name = fields.Char(
         string="Book", related="lesson_id.book_id.name", store=True
