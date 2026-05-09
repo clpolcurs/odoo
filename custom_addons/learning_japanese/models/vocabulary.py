@@ -398,6 +398,16 @@ class ContextTag(models.Model):
             )
 
 
+class HanViet(models.Model):
+    _name = "learning_japanese.hanviet"
+    _description = "Han Viet"
+    _rec_name = "kanji"
+    _order = "id asc"
+
+    kanji = fields.Char(string="Kanji")
+    han_viet = fields.Char(string="Hán Việt")
+
+
 class Vocabulary(models.Model):
     _name = "learning_japanese.vocabulary"
     _description = "Learning Japanese"
