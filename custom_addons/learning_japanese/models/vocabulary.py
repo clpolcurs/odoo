@@ -242,9 +242,9 @@ class Book(models.Model):
     _description = "Book"
     _rec_name = "name"
     _order = "name asc"
-    name = fields.Char(string="Tên giáo trình")
+    name = fields.Char(string="Book name", copy=False)
     lesson_ids = fields.One2many(
-        comodel_name="learning_japanese.lesson", inverse_name="book_id", string="Bài"
+        comodel_name="learning_japanese.lesson", inverse_name="book_id", string="Lessons"
     )
 
 
@@ -256,7 +256,7 @@ class Lesson(models.Model):
 
     lesson = fields.Char(string="Bài")
     book_id = fields.Many2one(
-        comodel_name="learning_japanese.book", string="Giáo trình",
+        comodel_name="learning_japanese.book", string="Book",
     )
     combination = fields.Char(
         string="Combination Name", compute="_compute_fields_combination", store=True
@@ -264,7 +264,7 @@ class Lesson(models.Model):
     vocabulary_ids = fields.One2many(
         comodel_name="learning_japanese.vocabulary",
         inverse_name="lesson_id",
-        string="Từ vựng",
+        string="Vocabulary",
     )
     grammar_ids = fields.One2many(
         comodel_name="learning_japanese.comprehensive",
@@ -315,14 +315,14 @@ class PartOfSpeech(models.Model):
 
     kanji = fields.Char(string="Kanji")
     higarana = fields.Char(string="Higarana")
-    vietnamese = fields.Char(string="Nghĩa")
+    vietnamese = fields.Char(string="Vietnamese")
     combination = fields.Char(
         string="Combination Name", compute="_compute_fields_combination", store=True
     )
     vocabulary_ids = fields.One2many(
         comodel_name="learning_japanese.vocabulary",
         inverse_name="part_of_speach_id",
-        string="Từ vựng",
+        string="Vocabularies",
     )
 
     @api.onchange("kanji")

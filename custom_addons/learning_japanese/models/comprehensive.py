@@ -30,10 +30,10 @@ class Comprehensive(models.Model):
         ],
         string="Level",
     )
-    title = fields.Text(string="Tiêu đề", copy=False)
+    title = fields.Text(string="Title", copy=False)
     audio_file = fields.Binary(string="Audio", copy=False)
-    description = fields.Text(string="Diễn giải", copy=False)
-    deadline = fields.Date(string="Hạn nộp", copy=False)
+    description = fields.Text(string="Description", copy=False)
+    deadline = fields.Date(string="Deadline", copy=False)
     category = fields.Selection(
         selection=[
             ("example", "Example"),
