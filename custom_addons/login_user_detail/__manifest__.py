@@ -3,8 +3,8 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2023-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
-#    Author: Aysha Shalin (odoo@cybrosys.com)
+#    Copyright (C) 2026-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Author: AYANA KP (odoo@cybrosys.com)
 #
 #    You can modify it under the terms of the GNU AFFERO
 #    GENERAL PUBLIC LICENSE (AGPL v3), Version 3.
@@ -21,7 +21,7 @@
 #############################################################################
 {
     'name': 'User Log Details',
-    'version': '17.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Extra Tools',
     'summary': 'Login user details & IP Address.',
     'description': """This module captures and stores user login details,
@@ -36,7 +36,7 @@
         'security/ir.model.access.csv',
         'views/login_detail_views.xml'
     ],
-    'images': ['static/description/banner.png'],
+    'images': ['static/description/banner.jpg'],
     'license': 'AGPL-3',
     'installable': True,
     'auto_install': False,

@@ -4,7 +4,7 @@
         <record id="book_action" model="ir.actions.act_window">
             <field name="name">Giáo trình</field>
             <field name="res_model">learning_japanese.book</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
             <field name="help" type="html">
                <p class="o_view_nocontent_smiling_face">
                    Tạo mới giáo trình
@@ -12,13 +12,13 @@
             </field>
         </record>
 
-        <record id="view_book_tree" model="ir.ui.view">
-            <field name="name">learning_japanese.book.tree</field>
+        <record id="view_book_list" model="ir.ui.view">
+            <field name="name">learning_japanese.book.list</field>
             <field name="model">learning_japanese.book</field>
             <field name="arch" type="xml">
-                <tree multi_edit="1" export_xlsx="1" string="Book Tree View">
+                <list multi_edit="1" export_xlsx="1" string="Book List View">
                     <field name="name"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -35,9 +35,9 @@
                         </group>
                         <notebook>
                             <page string="Lessons">
-                                <tree>
+                                <list>
                                     <field name="lesson_ids"/>
-                                </tree>
+                                </list>
                             </page>
                         </notebook>
                     </sheet>

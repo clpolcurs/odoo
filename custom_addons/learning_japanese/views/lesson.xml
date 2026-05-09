@@ -4,7 +4,7 @@
         <record id="lesson_action" model="ir.actions.act_window">
             <field name="name">Bài</field>
             <field name="res_model">learning_japanese.lesson</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
             <field name="help" type="html">
                <p class="o_view_nocontent_smiling_face">
                    Tạo mới bài
@@ -12,14 +12,14 @@
             </field>
         </record>
 
-        <record id="view_lesson_tree" model="ir.ui.view">
-            <field name="name">learning_japanese.lesson.tree</field>
+        <record id="view_lesson_list" model="ir.ui.view">
+            <field name="name">learning_japanese.lesson.list</field>
             <field name="model">learning_japanese.lesson</field>
             <field name="arch" type="xml">
-                <tree multi_edit="1" export_xlsx="1" string="Lesson Tree View">
+                <list multi_edit="1" export_xlsx="1" string="Lesson List View">
                     <field name="lesson"/>
                     <field name="book_id"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -37,50 +37,44 @@
                         </group>
                         <notebook>
                             <page string="Từ vựng">
-                                <tree>
+                                <list>
                                     <field name="vocabulary_ids"/>
-                                </tree>
+                                </list>
                             </page>
 
                            <page string="Grammar">
                                 <field name="grammar_ids"
                                        context="{'default_category': 'grammar'}">
-                                    <tree>
+                                    <list>
                                         <field name="title"/>
-                                    </tree>
+                                    </list>
                                 </field>
                             </page>
-
-<!--                            <page string="Ví dụ">-->
-<!--                                <tree>-->
-<!--                                    <field name="example_ids"/>-->
-<!--                                </tree>-->
-<!--                            </page>-->
 
                             <page string="Reading">
                                 <field name="reading_ids"
                                        context="{'default_category': 'reading'}">
-                                    <tree>
+                                    <list>
                                         <field name="title"/>
-                                    </tree>
+                                    </list>
                                 </field>
                             </page>
 
                             <page string="Listening">
                                 <field name="listening_ids"
                                        context="{'default_category': 'listening'}">
-                                    <tree>
+                                    <list>
                                         <field name="title"/>
-                                    </tree>
+                                    </list>
                                 </field>
                             </page>
 
                             <page string="Writing">
                                 <field name="writing_ids"
                                        context="{'default_category': 'writing'}">
-                                    <tree>
+                                    <list>
                                         <field name="title"/>
-                                    </tree>
+                                    </list>
                                 </field>
                             </page>
 

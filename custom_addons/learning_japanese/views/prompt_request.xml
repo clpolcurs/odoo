@@ -4,7 +4,7 @@
         <record id="prompt_request_action" model="ir.actions.act_window">
             <field name="name">Prompt Request</field>
             <field name="res_model">learning_japanese.prompt_request</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
             <field name="help" type="html">
                <p class="o_view_nocontent_smiling_face">
                    Tạo mới prompt request
@@ -12,14 +12,14 @@
             </field>
         </record>
 
-        <record id="view_prompt_request_tree" model="ir.ui.view">
-            <field name="name">learning_japanese.prompt_request.tree</field>
+        <record id="view_prompt_request_list" model="ir.ui.view">
+            <field name="name">learning_japanese.prompt_request.list</field>
             <field name="model">learning_japanese.prompt_request</field>
             <field name="arch" type="xml">
-                <tree export_xlsx="1" multi_edit="1" string="Prompt Request Tree View">
+                <list export_xlsx="1" multi_edit="1" string="Prompt Request List View">
                     <field name="request" optional="show"/>
                     <field name="content" optional="show"/>
-                </tree>
+                </list>
             </field>
         </record>
 

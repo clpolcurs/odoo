@@ -4,13 +4,13 @@
         <menuitem id="menu_learning_japanese" name="Learning Japanese"/>
 
             <menuitem id="vocabulary_menu" name="Từ vựng" action="vocabulary_action" parent="menu_learning_japanese" sequence="1"/>
-            <menuitem id="listening_menu" action="listening_action" parent="menu_learning_japanese" sequence="6"/>
-            <menuitem id="essential_menu" name="Nền tảng" parent="menu_learning_japanese" sequence="8"/>
-                <menuitem id="verb_group_action_menu" action="verb_group_action" parent="learning_japanese.essential_menu" sequence="20"/>
-                <menuitem id="verb_form_action_menu" action="verb_form_action" parent="learning_japanese.essential_menu" sequence="21"/>
-                <menuitem id="adj_form_action_menu" action="adj_form_action" parent="learning_japanese.essential_menu" sequence="22"/>
-                <menuitem id="number_action_menu" action="number_action" parent="learning_japanese.essential_menu" sequence="23"/>
-                <menuitem id="time_action_menu" action="time_action" parent="learning_japanese.essential_menu" sequence="24"/>
+            <menuitem id="comprehensive_menu" action="comprehensive_action" parent="menu_learning_japanese" sequence="6"/>
+<!--            <menuitem id="essential_menu" name="Nền tảng" parent="menu_learning_japanese" sequence="8"/>-->
+<!--                <menuitem id="verb_group_action_menu" action="verb_group_action" parent="learning_japanese.essential_menu" sequence="20"/>-->
+<!--                <menuitem id="verb_form_action_menu" action="verb_form_action" parent="learning_japanese.essential_menu" sequence="21"/>-->
+<!--                <menuitem id="adj_form_action_menu" action="adj_form_action" parent="learning_japanese.essential_menu" sequence="22"/>-->
+<!--                <menuitem id="number_action_menu" action="number_action" parent="learning_japanese.essential_menu" sequence="23"/>-->
+<!--                <menuitem id="time_action_menu" action="time_action" parent="learning_japanese.essential_menu" sequence="24"/>-->
 
 <!--            <menuitem id="tro_so_tu_menu" name="Trợ số từ" parent="menu_learning_japanese" sequence="9"/>-->
 <!--                <menuitem id="human_action_menu" action="human_action" parent="learning_japanese.tro_so_tu_menu" sequence="30"/>-->
@@ -40,11 +40,6 @@
                 <menuitem id="hanviet_menu_action" action="hanviet_action" parent="learning_japanese.setting_tag_menu" sequence="44"/>
                 <menuitem id="prompt_request_menu_action" action="prompt_request_action" parent="learning_japanese.setting_tag_menu" sequence="45"/>
                 <menuitem id="llm_config_menu_action" action="llm_config_action" parent="learning_japanese.setting_tag_menu" sequence="46"/>
-
-
-            <menuitem id="practice_menu" name="Practice" parent="menu_learning_japanese" sequence="12"/>
-                <menuitem id="practice_lesson_menu" action="practice_lesson_action" parent="learning_japanese.practice_menu" sequence="60"/>
-                <menuitem id="practice_vocabulary_menu" action="practice_vocabulary_action" parent="learning_japanese.practice_menu" sequence="61"/>
 
             <menuitem id="openai_support_action_menu" action="openai_support_action" parent="menu_learning_japanese" sequence="13"/>
 

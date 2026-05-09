@@ -29,6 +29,8 @@ Credits
               (V15) Noorjahan P,
               (V16) Sabeel B,
               (V17) Aysha Shalin,
+              (V18) Rosmy John,
+              (V19) AYANA KP,
   Contact: odoo@cybrosys.com
 
 Contacts

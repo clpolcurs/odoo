@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="listening_action" model="ir.actions.act_window">
+        <record id="comprehensive_action" model="ir.actions.act_window">
             <field name="name">Tổng hợp</field>
-            <field name="res_model">learning_japanese.listening</field>
-            <field name="view_mode">tree,form</field>
+            <field name="res_model">learning_japanese.comprehensive</field>
+            <field name="view_mode">list,form</field>
             <field name="help" type="html">
                <p class="o_view_nocontent_smiling_face">
                    Tạo mới nghe hiểu
@@ -12,11 +12,11 @@
             </field>
         </record>
 
-        <record id="view_listening_search" model="ir.ui.view">
-            <field name="name">learning_japanese.listening.search</field>
-            <field name="model">learning_japanese.listening</field>
+        <record id="view_comprehensive_search" model="ir.ui.view">
+            <field name="name">learning_japanese.comprehensive.search</field>
+            <field name="model">learning_japanese.comprehensive</field>
             <field name="arch" type="xml">
-                <search string="Nghe hiểu">
+                <search string="Comprehensive Search">
                     <field name="title" string="Title" filter_domain="[('title', 'ilike', self)]"/>
                     <field name="description" string="Diễn giải" filter_domain="[('description', 'ilike', self)]"/>
                     <field name="content_only_kanji" string="Nội dung" filter_domain="['|', ('content_only_kanji', 'ilike', self), ('content', 'ilike', self)]"/>
@@ -24,11 +24,11 @@
              </field>
         </record>
 
-        <record id="view_listening_tree" model="ir.ui.view">
-            <field name="name">learning_japanese.listening.tree</field>
-            <field name="model">learning_japanese.listening</field>
+        <record id="view_comprehensive_list" model="ir.ui.view">
+            <field name="name">learning_japanese.comprehensive.list</field>
+            <field name="model">learning_japanese.comprehensive</field>
             <field name="arch" type="xml">
-                <tree export_xlsx="1" multi_edit="1" string="Listening Tree View">
+                <list export_xlsx="1" multi_edit="1" string="Listening List View">
                     <field name="title" optional="show"/>
                     <field name="description" optional="hide"/>
                     <field name="content_only_kanji" optional="show"/>
@@ -38,17 +38,16 @@
                     <field name="lesson_id" optional="hide"/>
                     <field name="level" optional="hide"/>
                     <field name="deadline" optional="hide"/>
-                </tree>
+                </list>
             </field>
         </record>
 
-        <record id="view_listening_form" model="ir.ui.view">
-            <field name="name">learning_japanese.listening.form</field>
-            <field name="model">learning_japanese.listening</field>
+        <record id="view_comprehensive_form" model="ir.ui.view">
+            <field name="name">learning_japanese.comprehensive.form</field>
+            <field name="model">learning_japanese.comprehensive</field>
             <field name="arch" type="xml">
                 <form string="Listening Form View">
                     <header>
-<!--                        <button name="action_finalize" string="Finalize" type="object" invisible="is_finalized == True"/>-->
                         <button name="action_reverse" string="Reverse" type="object" invisible="is_finalized == False"/>
                     </header>
                     <sheet>

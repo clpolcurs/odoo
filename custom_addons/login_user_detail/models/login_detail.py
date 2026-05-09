@@ -3,8 +3,8 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2023-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
-#    Author: Aysha Shalin (odoo@cybrosys.com)
+#    Copyright (C) 2026-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Author: AYANA KP (odoo@cybrosys.com)
 #
 #    You can modify it under the terms of the GNU AFFERO
 #    GENERAL PUBLIC LICENSE (AGPL v3), Version 3.
@@ -31,6 +31,6 @@ class LoginDetail(models.Model):
     name = fields.Char(string="User Name", help="Name of logged in user")
     date_time = fields.Datetime(
         string="Login Date And Time",
-        default=lambda self: fields.datetime.now(),
+        default=fields.Datetime.now,
         help="Date and time of log in")
     ip_address = fields.Char(string="IP Address", help="IP address of login")
