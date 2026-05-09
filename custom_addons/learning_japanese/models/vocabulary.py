@@ -256,7 +256,7 @@ class Lesson(models.Model):
 
     lesson = fields.Char(string="Bài")
     book_id = fields.Many2one(
-        comodel_name="learning_japanese.book", string="Giáo trình", auto_join=True
+        comodel_name="learning_japanese.book", string="Giáo trình",
     )
     combination = fields.Char(
         string="Combination Name", compute="_compute_fields_combination", store=True
@@ -366,7 +366,7 @@ class ContextTag(models.Model):
         inverse_name="context_tag_id",
         string="Từ vựng",
     )
-    parent_path = fields.Char(index=True, unaccent=False)
+    parent_path = fields.Char(index=True)
     master_context_tag_id = fields.Many2one(
         "learning_japanese.context_tag",
         "Master Context Tag",
@@ -375,9 +375,9 @@ class ContextTag(models.Model):
     )
 
     # Check if name is unique
-    _sql_constraints = [
-        ("check_context_tag_name", "UNIQUE(id)", "Name must be unique"),
-    ]
+    # _sql_constraints = [
+    #     ("check_context_tag_name", "UNIQUE(id)", "Name must be unique"),
+    # ]
 
     @api.depends("name", "parent_id.complete_name")
     def _compute_complete_name(self):
@@ -408,13 +408,13 @@ class Vocabulary(models.Model):
     part_of_speach_id = fields.Many2one(
         comodel_name="learning_japanese.part_of_speech",
         string="Từ loại",
-        auto_join=True,
+        # auto_join=True,
     )
 
     lesson_id = fields.Many2one(
         comodel_name="learning_japanese.lesson",
         string="Bài",
-        auto_join=True,
+        # auto_join=True,
     )
     book_name = fields.Char(
         string="Giáo trình", related="lesson_id.book_id.name", store=True
@@ -469,9 +469,8 @@ class Vocabulary(models.Model):
     the_y_chi = fields.Char(string="Thể ý chí", copy=False)
     the_cam_chi = fields.Char(string="Thể cấm chỉ", copy=False)
 
-    _sql_constraints = [
-        (
-            "check_vocabulary",
+    _constraints = [
+        models.Constraint(
             "UNIQUE(vocabulary, vietnamese)",
             "Từ mới và nghĩa không được trùng nhau",
         ),

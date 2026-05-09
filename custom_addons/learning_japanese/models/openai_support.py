@@ -56,7 +56,7 @@ class OpenAISupport(models.Model):
     prompt_request_id = fields.Many2one(
         comodel_name="learning_japanese.prompt_request",
         string="Prompt Request",
-        auto_join=True,
+        # auto_join=True,
     )
     request_name = fields.Text(string="Request Name", copy=False)
     content = fields.Text(string="Content", copy=False)
