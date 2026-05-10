@@ -363,9 +363,11 @@ class ContextTag(models.Model):
     child_ids = fields.One2many(
         "learning_japanese.context_tag", "parent_id", string="Child Vocabularies"
     )
-    vocabulary_ids = fields.One2many(
+    vocabulary_ids = fields.Many2many(
         comodel_name="learning_japanese.vocabulary",
-        inverse_name="context_tag_id",
+        relation="vocabulary_context_tag_rel",
+        column1="context_tag_id",
+        column2="vocabulary_id",
         string="Từ vựng",
     )
     parent_path = fields.Char(index=True)
@@ -447,9 +449,12 @@ class Vocabulary(models.Model):
         compute="_compute_book_ids",
         store=True,
     )
-    context_tag_id = fields.Many2one(
+    context_tag_ids = fields.Many2many(
         comodel_name="learning_japanese.context_tag",
-        string="Chủ đề",
+        relation="vocabulary_context_tag_rel",
+        column1="vocabulary_id",
+        column2="context_tag_id",
+        string="Topic",
     )
     level = fields.Selection(
         selection=[

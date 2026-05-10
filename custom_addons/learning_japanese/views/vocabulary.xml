@@ -12,9 +12,15 @@
                     <field name="romanji" string="Romanji" filter_domain="[('romanji', 'ilike', self)]"/>
                     <field name="han_viet" string="Hán Việt" filter_domain="[('han_viet', 'ilike', self)]"/>
                     <field name="content" string="content_only_kanji" filter_domain="[('content_only_kanji', 'ilike', self)]"/>
+                    <field name="context_tag_ids" string="Topic" icon="fa-filter" enable_counters="1"/>
                     <searchpanel>
                         <field name="part_of_speech_id" string="Part of speach" icon="fa-filter" enable_counters="1"/>
-                        <field name="context_tag_id" string="Topic" icon="fa-filter" enable_counters="1"/>
+                        <field name="context_tag_ids"
+                               string="Topic"
+                               icon="fa-filter"
+                               select="multi"
+                               groupby="parent_id"
+                               enable_counters="1"/>
                     </searchpanel>
                 </search>
              </field>
@@ -47,7 +53,7 @@
                     <field name="book_ids" widget="many2many_tags" optional="hide"/>
                     <field name="lesson_ids" widget="many2many_tags" optional="hide"/>
                     <field name="level" optional="hide"/>
-                    <field name="context_tag_id" optional="hide"/>
+                    <field name="context_tag_ids" widget="many2many_tags" optional="hide"/>
                     <field name="nhom_dong_tu" optional="hide"/>
                     <field name="is_intransitive" optional="hide"/>
                     <field name="nhom_ngu" optional="hide"/>
@@ -96,7 +102,7 @@
                                 <field name="level"/>
                                 <field name="han_viet"/>
                                 <field name="vietnamese" placeholder="Auto generate by OpenAI"/>
-                                <field name="context_tag_id" context="{'show_complete_name': True}"/>
+                                <field name="context_tag_ids" widget="many2many_tags" context="{'show_complete_name': True}" options="{'no_create': True}"/>
                             </group>
                         </group>
 
