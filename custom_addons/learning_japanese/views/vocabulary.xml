@@ -13,7 +13,7 @@
                     <field name="han_viet" string="Hán Việt" filter_domain="[('han_viet', 'ilike', self)]"/>
                     <field name="content" string="content_only_kanji" filter_domain="[('content_only_kanji', 'ilike', self)]"/>
                     <searchpanel>
-                        <field name="part_of_speech_id" string="Part of speach" icon="fa-filter"  enable_counters="1"/>
+                        <field name="part_of_speech_id" string="Part of speach" icon="fa-filter" enable_counters="1"/>
                         <field name="context_tag_id" string="Topic" icon="fa-filter" enable_counters="1"/>
                     </searchpanel>
                 </search>
@@ -44,8 +44,8 @@
                     <field name="part_of_speech_id" optional="hide"/>
                     <field name="han_viet" optional="hide"/>
                     <field name="vietnamese" optional="show"/>
-                    <field name="book_name" optional="hide"/>
-                    <field name="lesson_id" optional="hide"/>
+                    <field name="book_ids" widget="many2many_tags" optional="hide"/>
+                    <field name="lesson_ids" widget="many2many_tags" optional="hide"/>
                     <field name="level" optional="hide"/>
                     <field name="context_tag_id" optional="hide"/>
                     <field name="nhom_dong_tu" optional="hide"/>
@@ -71,7 +71,6 @@
             <field name="arch" type="xml">
                 <form string="Vocabulary Form View">
                     <header>
-<!--                        <button name="action_finalize" string="Finalize" type="object" invisible="is_finalized == True"/>-->
                         <button name="action_reverse" string="Reverse" type="object" invisible="is_finalized == False"/>
                     </header>
                     <sheet>
@@ -89,18 +88,16 @@
                                 <field name="nhom_dong_tu" invisible="part_of_speech_id != 2"/>
                                 <field name="nhom_ngu"/>
                                 <field name="is_intransitive" invisible="part_of_speech_id != 2"/>
-<!--                                <field name="is_finalized"/>-->
                                 <field name="is_finalized" invisible="1"/>
                             </group>
                             <group>
-                                <field name="lesson_id"/>
-                                <field name="book_name"/>
+                                <field name="lesson_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                <field name="book_ids" widget="many2many_tags" options="{'no_create': True}"/>
                                 <field name="level"/>
                                 <field name="han_viet"/>
                                 <field name="vietnamese" placeholder="Auto generate by OpenAI"/>
-                                <field name="context_tag_id"/>
+                                <field name="context_tag_id" context="{'show_complete_name': True}"/>
                             </group>
-
                         </group>
 
                         <group string="Thể động từ" invisible="part_of_speech_id != 2"/>

@@ -261,9 +261,11 @@ class Lesson(models.Model):
     combination = fields.Char(
         string="Combination Name", compute="_compute_fields_combination", store=True
     )
-    vocabulary_ids = fields.One2many(
+    vocabulary_ids = fields.Many2many(
         comodel_name="learning_japanese.vocabulary",
-        inverse_name="lesson_id",
+        relation="lesson_vocabulary_rel",
+        column1="lesson_id",
+        column2="vocabulary_id",
         string="Vocabulary",
     )
     grammar_ids = fields.One2many(
@@ -397,6 +399,17 @@ class ContextTag(models.Model):
                 context_tag.parent_path.split("/")[0]
             )
 
+    @api.depends("name", "complete_name")
+    def _compute_display_name(self):
+        """
+        Dynamically switch display name based on context.
+        Defaults to short name, switches to complete_name if requested.
+        """
+        for record in self:
+            if self.env.context.get("show_complete_name") and record.complete_name:
+                record.display_name = record.complete_name
+            else:
+                record.display_name = record.name
 
 class HanViet(models.Model):
     _name = "learning_japanese.hanviet"
@@ -421,13 +434,18 @@ class Vocabulary(models.Model):
         # auto_join=True,
     )
 
-    lesson_id = fields.Many2one(
+    lesson_ids = fields.Many2many(
         comodel_name="learning_japanese.lesson",
-        string="Bài",
-        # auto_join=True,
+        relation="lesson_vocabulary_rel",
+        column1="vocabulary_id",
+        column2="lesson_id",
+        string="Lesson",
     )
-    book_name = fields.Char(
-        string="Giáo trình", related="lesson_id.book_id.name", store=True
+    book_ids = fields.Many2many(
+        comodel_name="learning_japanese.book",
+        string="Giáo trình",
+        compute="_compute_book_ids",
+        store=True,
     )
     context_tag_id = fields.Many2one(
         comodel_name="learning_japanese.context_tag",
@@ -856,3 +874,9 @@ class Vocabulary(models.Model):
             self.the_dieu_kien = self.get_the_dieu_kien(
                 self.vocabulary, self.nhom_dong_tu
             )
+
+    @api.depends("lesson_ids.book_id")
+    def _compute_book_ids(self):
+        for record in self:
+            # mapped() automatically collects unique records and returns a recordset
+            record.book_ids = record.lesson_ids.mapped("book_id")
