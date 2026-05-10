@@ -8,7 +8,7 @@ from pykakasi import kakasi
 from google import genai
 
 from odoo import api, fields, models
-from odoo.exceptions import AccessError, UserError
+from odoo.exceptions import AccessError, UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -380,10 +380,22 @@ class ContextTag(models.Model):
         store=True,
     )
 
-    # Check if name is unique
-    # _sql_constraints = [
-    #     ("check_context_tag_name", "UNIQUE(id)", "Name must be unique"),
-    # ]
+    @api.constrains("complete_name")
+    def _check_unique_complete_name(self):
+        """
+        Kiểm tra và cấm trùng lặp complete_name trên toàn bộ các chủ đề.
+        Đảm bảo mỗi đường dẫn phân cấp trong cây là duy nhất tuyệt đối.
+        """
+        for tag in self:
+            if tag.complete_name:
+                duplicate = self.search([
+                    ("complete_name", "=", tag.complete_name),
+                    ("id", "!=", tag.id),
+                ], limit=1)
+                if duplicate:
+                    raise ValidationError(
+                        f"Chủ đề '{tag.complete_name}' đã tồn tại trên hệ thống. Vui lòng đặt tên khác hoặc chọn chủ đề cha khác để tránh trùng lặp!"
+                    )
 
     @api.depends("name", "parent_id.complete_name")
     def _compute_complete_name(self):
