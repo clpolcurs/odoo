@@ -14,10 +14,10 @@
                     <field name="content" string="content_only_kanji" filter_domain="[('content_only_kanji', 'ilike', self)]"/>
                     <field name="context_tag_ids" string="Topic" icon="fa-filter" enable_counters="1"/>
                     <searchpanel>
-                        <field name="part_of_speech_ids" string="Part of speech" icon="fa-filter" select="multi" enable_counters="1"/>
+                        <field name="part_of_speech_ids" string="Part of speech" icon="fa-language" select="multi" enable_counters="1"/>
                         <field name="context_tag_ids"
                                string="Topic"
-                               icon="fa-filter"
+                               icon="fa-tags"
                                select="multi"
                                groupby="parent_id"
                                enable_counters="1"/>

@@ -282,7 +282,7 @@ class Lesson(models.Model):
         column1="lesson_id",
         column2="comprehensive_id",
         string="Grammar",
-        domain=[("category", "=", "grammar")],
+        domain=[("category_ids.name", "ilike", "Grammar")],
     )
 
     example_ids = fields.Many2many(
@@ -291,7 +291,7 @@ class Lesson(models.Model):
         column1="lesson_id",
         column2="comprehensive_id",
         string="Example",
-        domain=[("category", "=", "example")],
+        domain=[("category_ids.name", "ilike", "Example")],
     )
 
     reading_ids = fields.Many2many(
@@ -300,7 +300,7 @@ class Lesson(models.Model):
         column1="lesson_id",
         column2="comprehensive_id",
         string="Reading",
-        domain=[("category", "=", "reading")],
+        domain=[("category_ids.name", "ilike", "Reading")],
     )
 
     listening_ids = fields.Many2many(
@@ -309,7 +309,7 @@ class Lesson(models.Model):
         column1="lesson_id",
         column2="comprehensive_id",
         string="Listening",
-        domain=[("category", "=", "listening")],
+        domain=[("category_ids.name", "ilike", "Listening")],
     )
 
     writing_ids = fields.Many2many(
@@ -318,7 +318,7 @@ class Lesson(models.Model):
         column1="lesson_id",
         column2="comprehensive_id",
         string="Writing",
-        domain=[("category", "=", "writing")],
+        domain=[("category_ids.name", "ilike", "Writing")],
     )
 
     @api.depends("lesson", "book_id")

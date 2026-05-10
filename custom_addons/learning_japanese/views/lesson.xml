@@ -49,50 +49,36 @@
 
                            <page string="Grammar">
                                 <field name="grammar_ids"
-                                       context="{'default_category': 'grammar'}">
+                                       context="{'default_tag_name': 'Grammar'}">
                                     <list>
                                         <field name="title"/>
-                                        <field name="level" optional="show"/>
-                                    </list>
-                                </field>
-                            </page>
-
-                            <page string="Example">
-                                <field name="example_ids"
-                                       context="{'default_category': 'example'}">
-                                    <list>
-                                        <field name="title"/>
-                                        <field name="level" optional="show"/>
                                     </list>
                                 </field>
                             </page>
 
                             <page string="Reading">
                                 <field name="reading_ids"
-                                       context="{'default_category': 'reading'}">
+                                       context="{'default_tag_name': 'Reading'}">
                                     <list>
                                         <field name="title"/>
-                                        <field name="level" optional="show"/>
                                     </list>
                                 </field>
                             </page>
 
                             <page string="Listening">
                                 <field name="listening_ids"
-                                       context="{'default_category': 'listening'}">
+                                       context="{'default_tag_name': 'Listening'}">
                                     <list>
                                         <field name="title"/>
-                                        <field name="level" optional="show"/>
                                     </list>
                                 </field>
                             </page>
 
                             <page string="Writing">
                                 <field name="writing_ids"
-                                       context="{'default_category': 'writing'}">
+                                       context="{'default_tag_name': 'Writing'}">
                                     <list>
                                         <field name="title"/>
-                                        <field name="level" optional="show"/>
                                     </list>
                                 </field>
                             </page>

@@ -3,7 +3,7 @@
     <data>
         <menuitem id="menu_learning_japanese" name="Learning Japanese"/>
 
-            <menuitem id="vocabulary_menu" name="Từ vựng" action="vocabulary_action" parent="menu_learning_japanese" sequence="1"/>
+            <menuitem id="vocabulary_menu" action="vocabulary_action" parent="menu_learning_japanese" sequence="1"/>
             <menuitem id="comprehensive_menu" action="comprehensive_action" parent="menu_learning_japanese" sequence="6"/>
 <!--            <menuitem id="essential_menu" name="Nền tảng" parent="menu_learning_japanese" sequence="8"/>-->
 <!--                <menuitem id="verb_group_action_menu" action="verb_group_action" parent="learning_japanese.essential_menu" sequence="20"/>-->
@@ -33,6 +33,7 @@
 <!--            <menuitem id="context_tag_menu" action="context_tag_action" parent="menu_learning_japanese" sequence="10"/>-->
 
             <menuitem id="setting_tag_menu" name="Settings" parent="menu_learning_japanese" sequence="11"/>
+                <menuitem id="comprehensive_tag_menu" action="comprehensive_tag_action" parent="learning_japanese.setting_tag_menu" sequence="39"/>
                 <menuitem id="context_tag_menu" action="context_tag_action" parent="learning_japanese.setting_tag_menu" sequence="40"/>
                 <menuitem id="book_menu_action" action="book_action" parent="learning_japanese.setting_tag_menu" sequence="41"/>
                 <menuitem id="lesson_menu_action" action="lesson_action" parent="learning_japanese.setting_tag_menu" sequence="42"/>

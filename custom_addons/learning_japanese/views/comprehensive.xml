@@ -2,12 +2,12 @@
 <odoo>
     <data>
         <record id="comprehensive_action" model="ir.actions.act_window">
-            <field name="name">Tổng hợp</field>
+            <field name="name">Comprehensive</field>
             <field name="res_model">learning_japanese.comprehensive</field>
             <field name="view_mode">list,form</field>
             <field name="help" type="html">
                <p class="o_view_nocontent_smiling_face">
-                   Tạo mới nghe hiểu
+                   Create new comprehensive content
                </p>
             </field>
         </record>
@@ -18,8 +18,12 @@
             <field name="arch" type="xml">
                 <search string="Comprehensive Search">
                     <field name="title" string="Title" filter_domain="[('title', 'ilike', self)]"/>
-                    <field name="description" string="Diễn giải" filter_domain="[('description', 'ilike', self)]"/>
-                    <field name="content_only_kanji" string="Nội dung" filter_domain="['|', ('content_only_kanji', 'ilike', self), ('content', 'ilike', self)]"/>
+                    <field name="description" string="Description" filter_domain="[('description', 'ilike', self)]"/>
+                    <field name="content_only_kanji" string="Content" filter_domain="['|', ('content_only_kanji', 'ilike', self), ('content', 'ilike', self)]"/>
+                    <searchpanel>
+                        <field name="level" string="Level" icon="fa-signal" select="multi" enable_counters="1"/>
+                        <field name="category_ids" string="Category" icon="fa-tags" select="multi" enable_counters="1"/>
+                    </searchpanel>
                 </search>
              </field>
         </record>
@@ -33,7 +37,7 @@
                     <field name="description" optional="hide"/>
                     <field name="content_only_kanji" optional="show"/>
                     <field name="content" optional="hide"/>
-                    <field name="category" optional="hide"/>
+                    <field name="category_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
                     <field name="book_ids" widget="many2many_tags" optional="hide"/>
                     <field name="lesson_ids" widget="many2many_tags" optional="hide"/>
                     <field name="level" optional="hide"/>
@@ -57,7 +61,10 @@
                         </div>
                         <group>
                             <group>
-                                <field name="description" invisible="category != 'grammar'"/>
+                                <field name="is_grammar" invisible="1"/>
+                                <field name="is_writing_or_speaking" invisible="1"/>
+
+                                <field name="description" invisible="not is_grammar"/>
                             </group>
                         </group>
                         <br/>
@@ -65,13 +72,12 @@
                             <group>
                                 <field name="lesson_ids" widget="many2many_tags" options="{'no_create': True}"/>
                                 <field name="book_ids" widget="many2many_tags" options="{'no_create': True}"/>
-                                <field name="category"/>
 
+                                <field name="category_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': False}"/>
                             </group>
                             <group>
                                 <field name="level"/>
-<!--                                <field name="is_finalized" invisible="1"/>-->
-                                <field name="deadline" invisible="category not in ['writing', 'speaking']"/>
+                                <field name="deadline" invisible="not is_writing_or_speaking"/>
                                 <field name="audio_file" widget="audio_player"/>
                             </group>
                         </group>

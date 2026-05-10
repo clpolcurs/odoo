@@ -20,6 +20,7 @@
         "security/ir.model.access.csv",
         "security/security_access_data.xml",
         # views
+        "views/comprehensive_tag.xml",
         "views/llm_config.xml",
         "views/openai_support.xml",
         "views/prompt_request.xml",
