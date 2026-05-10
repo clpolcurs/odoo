@@ -30,10 +30,10 @@
 <!--                <menuitem id="do_uong_action_menu" action="do_uong_action" parent="learning_japanese.tro_so_tu_menu" sequence="44"/>-->
 <!--                <menuitem id="dong_vat_nho_con_trung_action_menu" action="dong_vat_nho_con_trung_action" parent="learning_japanese.tro_so_tu_menu" sequence="45"/>-->
 
-            <menuitem id="context_tag_menu" action="context_tag_action" parent="menu_learning_japanese" sequence="10"/>
+<!--            <menuitem id="context_tag_menu" action="context_tag_action" parent="menu_learning_japanese" sequence="10"/>-->
 
-            <menuitem id="setting_tag_menu" name="Thiết lập" parent="menu_learning_japanese" sequence="11"/>
-<!--                <menuitem id="context_tag_menu" action="context_tag_action" parent="learning_japanese.setting_tag_menu" sequence="40"/>-->
+            <menuitem id="setting_tag_menu" name="Settings" parent="menu_learning_japanese" sequence="11"/>
+                <menuitem id="context_tag_menu" action="context_tag_action" parent="learning_japanese.setting_tag_menu" sequence="40"/>
                 <menuitem id="book_menu_action" action="book_action" parent="learning_japanese.setting_tag_menu" sequence="41"/>
                 <menuitem id="lesson_menu_action" action="lesson_action" parent="learning_japanese.setting_tag_menu" sequence="42"/>
                 <menuitem id="part_of_speech_menu_action" action="part_of_speech_action" parent="learning_japanese.setting_tag_menu" sequence="43"/>

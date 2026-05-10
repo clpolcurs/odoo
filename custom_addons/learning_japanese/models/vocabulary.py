@@ -1,14 +1,14 @@
-import html
 import re
+import html
+import logging
+import openai
 
 from typing import Any
-
 from pykakasi import kakasi
-import openai
-import logging
+from google import genai
 
 from odoo import api, fields, models
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -321,9 +321,11 @@ class PartOfSpeech(models.Model):
     combination = fields.Char(
         string="Combination Name", compute="_compute_fields_combination", store=True
     )
-    vocabulary_ids = fields.One2many(
+    vocabulary_ids = fields.Many2many(
         comodel_name="learning_japanese.vocabulary",
-        inverse_name="part_of_speech_id",
+        relation="vocabulary_part_of_speech_rel",
+        column1="part_of_speech_id",
+        column2="vocabulary_id",
         string="Vocabularies",
     )
 
@@ -430,10 +432,12 @@ class Vocabulary(models.Model):
     _order = "id desc"
     _inherit = ["learning_japanese.furigana.mixin"]
 
-    part_of_speech_id = fields.Many2one(
+    part_of_speech_ids = fields.Many2many(
         comodel_name="learning_japanese.part_of_speech",
+        relation="vocabulary_part_of_speech_rel",
+        column1="vocabulary_id",
+        column2="part_of_speech_id",
         string="Từ loại",
-        # auto_join=True,
     )
 
     lesson_ids = fields.Many2many(
@@ -501,6 +505,11 @@ class Vocabulary(models.Model):
     the_menh_lenh = fields.Char(string="Thể mệnh lệnh", copy=False)
     the_y_chi = fields.Char(string="Thể ý chí", copy=False)
     the_cam_chi = fields.Char(string="Thể cấm chỉ", copy=False)
+    is_verb = fields.Boolean(
+        string="Is verb?",
+        compute="_compute_is_verb",
+        store=True,
+    )
 
     _check_unique_vocabulary = models.Constraint(
             "UNIQUE(vocabulary, vietnamese)",
@@ -541,27 +550,63 @@ class Vocabulary(models.Model):
         """
 
     def generate_response_from_transcript(
-        self, vocabulary: str
+            self, vocabulary: str
     ) -> str | tuple[Any, ...] | tuple[str, str, str]:
-        openai.api_key = self.get_openai_key()
-        try:
-            response = openai.chat.completions.create(
-                model="gpt-5.4",
-                messages=[
-                    {"role": "system", "content": self.create_prompt(vocabulary)}
-                ],
-                temperature=1,
-            )
-        except Exception as e:
-            raise AccessError(e)
+        # 1. Search for an active LLM configuration in the database
+        llm_config = self.env["learning_japanese.llm_config"].search(
+            [("is_active", "=", True)],
+            order="sequence asc, id desc",
+            limit=1
+        )
+        if not llm_config:
+            raise UserError("No active LLM configuration found. Please enable at least one provider.")
 
-        full_response = response.choices[0].message.content
+        prompt_text = self.create_prompt(vocabulary)
+        full_response = ""
+
+        # 2. Route request dynamically based on the active provider
+        if llm_config.provider == "openAI":
+            api_key = self.env["ir.config_parameter"].sudo().get_param("openai.api_key")
+            if not api_key:
+                raise AccessError("OpenAI API Key is missing in System Parameters.")
+
+            # Using the modern OpenAI client instantiation
+            client = openai.OpenAI(api_key=api_key)
+            try:
+                response = client.chat.completions.create(
+                    model=llm_config.model_code,  # Uses dynamic model code (e.g., gpt-4o)
+                    messages=[{"role": "system", "content": prompt_text}],
+                    temperature=1,
+                )
+                full_response = response.choices[0].message.content or ""
+            except Exception as e:
+                raise AccessError(f"OpenAI Error: {e}")
+
+        elif llm_config.provider == "gemini":
+            api_key = self.env["ir.config_parameter"].sudo().get_param("gemini.api_key")
+            if not api_key:
+                raise AccessError("Gemini API Key is missing in System Parameters.")
+
+            # Using the Gemini client instantiation
+            client = genai.Client(api_key=api_key)
+            try:
+                response = client.models.generate_content(
+                    model=llm_config.model_code,  # Uses dynamic model code (e.g., gemini-1.5-flash)
+                    contents=prompt_text,
+                )
+                full_response = response.text or ""
+            except Exception as e:
+                raise AccessError(f"Gemini Error: {e}")
+        else:
+            raise UserError("Unsupported LLM provider.")
+
+        # 3. Parse and return the response lines following the standard format
         try:
             lines = full_response.split("\n")
             return tuple(
                 line.split(":", 1)[1].strip() for line in lines if ":" in line
             )[:4]
-        except:
+        except Exception:
             return "", "", "", ""
 
     def get_part_of_speech(self, env: str, condition: tuple) -> int:
@@ -770,31 +815,36 @@ class Vocabulary(models.Model):
     def _onchange_vocabulary(self):
         if self.vocabulary:
             if self.vocabulary[-2:] == "ます":
-                self.part_of_speech_id = self.get_part_of_speech(
+                pos_id = self.get_part_of_speech(
                     "learning_japanese.part_of_speech",
                     ("combination", "=", "動詞 - どうし - Động từ"),
                 )
+                # Assign using Many2many command: replace existing with [pos_id]
+                self.part_of_speech_ids = [(6, 0, [pos_id])]
                 nhom_dong_tu = self.get_nhom_dong_tu(self.vocabulary)
                 self.get_cac_the_dong_tu(nhom_dong_tu)
 
             elif self.vocabulary[-1] == "い":
-                self.part_of_speech_id = self.get_part_of_speech(
+                pos_id = self.get_part_of_speech(
                     "learning_japanese.part_of_speech",
                     ("combination", "=", "い形容詞 - いけいようし - Tính từ い"),
                 )
+                self.part_of_speech_ids = [(6, 0, [pos_id])]
                 self.get_cac_the_dong_tu()
 
             elif self.vocabulary[-3:] == "「な」":
-                self.part_of_speech_id = self.get_part_of_speech(
+                pos_id = self.get_part_of_speech(
                     "learning_japanese.part_of_speech",
                     ("combination", "=", "な形容詞 - なけいようし - Tính từ な"),
                 )
+                self.part_of_speech_ids = [(6, 0, [pos_id])]
                 self.get_cac_the_dong_tu()
             else:
-                self.part_of_speech_id = self.get_part_of_speech(
+                pos_id = self.get_part_of_speech(
                     "learning_japanese.part_of_speech",
                     ("combination", "=", "名詞 - めいし - Danh từ"),
                 )
+                self.part_of_speech_ids = [(6, 0, [pos_id])]
                 self.get_cac_the_dong_tu()
 
             kks = kakasi()
@@ -885,3 +935,12 @@ class Vocabulary(models.Model):
         for record in self:
             # mapped() automatically collects unique records and returns a recordset
             record.book_ids = record.lesson_ids.mapped("book_id")
+
+    @api.depends("part_of_speech_ids", "part_of_speech_ids.kanji", "part_of_speech_ids.combination")
+    def _compute_is_verb(self):
+        for record in self:
+            # Dynamically check if any selected part of speech represents a verb
+            record.is_verb = any(
+                pos.kanji == "動詞" or (pos.combination and "動詞" in pos.combination)
+                for pos in record.part_of_speech_ids
+            )

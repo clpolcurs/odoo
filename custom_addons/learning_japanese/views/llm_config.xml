@@ -16,11 +16,12 @@
             <field name="name">learning_japanese.llm_config.list</field>
             <field name="model">learning_japanese.llm_config</field>
             <field name="arch" type="xml">
-                <list export_xlsx="1" multi_edit="1" string="LLM Config List View">
-                    <field name="name" optional="show"/>
-                    <field name="model_code" optional="show"/>
-                    <field name="provider" optional="show"/>
-                    <field name="is_active" optional="show"/>
+                <list string="LLM Configurations" editable="bottom">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="provider"/>
+                    <field name="model_code"/>
+                    <field name="is_active" widget="boolean_toggle"/>
                 </list>
             </field>
         </record>

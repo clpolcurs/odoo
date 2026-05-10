@@ -27,6 +27,9 @@ class LLMConfig(models.Model):
     _name = "learning_japanese.llm_config"
     _description = "LLM Configuration"
 
+    # 1. ADD THE DEFAULT ORDERING
+    _order = "sequence asc, id desc"
+
     name = fields.Char(string="Display Name", required=True, help="e.g., GPT-4o High Speed")
     model_code = fields.Char(string="Model Technical Name", required=True, help="e.g., gpt-4o or gemini-1.5-flash")
     provider = fields.Selection(
@@ -38,6 +41,13 @@ class LLMConfig(models.Model):
         required=True
     )
     is_active = fields.Boolean(default=True)
+
+    # 2. ADD THE SEQUENCE FIELD
+    sequence = fields.Integer(
+        string="Sequence",
+        default=10,
+        help="Priority order (lower value = higher priority)."
+    )
 
     def name_get(self):
         """Custom display name: [Provider] Display Name"""

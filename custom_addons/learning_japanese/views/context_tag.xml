@@ -2,12 +2,12 @@
 <odoo>
     <data>
         <record id="context_tag_action" model="ir.actions.act_window">
-            <field name="name">Chủ đề</field>
+            <field name="name">Topic</field>
             <field name="res_model">learning_japanese.context_tag</field>
             <field name="view_mode">list,form</field>
             <field name="help" type="html">
                <p class="o_view_nocontent_smiling_face">
-                   Tạo mới chủ đề
+                   Add a new topic or context tag to categorize vocabulary and grammar points. You can create a hierarchy of tags by setting parent tags, allowing for flexible organization of your learning materials.
                </p>
             </field>
         </record>

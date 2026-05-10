@@ -14,7 +14,7 @@
                     <field name="content" string="content_only_kanji" filter_domain="[('content_only_kanji', 'ilike', self)]"/>
                     <field name="context_tag_ids" string="Topic" icon="fa-filter" enable_counters="1"/>
                     <searchpanel>
-                        <field name="part_of_speech_id" string="Part of speach" icon="fa-filter" enable_counters="1"/>
+                        <field name="part_of_speech_ids" string="Part of speech" icon="fa-filter" select="multi" enable_counters="1"/>
                         <field name="context_tag_ids"
                                string="Topic"
                                icon="fa-filter"
@@ -27,13 +27,13 @@
         </record>
 
         <record id="vocabulary_action" model="ir.actions.act_window">
-            <field name="name">Từ vựng</field>
+            <field name="name">Vocabulary</field>
             <field name="res_model">learning_japanese.vocabulary</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="view_vocabulary_search"/>
             <field name="help" type="html">
                <p class="o_view_nocontent_smiling_face">
-                   Tạo mới từ vựng
+                   Add a new vocabulary
                </p>
             </field>
         </record>
@@ -47,7 +47,7 @@
                     <field name="higarana" optional="show"/>
                     <field name="katakana" optional="show"/>
                     <field name="romanji" optional="hide"/>
-                    <field name="part_of_speech_id" optional="hide"/>
+                    <field name="part_of_speech_ids" widget="many2many_tags" optional="hide"/>
                     <field name="han_viet" optional="hide"/>
                     <field name="vietnamese" optional="show"/>
                     <field name="book_ids" widget="many2many_tags" optional="hide"/>
@@ -90,11 +90,12 @@
                                 <field name="higarana"/>
                                 <field name="katakana"/>
                                 <field name="romanji"/>
-                                <field name="part_of_speech_id"/>
-                                <field name="nhom_dong_tu" invisible="part_of_speech_id != 2"/>
+                                <field name="part_of_speech_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                <field name="is_verb" invisible="1"/>
+                                <field name="nhom_dong_tu" invisible="not is_verb"/>
                                 <field name="nhom_ngu"/>
-                                <field name="is_intransitive" invisible="part_of_speech_id != 2"/>
-                                <field name="is_finalized" invisible="1"/>
+                                <field name="is_intransitive" invisible="not is_verb"/>
+<!--                                <field name="is_finalized" invisible="1"/>-->
                             </group>
                             <group>
                                 <field name="lesson_ids" widget="many2many_tags" options="{'no_create': True}"/>
@@ -106,23 +107,23 @@
                             </group>
                         </group>
 
-                        <group string="Thể động từ" invisible="part_of_speech_id != 2"/>
+                        <group string="Thể động từ" invisible="not is_verb"/>
                         <group>
                             <group>
-                                <field name="the_tu_dien" invisible="part_of_speech_id != 2"/>
-                                <field name="the_te" invisible="part_of_speech_id != 2"/>
-                                <field name="the_qua_khu" invisible="part_of_speech_id != 2"/>
-                                <field name="the_phu_dinh" invisible="part_of_speech_id != 2"/>
-                                <field name="the_kha_nang" invisible="part_of_speech_id != 2"/>
-                                <field name="the_y_chi" invisible="part_of_speech_id != 2"/>
+                                <field name="the_tu_dien" invisible="not is_verb"/>
+                                <field name="the_te" invisible="not is_verb"/>
+                                <field name="the_qua_khu" invisible="not is_verb"/>
+                                <field name="the_phu_dinh" invisible="not is_verb"/>
+                                <field name="the_kha_nang" invisible="not is_verb"/>
+                                <field name="the_y_chi" invisible="not is_verb"/>
                             </group>
                              <group>
-                                <field name="the_menh_lenh" invisible="part_of_speech_id != 2"/>
-                                <field name="the_cam_chi" invisible="part_of_speech_id != 2"/>
-                                <field name="the_thu_dong" invisible="part_of_speech_id != 2"/>
-                                <field name="the_sai_khien" invisible="part_of_speech_id != 2"/>
-                                <field name="the_sai_khien_thu_dong" invisible="part_of_speech_id != 2"/>
-                                <field name="the_dieu_kien" invisible="part_of_speech_id != 2"/>
+                                <field name="the_menh_lenh" invisible="not is_verb"/>
+                                <field name="the_cam_chi" invisible="not is_verb"/>
+                                <field name="the_thu_dong" invisible="not is_verb"/>
+                                <field name="the_sai_khien" invisible="not is_verb"/>
+                                <field name="the_sai_khien_thu_dong" invisible="not is_verb"/>
+                                <field name="the_dieu_kien" invisible="not is_verb"/>
                             </group>
                         </group>
 
