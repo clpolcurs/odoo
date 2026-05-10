@@ -34,8 +34,8 @@
                     <field name="content_only_kanji" optional="show"/>
                     <field name="content" optional="hide"/>
                     <field name="category" optional="hide"/>
-                    <field name="book_name" optional="hide"/>
-                    <field name="lesson_id" optional="hide"/>
+                    <field name="book_ids" widget="many2many_tags" optional="hide"/>
+                    <field name="lesson_ids" widget="many2many_tags" optional="hide"/>
                     <field name="level" optional="hide"/>
                     <field name="deadline" optional="hide"/>
                 </list>
@@ -63,14 +63,14 @@
                         <br/>
                         <group>
                             <group>
-                                <field name="lesson_id"/>
-                                <field name="book_name"/>
+                                <field name="lesson_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                <field name="book_ids" widget="many2many_tags" options="{'no_create': True}"/>
                                 <field name="category"/>
 
                             </group>
                             <group>
                                 <field name="level"/>
-                                <field name="is_finalized" invisible="1"/>
+<!--                                <field name="is_finalized" invisible="1"/>-->
                                 <field name="deadline" invisible="category not in ['writing', 'speaking']"/>
                                 <field name="audio_file" widget="audio_player"/>
                             </group>

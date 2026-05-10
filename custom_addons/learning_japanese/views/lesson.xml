@@ -37,9 +37,14 @@
                         </group>
                         <notebook>
                             <page string="Từ vựng">
-                                <list>
-                                    <field name="vocabulary_ids"/>
-                                </list>
+                                <field name="vocabulary_ids">
+                                    <list string="Vocabulary">
+                                        <field name="vocabulary"/>
+                                        <field name="higarana" optional="show"/>
+                                        <field name="vietnamese" optional="show"/>
+                                        <field name="level" optional="hide"/>
+                                    </list>
+                                </field>
                             </page>
 
                            <page string="Grammar">
@@ -47,6 +52,17 @@
                                        context="{'default_category': 'grammar'}">
                                     <list>
                                         <field name="title"/>
+                                        <field name="level" optional="show"/>
+                                    </list>
+                                </field>
+                            </page>
+
+                            <page string="Example">
+                                <field name="example_ids"
+                                       context="{'default_category': 'example'}">
+                                    <list>
+                                        <field name="title"/>
+                                        <field name="level" optional="show"/>
                                     </list>
                                 </field>
                             </page>
@@ -56,6 +72,7 @@
                                        context="{'default_category': 'reading'}">
                                     <list>
                                         <field name="title"/>
+                                        <field name="level" optional="show"/>
                                     </list>
                                 </field>
                             </page>
@@ -65,6 +82,7 @@
                                        context="{'default_category': 'listening'}">
                                     <list>
                                         <field name="title"/>
+                                        <field name="level" optional="show"/>
                                     </list>
                                 </field>
                             </page>
@@ -74,6 +92,7 @@
                                        context="{'default_category': 'writing'}">
                                     <list>
                                         <field name="title"/>
+                                        <field name="level" optional="show"/>
                                     </list>
                                 </field>
                             </page>

@@ -248,6 +248,9 @@ class Book(models.Model):
     )
 
 
+from odoo import api, fields, models
+
+
 class Lesson(models.Model):
     _name = "learning_japanese.lesson"
     _description = "Lesson"
@@ -256,11 +259,15 @@ class Lesson(models.Model):
 
     lesson = fields.Char(string="Bài")
     book_id = fields.Many2one(
-        comodel_name="learning_japanese.book", string="Book",
+        comodel_name="learning_japanese.book",
+        string="Book",
     )
     combination = fields.Char(
-        string="Combination Name", compute="_compute_fields_combination", store=True
+        string="Combination Name",
+        compute="_compute_fields_combination",
+        store=True,
     )
+
     vocabulary_ids = fields.Many2many(
         comodel_name="learning_japanese.vocabulary",
         relation="lesson_vocabulary_rel",
@@ -268,36 +275,48 @@ class Lesson(models.Model):
         column2="vocabulary_id",
         string="Vocabulary",
     )
-    grammar_ids = fields.One2many(
+
+    grammar_ids = fields.Many2many(
         comodel_name="learning_japanese.comprehensive",
-        inverse_name="lesson_id",
+        relation="comprehensive_lesson_rel",
+        column1="lesson_id",
+        column2="comprehensive_id",
         string="Grammar",
         domain=[("category", "=", "grammar")],
     )
-    example_ids = fields.One2many(
+
+    example_ids = fields.Many2many(
         comodel_name="learning_japanese.comprehensive",
-        inverse_name="lesson_id",
+        relation="comprehensive_lesson_rel",
+        column1="lesson_id",
+        column2="comprehensive_id",
         string="Example",
         domain=[("category", "=", "example")],
     )
 
-    reading_ids = fields.One2many(
+    reading_ids = fields.Many2many(
         comodel_name="learning_japanese.comprehensive",
-        inverse_name="lesson_id",
+        relation="comprehensive_lesson_rel",
+        column1="lesson_id",
+        column2="comprehensive_id",
         string="Reading",
         domain=[("category", "=", "reading")],
     )
 
-    listening_ids = fields.One2many(
+    listening_ids = fields.Many2many(
         comodel_name="learning_japanese.comprehensive",
-        inverse_name="lesson_id",
+        relation="comprehensive_lesson_rel",
+        column1="lesson_id",
+        column2="comprehensive_id",
         string="Listening",
         domain=[("category", "=", "listening")],
     )
 
-    writing_ids = fields.One2many(
+    writing_ids = fields.Many2many(
         comodel_name="learning_japanese.comprehensive",
-        inverse_name="lesson_id",
+        relation="comprehensive_lesson_rel",
+        column1="lesson_id",
+        column2="comprehensive_id",
         string="Writing",
         domain=[("category", "=", "writing")],
     )

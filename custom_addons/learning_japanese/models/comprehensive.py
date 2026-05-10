@@ -1,6 +1,6 @@
 import logging
 
-from odoo import fields, models
+from odoo import fields, models, api
 
 _logger = logging.getLogger(__name__)
 
@@ -12,13 +12,18 @@ class Comprehensive(models.Model):
     _order = "id asc"
     _inherit = ["learning_japanese.furigana.mixin"]
 
-    lesson_id = fields.Many2one(
+    lesson_ids = fields.Many2many(
         comodel_name="learning_japanese.lesson",
-        string="Lesson",
-        # auto_join=True,
+        relation="comprehensive_lesson_rel",
+        column1="comprehensive_id",
+        column2="lesson_id",
+        string="Lessons",
     )
-    book_name = fields.Char(
-        string="Book", related="lesson_id.book_id.name", store=True
+    book_ids = fields.Many2many(
+        comodel_name="learning_japanese.book",
+        string="Books",
+        compute="_compute_book_ids",
+        store=True,
     )
     level = fields.Selection(
         selection=[
@@ -45,3 +50,8 @@ class Comprehensive(models.Model):
         ],
         string="Comprehensive skills",
     )
+
+    @api.depends("lesson_ids.book_id")
+    def _compute_book_ids(self):
+        for record in self:
+            record.book_ids = record.lesson_ids.mapped("book_id")
