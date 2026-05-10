@@ -567,9 +567,9 @@ class Vocabulary(models.Model):
         
         Final response:
         Nghĩa: You put the meaning here
-        Ví dụ 1: Japanese sentence with vocabulary and grammar of N4 level。{{{{Vietnamese meaning}}}}
-        Ví dụ 2: Japanese sentence with vocabulary and grammar of N3 level。{{{{Vietnamese meaning}}}}
-        Ví dụ 3: Japanese sentence with vocabulary and grammar of N2 level。{{{{Vietnamese meaning}}}}
+        Ví dụ 1: Japanese sentence with vocabulary and grammar of N3 level。{{{{Vietnamese meaning}}}}
+        Ví dụ 2: Japanese sentence with vocabulary and grammar of N2 level。{{{{Vietnamese meaning}}}}
+        Ví dụ 3: Japanese sentence with vocabulary and grammar of N1 level。{{{{Vietnamese meaning}}}}
     
         
         Examples for you to refer:
