@@ -83,7 +83,7 @@ def process_furigana(html_string: str) -> tuple[str, str]:
         # - Keeps the span class for text color/styling alongside the static <rt> reading
         annotated_html = annotated_html.replace(
             marker,
-            f'<ruby><span class="add_color_to_kanji">{display}</span><rt style="color: #35979c; position: relative; top: -4px; font-size: 0.6em;">{hira}</rt></ruby>'
+            f'<ruby><span class="add_color_to_kanji">{display}</span><rt style="margin-top: 0.5rem; color: #35979c; position: relative; top: -4px; font-size: 0.6em;">{hira}</rt></ruby>'
         )
 
     # 6. Odoo 19 Sanitizer Defense: Wrap the entire output in a root block tag
