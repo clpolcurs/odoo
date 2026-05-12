@@ -24,7 +24,6 @@
                         <field name="level" string="Level" icon="fa-signal" select="multi" enable_counters="1"/>
                         <field name="category_ids" string="Category" icon="fa-tags" select="multi" enable_counters="1"/>
                         <field name="book_ids" string="Book" icon="fa-book" select="multi" enable_counters="1"/>
-                        <field name="lesson_ids" string="Lesson" icon="fa-file-text-o" select="multi" enable_counters="1"/>
                     </searchpanel>
                 </search>
              </field>
@@ -34,7 +33,7 @@
             <field name="name">learning_japanese.comprehensive.list</field>
             <field name="model">learning_japanese.comprehensive</field>
             <field name="arch" type="xml">
-                <list export_xlsx="1" multi_edit="1" string="Listening List View">
+                <list default_group_by="book_ids" export_xlsx="1" multi_edit="1" string="Comprehensive List View">
                     <field name="title" optional="show"/>
                     <field name="description" optional="hide"/>
                     <field name="content_only_kanji" optional="show"/>
@@ -52,7 +51,7 @@
             <field name="name">learning_japanese.comprehensive.form</field>
             <field name="model">learning_japanese.comprehensive</field>
             <field name="arch" type="xml">
-                <form string="Listening Form View">
+                <form string="Comprehensive Form View">
                     <header>
                         <button name="action_reverse" string="Reverse" type="object" invisible="is_finalized == False"/>
                     </header>
