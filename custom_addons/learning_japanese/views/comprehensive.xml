@@ -24,6 +24,7 @@
                         <field name="level" string="Level" icon="fa-signal" select="multi" enable_counters="1"/>
                         <field name="category_ids" string="Category" icon="fa-tags" select="multi" enable_counters="1"/>
                         <field name="book_ids" string="Book" icon="fa-book" select="multi" enable_counters="1"/>
+                        <field name="lesson_ids" string="Lesson" icon="fa-file-text-o" select="multi" enable_counters="1"/>
                     </searchpanel>
                 </search>
              </field>
