@@ -33,7 +33,7 @@
             <field name="name">learning_japanese.comprehensive.list</field>
             <field name="model">learning_japanese.comprehensive</field>
             <field name="arch" type="xml">
-                <list default_group_by="book_ids" export_xlsx="1" multi_edit="1" string="Comprehensive List View">
+                <list export_xlsx="1" multi_edit="1" string="Comprehensive List View">
                     <field name="title" optional="show"/>
                     <field name="description" optional="hide"/>
                     <field name="content_only_kanji" optional="show"/>
