@@ -1,5 +1,6 @@
 import re
 import logging
+import anthropic
 import openai
 from google import genai
 from odoo import api, fields, models
@@ -31,11 +32,12 @@ class LLMConfig(models.Model):
     _order = "sequence asc, id desc"
 
     name = fields.Char(string="Display Name", required=True, help="e.g., GPT-4o High Speed")
-    model_code = fields.Char(string="Model Technical Name", required=True, help="e.g., gpt-4o or gemini-1.5-flash")
+    model_code = fields.Char(string="Model Technical Name", required=True, help="e.g., gpt-4o, gemini-1.5-flash or claude-opus-5")
     provider = fields.Selection(
         selection=[
             ("openAI", "OpenAI"),
             ("gemini", "Gemini"),
+            ("claude", "Claude"),
         ],
         string="Provider",
         required=True
@@ -47,6 +49,19 @@ class LLMConfig(models.Model):
         string="Sequence",
         default=10,
         help="Priority order (lower value = higher priority)."
+    )
+
+    effort = fields.Selection(
+        selection=[
+            ("low", "Low"),
+            ("medium", "Medium"),
+            ("high", "High"),
+            ("xhigh", "Extra High"),
+            ("max", "Max"),
+        ],
+        string="Effort",
+        help="Reasoning/thinking effort requested from the provider. "
+             "Leave empty to use the provider's default behavior.",
     )
 
     def name_get(self):
@@ -103,34 +118,68 @@ class OpenAISupport(models.Model):
     def generate_response(self, prompt_request, content, llm_config):
         """Dispatcher now uses the llm_config record"""
         if llm_config.provider == 'openAI':
-            return self._generate_openai(prompt_request, content, llm_config.model_code)
+            return self._generate_openai(prompt_request, content, llm_config.model_code, llm_config.effort)
         elif llm_config.provider == 'gemini':
-            return self._generate_gemini(prompt_request, content, llm_config.model_code)
+            return self._generate_gemini(prompt_request, content, llm_config.model_code, llm_config.effort)
+        elif llm_config.provider == 'claude':
+            return self._generate_claude(prompt_request, content, llm_config.model_code, llm_config.effort)
         raise UserError("Unsupported LLM provider.")
 
-    def _generate_openai(self, prompt_request, content, model_name):
+    def _generate_openai(self, prompt_request, content, model_name, effort=None):
         api_key = self.env["ir.config_parameter"].sudo().get_param("openai.api_key")
         client = openai.OpenAI(api_key=api_key)
         try:
+            kwargs = {}
+            if effort:
+                # OpenAI's reasoning_effort has no "max" tier; clamp it to "xhigh".
+                kwargs["reasoning_effort"] = "xhigh" if effort == "max" else effort
             response = client.chat.completions.create(
                 model=model_name, # Use the dynamic model name from config
                 messages=[{"role": "user", "content": self.create_prompt(prompt_request, content)}],
+                **kwargs,
             )
             return response.choices[0].message.content or ""
         except Exception as e:
             raise AccessError(f"OpenAI Error: {e}")
 
-    def _generate_gemini(self, prompt_request, content, model_name):
+    def _generate_gemini(self, prompt_request, content, model_name, effort=None):
         api_key = self.env["ir.config_parameter"].sudo().get_param("gemini.api_key")
         client = genai.Client(api_key=api_key)
         try:
+            config = None
+            if effort:
+                # Gemini's ThinkingLevel tops out at HIGH; clamp "xhigh"/"max" to it.
+                level_map = {"low": "LOW", "medium": "MEDIUM", "high": "HIGH", "xhigh": "HIGH", "max": "HIGH"}
+                config = genai.types.GenerateContentConfig(
+                    thinking_config=genai.types.ThinkingConfig(thinking_level=level_map[effort])
+                )
             response = client.models.generate_content(
                 model=model_name, # Use the dynamic model name from config
                 contents=self.create_prompt(prompt_request, content),
+                config=config,
             )
             return response.text or ""
         except Exception as e:
             raise AccessError(f"Gemini Error: {e}")
+
+    def _generate_claude(self, prompt_request, content, model_name, effort=None):
+        api_key = self.env["ir.config_parameter"].sudo().get_param("claude.api_key")
+        client = anthropic.Anthropic(api_key=api_key)
+        try:
+            kwargs = {}
+            if effort:
+                kwargs["output_config"] = {"effort": effort}
+            # max_tokens is set to the model's max output (128K); streaming avoids HTTP timeouts at that size.
+            with client.messages.stream(
+                model=model_name,  # Use the dynamic model name from config, e.g. claude-opus-5
+                max_tokens=128000,
+                messages=[{"role": "user", "content": self.create_prompt(prompt_request, content)}],
+                **kwargs,
+            ) as stream:
+                response = stream.get_final_message()
+            return next((block.text for block in response.content if block.type == "text"), "")
+        except Exception as e:
+            raise AccessError(f"Claude Error: {e}")
 
     @staticmethod
     def create_prompt(prompt_request: str, content: str) -> str:
