@@ -142,6 +142,11 @@ paths:
           in: query
           description: One or more tag names, comma separated; an item matches if it has any of them.
           schema: {type: string, examples: ['Reading,Listening', 'Grammar']}
+        - name: grammar
+          in: query
+          description: Only grammar points (true) or only the other items (false). Grammar points are the items with
+            a tag whose name contains "grammar" or "ngữ pháp", the same rule as `grammar_id` of grammar overrides.
+          schema: {type: boolean}
         - name: book_id
           in: query
           schema: {type: integer}
@@ -298,7 +303,9 @@ paths:
         - name: X-Filename
           in: header
           required: false
-          description: File name kept on the attachment, e.g. `n2-dd-1ban.mp3`.
+          description: >-
+            File name kept on the attachment, percent-encoded as UTF-8 (header values are ASCII),
+            e.g. `n2-dd-1ban.mp3` or `%E8%81%B4%E8%A7%A3.mp3` for 聴解.mp3. Only the base name is kept.
           schema: {type: string}
       requestBody:
         required: true

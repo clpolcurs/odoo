@@ -90,6 +90,8 @@ class TestApiV1(HttpCase, LearningJapaneseDataCase):
 
         self.assertEqual(ids(tag="Reading"), [self.reading.id, self.draft_item.id])
         self.assertEqual(ids(tag="reading,listening", level="none"), [self.listening.id])
+        self.assertEqual(ids(grammar="true"), self.grammar.ids)
+        self.assertNotIn(self.grammar.id, ids(grammar="false"))
         self.assertEqual(ids(published="false"), [self.draft_item.id])
         self.assertEqual(ids(q="メッセージ"), [self.reading.id])
         self.assertEqual(ids(lesson_id=self.lesson_draft.id), [self.draft_item.id])
@@ -183,6 +185,9 @@ class TestApiV1(HttpCase, LearningJapaneseDataCase):
         self.assertEqual(item["audio"]["size"], len(sound))
         self.assertEqual(item["audio"]["mimetype"], "audio/mpeg")
         self.assertEqual(item["audio"]["filename"], "1ban.mp3")
+        item = self.ok("PUT", path, data=sound, headers={"Content-Type": "audio/mpeg",
+                                                         "X-Filename": "%E8%81%B4%E8%A7%A3%201.mp3"})
+        self.assertEqual(item["audio"]["filename"], "聴解 1.mp3")
 
         whole = self.call("GET", path, key=self.reader_key)
         self.assertEqual(whole.status_code, 200)

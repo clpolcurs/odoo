@@ -4,6 +4,7 @@ import base64
 import binascii
 import os
 from datetime import datetime, timezone
+from urllib.parse import unquote
 
 import psycopg2
 
@@ -239,6 +240,8 @@ def comprehensive_domain(env, params):
         domain.append(("id", "in", ids))
     if names := parse_csv(params, "tag"):
         domain.append(("category_ids", "in", tag_ids(env, names)))
+    if (grammar := parse_bool(params, "grammar")) is not None:
+        domain.append(("is_grammar", "=", grammar))
     if (book_id := parse_int(params, "book_id")) is not None:
         domain.append(("book_ids", "in", [book_id]))
     if (lesson_id := parse_int(params, "lesson_id")) is not None:
@@ -413,7 +416,9 @@ def put_audio(env, item_id, data, content_type, filename, if_match):
     attachment = env["ir.attachment"].sudo().search(
         [("res_model", "=", COMPREHENSIVE), ("res_field", "=", "audio_file"), ("res_id", "=", item.id)], limit=1,
     )
-    name = os.path.basename((filename or "").replace("\\", "/")).strip()[:200]
+    # X-Filename is percent-encoded UTF-8: header values cannot carry non-ASCII names as is.
+    name = os.path.basename(unquote(filename or "").replace("\\", "/"))
+    name = "".join(char for char in name if char.isprintable()).strip()[:200]
     attachment.write({"name": name or "audio_file", "mimetype": mimetype})
     after = get_comprehensive(env, item_id)
     audit(env, "comprehensive", item.id, "audio", {"audio": before["audio"]}, {"audio": after["audio"]})
