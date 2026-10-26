@@ -9,6 +9,8 @@ class ComprehensiveTag(models.Model):
     _name = "learning_japanese.comprehensive_tag"
     _description = "Comprehensive Tag"
     _order = "name"
+    _inherit = ["learning_japanese.change.tracked.mixin"]
+    _lj_entity = "tag"
 
     name = fields.Char(string="Comprehensive Topic", required=True)
     color = fields.Integer(string="Color Index")
@@ -18,13 +20,29 @@ class ComprehensiveTag(models.Model):
         "Comprehensive Topic phải là duy nhất!"
     )
 
+    def write(self, vals):
+        result = super().write(vals)
+        if "name" in vals:
+            # Items expose their tags by name.
+            self._lj_log_items()
+        return result
+
+    def unlink(self):
+        self._lj_log_items()
+        return super().unlink()
+
+    def _lj_log_items(self):
+        items = self.env["learning_japanese.comprehensive"].search([("category_ids", "in", self.ids)])
+        items._lj_log("update")
+
 
 class Comprehensive(models.Model):
     _name = "learning_japanese.comprehensive"
     _description = "Comprehensive skills"
     _rec_name = "title"
     _order = "id asc"
-    _inherit = ["learning_japanese.furigana.mixin"]
+    _inherit = ["learning_japanese.furigana.mixin", "learning_japanese.change.tracked.mixin"]
+    _lj_entity = "comprehensive"
 
     lesson_ids = fields.Many2many(
         comodel_name="learning_japanese.lesson",
@@ -70,6 +88,23 @@ class Comprehensive(models.Model):
         compute="_compute_category_flags",
         store=True,
     )
+    grammar_patterns = fields.Text(
+        string="Mẫu khớp ngữ pháp",
+        copy=False,
+        help="Mỗi dòng một mẫu ở dạng từ điển, ví dụ ようとする hoặc とする. "
+             "NihonGo dùng các mẫu này để tìm điểm ngữ pháp trong bài đọc.",
+    )
+    grammar_override_ids = fields.One2many(
+        comodel_name="learning_japanese.grammar_override",
+        inverse_name="comprehensive_id",
+        string="Ghi đè ngữ pháp",
+    )
+    nihongo_published = fields.Boolean(
+        string="Có trên NihonGo",
+        compute="_compute_nihongo_published",
+        search="_search_nihongo_published",
+        help="Bài thuộc ít nhất một giáo trình đã bật cờ Xuất bản NihonGo.",
+    )
 
     @api.depends("category_ids", "category_ids.name")
     def _compute_category_flags(self):
@@ -86,6 +121,25 @@ class Comprehensive(models.Model):
     def _compute_book_ids(self):
         for record in self:
             record.book_ids = record.lesson_ids.mapped("book_id")
+
+    @api.depends("book_ids.nihongo_published")
+    def _compute_nihongo_published(self):
+        for record in self:
+            record.nihongo_published = any(record.book_ids.mapped("nihongo_published"))
+
+    def _search_nihongo_published(self, operator, value):
+        if operator not in ("=", "!=") or not isinstance(value, bool):
+            return NotImplemented
+        published = (operator == "=") == value
+        domain = [("book_ids.nihongo_published", "=", True)]
+        return domain if published else ["!", *domain]
+
+    def unlink(self):
+        # Overrides pointing at a deleted grammar point vanish with it (ON DELETE CASCADE),
+        # which changes the output of the items that held them.
+        overrides = self.env["learning_japanese.grammar_override"].search([("grammar_id", "in", self.ids)])
+        (overrides.comprehensive_id - self)._lj_log("update")
+        return super().unlink()
 
     @api.model
     def default_get(self, fields_list):

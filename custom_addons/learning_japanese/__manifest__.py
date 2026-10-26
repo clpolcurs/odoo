@@ -5,7 +5,7 @@
     "category": "Phyto",
     "summary": "Module Learning Japanese",
     "author": "Tăng Tiến Thanh Tùng",
-    "version": "1.0",
+    "version": "1.1",
     "website": "",
     "description": """
     This is a custom module for learning Japanese
@@ -16,9 +16,11 @@
         "product",
     ],
     "data": [
-        # security
-        "security/ir.model.access.csv",
+        # security (groups first: the ACL rows reference them)
         "security/security_access_data.xml",
+        "security/ir.model.access.csv",
+        # data
+        "data/ir_cron.xml",
         # views
         "views/comprehensive_tag.xml",
         "views/llm_config.xml",
@@ -31,6 +33,7 @@
         "views/part_of_speech.xml",
         "views/book.xml",
         "views/lesson.xml",
+        "views/api_log.xml",
         "views/learning_japanese_menus.xml",
     ],
     "assets": {"web.assets_backend": ["learning_japanese/static/src/css/style.css"]},

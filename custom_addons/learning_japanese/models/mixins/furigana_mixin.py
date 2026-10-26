@@ -53,8 +53,9 @@ class FuriganaMixin(models.AbstractModel):
 
     def write(self, vals: dict) -> bool:
         raw_html = vals.get("content_only_kanji")
-        # On a recordset write, check each record individually
-        if raw_html:
+        # On a recordset write, check each record individually.
+        # The API passes lj_furigana_processed when vals already hold the converted HTML.
+        if raw_html and not self.env.context.get("lj_furigana_processed"):
             for record in self:
                 if record._should_process(raw_html):
                     record._apply_furigana(vals, raw_html)

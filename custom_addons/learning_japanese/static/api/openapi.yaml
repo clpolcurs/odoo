@@ -1,0 +1,1260 @@
+openapi: 3.1.0
+info:
+  title: Learning Japanese API
+  version: 1.0.0
+  summary: Content API of the Odoo addon learning_japanese (oht-t4-hcet).
+  description: |
+    REST API v1 used by two clients:
+
+    * **lj-mcp**, the MCP server through which Claude reads and edits content in Odoo;
+    * **NihonGo**, which keeps a read-only copy of the published content in sync.
+
+    Conventions
+
+    * Authentication: `Authorization: Bearer <Odoo API key>` of a technical user.
+      Reading needs the group *Learning Japanese Read Only*; writing needs *Learning Japanese Admin*.
+    * JSON bodies, `snake_case` keys, timestamps in ISO-8601 UTC (`2026-10-26T15:04:05Z`).
+    * Errors are `application/problem+json` (RFC 9457) with an extra `code` member.
+    * Every resource has `id`, `xid` (`odoo:<entity>:<id>`) and `version`, a hash of its content.
+      Single-resource responses carry `ETag: "<version>"`.
+    * `PATCH` and `DELETE` require `If-Match: "<version>"`: a stale version gets `412`, a missing header `428`.
+    * Lists are ordered by `id` and paginated with an opaque `cursor`; follow `next_cursor` until it is `null`.
+    * Titles keep usage prefixes such as `PI` or `thể ta`; `title_display` only drops leading `[...]` filter prefixes.
+  license:
+    name: LGPL-3.0
+servers:
+  - url: https://oht-t4-hcet.com/api/lj/v1
+security:
+  - bearerAuth: []
+tags:
+  - name: meta
+  - name: books
+  - name: comprehensives
+    description: Reading, listening, grammar and example items (one Odoo model, told apart by tags).
+  - name: vocabularies
+  - name: catalogs
+  - name: markup
+  - name: sync
+    description: Change feed and snapshots for NihonGo.
+  - name: qa
+paths:
+  /meta:
+    get:
+      tags: [meta]
+      operationId: getMeta
+      summary: API version, levels, tags, limits and the calling user's rights.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Meta'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+
+  /books:
+    get:
+      tags: [books]
+      operationId: listBooks
+      summary: Textbooks with their lessons.
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Ids'
+        - name: published
+          in: query
+          description: Only books with (true) or without (false) the NihonGo publish flag.
+          schema: {type: boolean}
+        - name: q
+          in: query
+          description: Case-insensitive search in the book name.
+          schema: {type: string}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, next_cursor]
+                properties:
+                  items: {type: array, items: {$ref: '#/components/schemas/Book'}}
+                  next_cursor: {$ref: '#/components/schemas/NextCursor'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /books/{id}:
+    get:
+      tags: [books]
+      operationId: getBook
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200':
+          description: OK
+          headers: {ETag: {$ref: '#/components/headers/ETag'}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Book'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+
+  /lessons:
+    get:
+      tags: [books]
+      operationId: listLessons
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Ids'
+        - name: book_id
+          in: query
+          schema: {type: integer}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, next_cursor]
+                properties:
+                  items: {type: array, items: {$ref: '#/components/schemas/Lesson'}}
+                  next_cursor: {$ref: '#/components/schemas/NextCursor'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+
+  /comprehensives:
+    get:
+      tags: [comprehensives]
+      operationId: listComprehensives
+      summary: Search items. Grammar points are the items tagged `Grammar`.
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Ids'
+        - name: level
+          in: query
+          description: One or more levels, comma separated (`N3,N2`). Use `none` for items without a level.
+          schema: {type: string, examples: ['N2', 'N3,N2', 'none']}
+        - name: tag
+          in: query
+          description: One or more tag names, comma separated; an item matches if it has any of them.
+          schema: {type: string, examples: ['Reading,Listening', 'Grammar']}
+        - name: book_id
+          in: query
+          schema: {type: integer}
+        - name: lesson_id
+          in: query
+          schema: {type: integer}
+        - name: q
+          in: query
+          description: Case-insensitive search in title and description.
+          schema: {type: string}
+        - name: published
+          in: query
+          description: Only items in (true) or outside (false) a published book.
+          schema: {type: boolean}
+        - $ref: '#/components/parameters/UpdatedAfter'
+        - name: view
+          in: query
+          description: '`summary` (default) leaves out markup and HTML; `full` returns the same object as GET /comprehensives/{id}.'
+          schema: {type: string, enum: [summary, full], default: summary}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, next_cursor]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      oneOf:
+                        - $ref: '#/components/schemas/ComprehensiveSummary'
+                        - $ref: '#/components/schemas/Comprehensive'
+                  next_cursor: {$ref: '#/components/schemas/NextCursor'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+    post:
+      tags: [comprehensives]
+      operationId: createComprehensive
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ComprehensiveCreate'}
+      responses:
+        '201':
+          description: Created
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+            Location: {schema: {type: string}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Comprehensive'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+  /comprehensives/{id}:
+    get:
+      tags: [comprehensives]
+      operationId: getComprehensive
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200':
+          description: OK
+          headers: {ETag: {$ref: '#/components/headers/ETag'}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Comprehensive'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+    patch:
+      tags: [comprehensives]
+      operationId: updateComprehensive
+      description: |
+        Partial update. Only the keys present in the body change.
+        A new `markup` is converted again (hover HTML, ruby HTML) exactly as when it is typed in Odoo.
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ComprehensivePatch'}
+      responses:
+        '200':
+          description: Updated
+          headers: {ETag: {$ref: '#/components/headers/ETag'}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Comprehensive'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '428': {$ref: '#/components/responses/PreconditionRequired'}
+    delete:
+      tags: [comprehensives]
+      operationId: deleteComprehensive
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '204': {description: Deleted}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '428': {$ref: '#/components/responses/PreconditionRequired'}
+  /comprehensives/{id}/audio:
+    get:
+      tags: [comprehensives]
+      operationId: getComprehensiveAudio
+      description: The audio file. Supports `Range` requests (206) and conditional requests.
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - name: Range
+          in: header
+          schema: {type: string, examples: ['bytes=0-65535']}
+      responses:
+        '200':
+          description: Whole file
+          content:
+            audio/*:
+              schema: {type: string, contentMediaType: application/octet-stream}
+        '206':
+          description: Partial content
+          content:
+            audio/*:
+              schema: {type: string, contentMediaType: application/octet-stream}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+    put:
+      tags: [comprehensives]
+      operationId: putComprehensiveAudio
+      description: |
+        Replace the audio file. The body is the raw file (at most `limits.audio_max_bytes`).
+        Clients download remote files themselves; the server never fetches URLs.
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - name: If-Match
+          in: header
+          required: false
+          description: Optional; when given it must match the item's current version.
+          schema: {type: string}
+        - name: X-Filename
+          in: header
+          required: false
+          description: File name kept on the attachment, e.g. `n2-dd-1ban.mp3`.
+          schema: {type: string}
+      requestBody:
+        required: true
+        content:
+          audio/*:
+            schema: {type: string, contentMediaType: application/octet-stream}
+      responses:
+        '200':
+          description: Audio replaced
+          headers: {ETag: {$ref: '#/components/headers/ETag'}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Comprehensive'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '413': {$ref: '#/components/responses/TooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+  /comprehensives/{id}/grammar-overrides:
+    get:
+      tags: [comprehensives]
+      operationId: getGrammarOverrides
+      description: Grammar points pinned to or hidden from one reading or listening item.
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/GrammarOverrideList'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+    put:
+      tags: [comprehensives]
+      operationId: putGrammarOverrides
+      description: 'Replace the whole list. Send `{"items": []}` to clear it.'
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - name: If-Match
+          in: header
+          required: false
+          description: Optional; when given it must match the item's current version.
+          schema: {type: string}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items]
+              properties:
+                items:
+                  type: array
+                  maxItems: 200
+                  items: {$ref: '#/components/schemas/GrammarOverrideInput'}
+      responses:
+        '200':
+          description: Saved
+          headers: {ETag: {$ref: '#/components/headers/ETag'}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/GrammarOverrideList'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+
+  /vocabularies:
+    get:
+      tags: [vocabularies]
+      operationId: listVocabularies
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Ids'
+        - name: q
+          in: query
+          description: Case-insensitive search in the term, its kana and its Vietnamese meaning.
+          schema: {type: string}
+        - name: level
+          in: query
+          description: One or more levels, comma separated, or `none`.
+          schema: {type: string}
+        - name: book_id
+          in: query
+          schema: {type: integer}
+        - name: lesson_id
+          in: query
+          schema: {type: integer}
+        - name: context_tag_id
+          in: query
+          schema: {type: integer}
+        - name: published
+          in: query
+          schema: {type: boolean}
+        - $ref: '#/components/parameters/UpdatedAfter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, next_cursor]
+                properties:
+                  items: {type: array, items: {$ref: '#/components/schemas/Vocabulary'}}
+                  next_cursor: {$ref: '#/components/schemas/NextCursor'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+    post:
+      tags: [vocabularies]
+      operationId: createVocabulary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/VocabularyCreate'}
+      responses:
+        '201':
+          description: Created
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+            Location: {schema: {type: string}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Vocabulary'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+  /vocabularies/bulk:
+    post:
+      tags: [vocabularies]
+      operationId: bulkVocabularies
+      description: |
+        Create (no `id`) or update (with `id`) up to `limits.bulk_max` entries in one transaction.
+        Either every entry is saved or none is; errors carry the entry `index`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items]
+              properties:
+                items:
+                  type: array
+                  minItems: 1
+                  maxItems: 100
+                  items: {$ref: '#/components/schemas/VocabularyBulkItem'}
+      responses:
+        '200':
+          description: All entries saved, in request order.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items: {type: array, items: {$ref: '#/components/schemas/Vocabulary'}}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+  /vocabularies/{id}:
+    get:
+      tags: [vocabularies]
+      operationId: getVocabulary
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200':
+          description: OK
+          headers: {ETag: {$ref: '#/components/headers/ETag'}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Vocabulary'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+    patch:
+      tags: [vocabularies]
+      operationId: updateVocabulary
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/VocabularyPatch'}
+      responses:
+        '200':
+          description: Updated
+          headers: {ETag: {$ref: '#/components/headers/ETag'}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Vocabulary'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '428': {$ref: '#/components/responses/PreconditionRequired'}
+    delete:
+      tags: [vocabularies]
+      operationId: deleteVocabulary
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '204': {description: Deleted}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '428': {$ref: '#/components/responses/PreconditionRequired'}
+
+  /tags:
+    get:
+      tags: [catalogs]
+      operationId: listTags
+      summary: Comprehensive tags (Reading, Listening, Grammar, Example, Writing, Speaking...).
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Ids'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, next_cursor]
+                properties:
+                  items: {type: array, items: {$ref: '#/components/schemas/Tag'}}
+                  next_cursor: {$ref: '#/components/schemas/NextCursor'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /context-tags:
+    get:
+      tags: [catalogs]
+      operationId: listContextTags
+      summary: Vocabulary topics (a tree).
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Ids'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, next_cursor]
+                properties:
+                  items: {type: array, items: {$ref: '#/components/schemas/ContextTag'}}
+                  next_cursor: {$ref: '#/components/schemas/NextCursor'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /parts-of-speech:
+    get:
+      tags: [catalogs]
+      operationId: listPartsOfSpeech
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Ids'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, next_cursor]
+                properties:
+                  items: {type: array, items: {$ref: '#/components/schemas/PartOfSpeech'}}
+                  next_cursor: {$ref: '#/components/schemas/NextCursor'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /hanviet:
+    get:
+      tags: [catalogs]
+      operationId: listHanViet
+      summary: Sino-Vietnamese readings of kanji.
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Ids'
+        - name: kanji
+          in: query
+          description: Return only the entries for the characters of this string, e.g. `話題`.
+          schema: {type: string}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, next_cursor]
+                properties:
+                  items: {type: array, items: {$ref: '#/components/schemas/HanViet'}}
+                  next_cursor: {$ref: '#/components/schemas/NextCursor'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+
+  /markup/preview:
+    post:
+      tags: [markup]
+      operationId: previewMarkup
+      description: |
+        Convert markup the way Odoo does on save and report problems; nothing is stored.
+        Markup is HTML where `<<漢字 - よみ>>` gives a reading (`<<漢字>>` lets the server guess it)
+        and `{{...}}` holds the Vietnamese translation of the paragraph.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [markup]
+              properties:
+                markup: {type: string, maxLength: 200000}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/MarkupPreview'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+
+  /changes:
+    get:
+      tags: [sync]
+      operationId: listChanges
+      description: |
+        Change feed read from the outbox `lj_change_log`. Events only say *which* record changed;
+        fetch the record again (or see 404 for deletions). Events of a transaction appear once it has committed.
+        Keep `next_after` and pass it as `after` next time. A cursor older than the 90-day retention gets `410`:
+        take a new snapshot.
+      parameters:
+        - name: after
+          in: query
+          description: Cursor from a previous `next_after`, `/changes/head` or a snapshot; `0` reads from the oldest kept event.
+          schema: {type: string, default: '0', examples: ['0', '8231-1200']}
+        - name: limit
+          in: query
+          schema: {type: integer, minimum: 1, maximum: 1000, default: 500}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ChangePage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '410': {$ref: '#/components/responses/Gone'}
+  /changes/head:
+    get:
+      tags: [sync]
+      operationId: getChangesHead
+      description: Cursor of the newest committed event. Record it before taking a snapshot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [cursor]
+                properties:
+                  cursor: {type: string}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /snapshot/{entity}:
+    get:
+      tags: [sync]
+      operationId: getSnapshot
+      description: |
+        Every record id with its current version, for reconciliation. The first page (no `cursor`)
+        also returns `feed_cursor`, the change-feed position to continue from after the snapshot.
+      parameters:
+        - name: entity
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [comprehensives, vocabularies, books, lessons, tags, context-tags, parts-of-speech, hanviet]
+        - name: published_only
+          in: query
+          description: For comprehensives, vocabularies, books and lessons, keep only what belongs to a published book.
+          schema: {type: boolean, default: true}
+        - name: tag
+          in: query
+          description: For comprehensives, one or more tag names, comma separated.
+          schema: {type: string}
+        - name: limit
+          in: query
+          schema: {type: integer, minimum: 1, maximum: 1000, default: 1000}
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SnapshotPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+
+  /qa/issues:
+    get:
+      tags: [qa]
+      operationId: listIssues
+      description: |
+        Items that need fixing before they go to NihonGo. Only items that have at least one issue are listed;
+        `summary` counts every issue code over the whole filtered set, not only the current page.
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: code
+          in: query
+          description: One or more issue codes, comma separated.
+          schema: {type: string, examples: ['missing_level', 'auto_readings,kanji_without_reading']}
+        - name: level
+          in: query
+          description: One or more levels, comma separated, or `none`.
+          schema: {type: string}
+        - name: tag
+          in: query
+          description: Tag names, comma separated. Default `Reading,Listening,Grammar`.
+          schema: {type: string}
+        - name: book_id
+          in: query
+          schema: {type: integer}
+        - name: published
+          in: query
+          schema: {type: boolean}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/QaPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Odoo 19 API key of a technical user (Preferences → Account Security → New API Key).
+
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema: {type: integer, minimum: 1}
+    Limit:
+      name: limit
+      in: query
+      schema: {type: integer, minimum: 1, maximum: 200, default: 50}
+    Cursor:
+      name: cursor
+      in: query
+      description: Opaque value from `next_cursor`.
+      schema: {type: string}
+    Ids:
+      name: ids
+      in: query
+      description: Comma separated ids (at most 200), e.g. `58,59,60`.
+      schema: {type: string}
+    UpdatedAfter:
+      name: updated_after
+      in: query
+      description: Only records changed after this instant (ISO-8601).
+      schema: {type: string, format: date-time}
+    IfMatch:
+      name: If-Match
+      in: header
+      required: true
+      description: The `version` (or ETag) you read, e.g. `"3f9a0c1d2e4b5a67"`.
+      schema: {type: string}
+
+  headers:
+    ETag:
+      description: Quoted `version` of the returned resource.
+      schema: {type: string}
+
+  responses:
+    BadRequest:
+      description: Malformed request (bad JSON, bad query parameter).
+      content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}
+    Unauthorized:
+      description: Missing or invalid API key.
+    Forbidden:
+      description: The key's user lacks the needed group.
+      content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}
+    NotFound:
+      description: No such record.
+      content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}
+    Conflict:
+      description: Would break a uniqueness rule (e.g. same vocabulary and meaning).
+      content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}
+    Gone:
+      description: The cursor is older than the retained change log; take a snapshot.
+      content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}
+    PreconditionFailed:
+      description: The record changed since that version; `current_version` holds the new one.
+      content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}
+    TooLarge:
+      description: Body too large.
+      content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}
+    UnsupportedMediaType:
+      description: Wrong Content-Type.
+      content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}
+    Unprocessable:
+      description: Valid JSON that breaks a rule; `errors` lists the fields.
+      content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}
+    PreconditionRequired:
+      description: '`If-Match` header missing.'
+      content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}
+
+  schemas:
+    Problem:
+      type: object
+      required: [type, title, status, code]
+      properties:
+        type: {type: string, examples: ['urn:lj:problem:version-mismatch']}
+        title: {type: string}
+        status: {type: integer}
+        detail: {type: string}
+        code:
+          type: string
+          description: Stable machine-readable code.
+          enum: [bad-request, forbidden, not-found, conflict, cursor-expired, version-mismatch, version-required,
+                 too-large, unsupported-media-type, validation-error, internal-error]
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              index: {type: integer, description: Entry index in a bulk request.}
+              field: {type: string}
+              message: {type: string}
+        current_version: {type: string, description: Present on 412.}
+
+    Level:
+      type: [string, 'null']
+      enum: [N5, N4, N3, N2, N1, null]
+
+    NextCursor:
+      type: [string, 'null']
+      description: Pass as `cursor` to get the next page; `null` on the last page.
+
+    Meta:
+      type: object
+      required: [api_version, server_time, user, levels, tags, limits]
+      properties:
+        api_version: {type: string, examples: ['1.0.0']}
+        server_time: {type: string, format: date-time}
+        user:
+          type: object
+          required: [id, login, can_write]
+          properties:
+            id: {type: integer}
+            login: {type: string}
+            can_write: {type: boolean}
+        levels:
+          type: array
+          items: {type: string}
+          examples: [['N5', 'N4', 'N3', 'N2', 'N1']]
+        tags: {type: array, items: {$ref: '#/components/schemas/Tag'}}
+        limits:
+          type: object
+          properties:
+            page_max: {type: integer, examples: [200]}
+            changes_max: {type: integer, examples: [1000]}
+            snapshot_max: {type: integer, examples: [1000]}
+            bulk_max: {type: integer, examples: [100]}
+            audio_max_bytes: {type: integer, examples: [31457280]}
+            change_log_retention_days: {type: integer, examples: [90]}
+
+    LessonRef:
+      type: object
+      required: [id, xid, name]
+      properties:
+        id: {type: integer}
+        xid: {type: string, examples: ['odoo:lesson:12']}
+        name: {type: string, examples: ['聴解・課題理解']}
+        item_count: {type: integer, description: Comprehensive items linked to the lesson (not part of `version`).}
+        vocabulary_count: {type: integer, description: Not part of `version`.}
+
+    Book:
+      type: object
+      required: [id, xid, name, published, lessons, updated_at, version]
+      properties:
+        id: {type: integer}
+        xid: {type: string, examples: ['odoo:book:3']}
+        name: {type: string, examples: ['ドリル&ドリル N2']}
+        published: {type: boolean, description: The NihonGo publish flag.}
+        lessons: {type: array, items: {$ref: '#/components/schemas/LessonRef'}}
+        updated_at: {type: string, format: date-time}
+        version: {type: string}
+
+    Lesson:
+      type: object
+      required: [id, xid, name, book_id, published, updated_at, version]
+      properties:
+        id: {type: integer}
+        xid: {type: string}
+        name: {type: string}
+        book_id: {type: [integer, 'null']}
+        published: {type: boolean, description: True when the lesson's book is published.}
+        item_count: {type: integer}
+        vocabulary_count: {type: integer}
+        updated_at: {type: string, format: date-time}
+        version: {type: string}
+
+    Audio:
+      type: [object, 'null']
+      required: [url, sha1, size, mimetype]
+      properties:
+        url: {type: string, examples: ['/api/lj/v1/comprehensives/58/audio']}
+        sha1: {type: string}
+        size: {type: integer}
+        mimetype: {type: string, examples: ['audio/mpeg']}
+        filename: {type: [string, 'null']}
+
+    GrammarOverride:
+      type: object
+      required: [grammar_id, action]
+      properties:
+        grammar_id: {type: integer, description: Id of a comprehensive tagged Grammar.}
+        grammar_title: {type: string}
+        action: {type: string, enum: [pin, hide]}
+        note: {type: [string, 'null']}
+
+    GrammarOverrideInput:
+      type: object
+      required: [grammar_id, action]
+      properties:
+        grammar_id: {type: integer}
+        action: {type: string, enum: [pin, hide]}
+        note: {type: [string, 'null'], maxLength: 500}
+
+    GrammarOverrideList:
+      type: object
+      required: [items, version]
+      properties:
+        items: {type: array, items: {$ref: '#/components/schemas/GrammarOverride'}}
+        version: {type: string, description: Version of the parent item after the call.}
+
+    ComprehensiveSummary:
+      type: object
+      required: [id, xid, title, title_display, level, tags, lesson_ids, book_ids, published, has_markup, audio, updated_at, version]
+      properties:
+        id: {type: integer}
+        xid: {type: string, examples: ['odoo:comprehensive:58']}
+        title: {type: string, examples: ['[Cơ bản] そうですね']}
+        title_display: {type: string, examples: ['そうですね']}
+        level: {$ref: '#/components/schemas/Level'}
+        tags: {type: array, items: {type: string}, examples: [['Listening']]}
+        lesson_ids: {type: array, items: {type: integer}}
+        book_ids: {type: array, items: {type: integer}}
+        published: {type: boolean}
+        has_markup: {type: boolean}
+        audio: {$ref: '#/components/schemas/Audio'}
+        updated_at: {type: string, format: date-time}
+        version: {type: string}
+
+    Comprehensive:
+      allOf:
+        - $ref: '#/components/schemas/ComprehensiveSummary'
+        - type: object
+          required: [markup, html_hover, html_ruby, is_finalized, description, grammar_patterns, grammar_overrides, created_at]
+          properties:
+            markup:
+              type: [string, 'null']
+              description: Source markup (`backup_text`), e.g. `<p><<人 - ひと>>と{{người}}</p>`.
+            html_hover: {type: [string, 'null'], description: HTML with the reading in a tooltip (tab "Nội dung").}
+            html_ruby: {type: [string, 'null'], description: HTML with <ruby> readings (tab "Chú thích kanji").}
+            is_finalized: {type: boolean}
+            description: {type: [string, 'null']}
+            grammar_patterns:
+              type: array
+              items: {type: string}
+              description: Dictionary-form match patterns of a grammar point, e.g. `とする`.
+            grammar_overrides: {type: array, items: {$ref: '#/components/schemas/GrammarOverride'}}
+            created_at: {type: string, format: date-time}
+
+    ComprehensiveCreate:
+      type: object
+      required: [title]
+      additionalProperties: false
+      properties:
+        title: {type: string, minLength: 1, maxLength: 1000}
+        level: {$ref: '#/components/schemas/Level'}
+        tags: {type: array, items: {type: string}, description: Existing tag names (see /tags).}
+        lesson_ids: {type: array, items: {type: integer}}
+        markup: {type: [string, 'null'], maxLength: 200000}
+        description: {type: [string, 'null']}
+        grammar_patterns: {type: array, items: {type: string, maxLength: 100}, maxItems: 30}
+
+    ComprehensivePatch:
+      type: object
+      minProperties: 1
+      additionalProperties: false
+      properties:
+        title: {type: string, minLength: 1, maxLength: 1000}
+        level: {$ref: '#/components/schemas/Level'}
+        tags: {type: array, items: {type: string}, description: Replaces all tags.}
+        lesson_ids: {type: array, items: {type: integer}, description: Replaces all lessons.}
+        markup: {type: [string, 'null'], maxLength: 200000}
+        description: {type: [string, 'null']}
+        grammar_patterns: {type: array, items: {type: string, maxLength: 100}, maxItems: 30}
+
+    VerbForms:
+      type: object
+      properties:
+        dictionary: {type: [string, 'null']}
+        past: {type: [string, 'null']}
+        negative: {type: [string, 'null']}
+        te: {type: [string, 'null']}
+        potential: {type: [string, 'null']}
+        passive: {type: [string, 'null']}
+        causative: {type: [string, 'null']}
+        causative_passive: {type: [string, 'null']}
+        conditional: {type: [string, 'null']}
+        imperative: {type: [string, 'null']}
+        volitional: {type: [string, 'null']}
+        prohibitive: {type: [string, 'null']}
+
+    Vocabulary:
+      type: object
+      required: [id, xid, term, hiragana, meaning_vi, level, version]
+      properties:
+        id: {type: integer}
+        xid: {type: string, examples: ['odoo:vocabulary:120']}
+        term: {type: string, examples: ['理解します']}
+        hiragana: {type: [string, 'null']}
+        katakana: {type: [string, 'null']}
+        romaji: {type: [string, 'null']}
+        meaning_vi: {type: [string, 'null']}
+        han_viet: {type: [string, 'null']}
+        level: {$ref: '#/components/schemas/Level'}
+        is_intransitive: {type: boolean}
+        is_verb: {type: boolean}
+        verb_group: {type: [string, 'null'], enum: [group1, group2, group3, null]}
+        honorific_type: {type: [string, 'null'], enum: [sonkeigo, kenjougo, null]}
+        forms: {$ref: '#/components/schemas/VerbForms'}
+        part_of_speech_ids: {type: array, items: {type: integer}}
+        context_tag_ids: {type: array, items: {type: integer}}
+        lesson_ids: {type: array, items: {type: integer}}
+        book_ids: {type: array, items: {type: integer}}
+        published: {type: boolean}
+        examples_markup: {type: [string, 'null']}
+        examples_html_ruby: {type: [string, 'null']}
+        created_at: {type: string, format: date-time}
+        updated_at: {type: string, format: date-time}
+        version: {type: string}
+
+    VocabularyFields:
+      type: object
+      properties:
+        term: {type: string, minLength: 1, maxLength: 200}
+        hiragana: {type: [string, 'null']}
+        katakana: {type: [string, 'null']}
+        romaji: {type: [string, 'null']}
+        meaning_vi: {type: [string, 'null']}
+        han_viet: {type: [string, 'null']}
+        level: {$ref: '#/components/schemas/Level'}
+        is_intransitive: {type: boolean}
+        verb_group: {type: [string, 'null'], enum: [group1, group2, group3, null]}
+        honorific_type: {type: [string, 'null'], enum: [sonkeigo, kenjougo, null]}
+        forms: {$ref: '#/components/schemas/VerbForms'}
+        part_of_speech_ids: {type: array, items: {type: integer}}
+        context_tag_ids: {type: array, items: {type: integer}}
+        lesson_ids: {type: array, items: {type: integer}}
+        examples_markup: {type: [string, 'null'], maxLength: 100000}
+
+    VocabularyCreate:
+      allOf:
+        - $ref: '#/components/schemas/VocabularyFields'
+        - type: object
+          required: [term]
+
+    VocabularyPatch:
+      allOf:
+        - $ref: '#/components/schemas/VocabularyFields'
+        - type: object
+          minProperties: 1
+
+    VocabularyBulkItem:
+      allOf:
+        - $ref: '#/components/schemas/VocabularyFields'
+        - type: object
+          properties:
+            id: {type: integer, description: Present to update; absent to create.}
+            version: {type: string, description: Optional optimistic lock for an update.}
+
+    Tag:
+      type: object
+      required: [id, xid, name, version]
+      properties:
+        id: {type: integer}
+        xid: {type: string}
+        name: {type: string, examples: ['Reading']}
+        color: {type: [integer, 'null']}
+        version: {type: string}
+
+    ContextTag:
+      type: object
+      required: [id, xid, name, complete_name, parent_id, version]
+      properties:
+        id: {type: integer}
+        xid: {type: string}
+        name: {type: string}
+        complete_name: {type: [string, 'null'], examples: ['Công việc / Văn phòng']}
+        parent_id: {type: [integer, 'null']}
+        version: {type: string}
+
+    PartOfSpeech:
+      type: object
+      required: [id, xid, kanji, hiragana, vietnamese, version]
+      properties:
+        id: {type: integer}
+        xid: {type: string}
+        kanji: {type: [string, 'null'], examples: ['動詞']}
+        hiragana: {type: [string, 'null'], examples: ['どうし']}
+        vietnamese: {type: [string, 'null'], examples: ['Động từ']}
+        label: {type: [string, 'null']}
+        version: {type: string}
+
+    HanViet:
+      type: object
+      required: [id, xid, kanji, han_viet, version]
+      properties:
+        id: {type: integer}
+        xid: {type: string}
+        kanji: {type: [string, 'null'], examples: ['話']}
+        han_viet: {type: [string, 'null'], examples: ['THOẠI']}
+        version: {type: string}
+
+    MarkupIssue:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          enum: [unbalanced_marker, empty_marker, auto_reading, kanji_without_reading, reading_not_kana, unbalanced_translation, missing_translation]
+        message: {type: string}
+        text: {type: string, description: The marker or characters concerned.}
+        reading: {type: string, description: For auto_reading, the reading the server guessed.}
+        block: {type: integer, description: 0-based index of the paragraph.}
+
+    MarkupPreview:
+      type: object
+      required: [html_hover, html_ruby, stats, issues]
+      properties:
+        html_hover: {type: string}
+        html_ruby: {type: string}
+        stats:
+          type: object
+          properties:
+            blocks: {type: integer}
+            markers: {type: integer}
+            explicit_readings: {type: integer}
+            auto_readings: {type: integer}
+            translations: {type: integer}
+        issues: {type: array, items: {$ref: '#/components/schemas/MarkupIssue'}}
+
+    ChangeEvent:
+      type: object
+      required: [seq, entity, id, op, at]
+      properties:
+        seq: {type: integer}
+        entity: {type: string, enum: [comprehensive, vocabulary, book, lesson, tag, context_tag, part_of_speech, hanviet]}
+        id: {type: integer}
+        op: {type: string, enum: [create, update, delete]}
+        at: {type: string, format: date-time}
+
+    ChangePage:
+      type: object
+      required: [events, next_after, has_more]
+      properties:
+        events: {type: array, items: {$ref: '#/components/schemas/ChangeEvent'}}
+        next_after: {type: string}
+        has_more: {type: boolean}
+
+    SnapshotPage:
+      type: object
+      required: [items, next_cursor]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            required: [id, version]
+            properties:
+              id: {type: integer}
+              version: {type: string}
+        next_cursor: {$ref: '#/components/schemas/NextCursor'}
+        feed_cursor: {type: string, description: Only on the first page.}
+
+    QaIssue:
+      type: object
+      required: [code]
+      properties:
+        code:
+          type: string
+          enum: [missing_level, missing_markup, not_finalized, unbalanced_markup, kanji_without_reading,
+                 auto_readings, missing_audio, grammar_missing_patterns, not_published]
+        count: {type: integer}
+        details: {type: array, items: {type: string}, description: For example the kanji concerned.}
+
+    QaItem:
+      type: object
+      required: [entity, id, title, level, tags, issues]
+      properties:
+        entity: {type: string, enum: [comprehensive]}
+        id: {type: integer}
+        title: {type: string}
+        level: {$ref: '#/components/schemas/Level'}
+        tags: {type: array, items: {type: string}}
+        book_ids: {type: array, items: {type: integer}}
+        published: {type: boolean}
+        issues: {type: array, items: {$ref: '#/components/schemas/QaIssue'}}
+
+    QaPage:
+      type: object
+      required: [items, summary, next_cursor]
+      properties:
+        items: {type: array, items: {$ref: '#/components/schemas/QaItem'}}
+        summary:
+          type: object
+          additionalProperties: {type: integer}
+          examples: [{missing_level: 22, missing_markup: 26}]
+        next_cursor: {$ref: '#/components/schemas/NextCursor'}

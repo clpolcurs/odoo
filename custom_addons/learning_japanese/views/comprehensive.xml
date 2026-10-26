@@ -20,6 +20,8 @@
                     <field name="title" string="Title" filter_domain="[('title', 'ilike', self)]"/>
                     <field name="description" string="Description" filter_domain="[('description', 'ilike', self)]"/>
                     <field name="content_only_kanji" string="Content" filter_domain="['|', ('content_only_kanji', 'ilike', self), ('content', 'ilike', self)]"/>
+                    <filter name="nihongo_published" string="Có trên NihonGo" domain="[('nihongo_published', '=', True)]"/>
+                    <filter name="missing_level" string="Chưa có level" domain="[('level', '=', False)]"/>
                     <searchpanel>
                         <field name="level" string="Level" icon="fa-signal" select="multi" enable_counters="1"/>
                         <field name="category_ids" string="Category" icon="fa-tags" select="multi" enable_counters="1"/>
@@ -66,6 +68,8 @@
                                 <field name="is_writing_or_speaking" invisible="1"/>
 
                                 <field name="description" invisible="not is_grammar"/>
+                                <field name="grammar_patterns" invisible="not is_grammar"
+                                       placeholder="Mỗi dòng một mẫu dạng từ điển, ví dụ ようとする"/>
                             </group>
                         </group>
                         <br/>
@@ -90,6 +94,16 @@
 
                              <page string="Chú thích Kanji">
                                 <field class="html_field_font_size" name="content"/>
+                            </page>
+
+                            <page string="Ghi đè ngữ pháp" invisible="is_grammar">
+                                <field name="grammar_override_ids">
+                                    <list editable="bottom">
+                                        <field name="grammar_id" options="{'no_create': True}"/>
+                                        <field name="action"/>
+                                        <field name="note"/>
+                                    </list>
+                                </field>
                             </page>
                        </notebook>
 

@@ -41,6 +41,10 @@
                 <menuitem id="hanviet_menu_action" action="hanviet_action" parent="learning_japanese.setting_tag_menu" sequence="44"/>
                 <menuitem id="prompt_request_menu_action" action="prompt_request_action" parent="learning_japanese.setting_tag_menu" sequence="45"/>
                 <menuitem id="llm_config_menu_action" action="llm_config_action" parent="learning_japanese.setting_tag_menu" sequence="46"/>
+                <menuitem id="audit_log_menu_action" action="audit_log_action" parent="learning_japanese.setting_tag_menu" sequence="47"
+                          groups="learning_japanese.learning_japanese_admin"/>
+                <menuitem id="change_log_menu_action" action="change_log_action" parent="learning_japanese.setting_tag_menu" sequence="48"
+                          groups="learning_japanese.learning_japanese_admin"/>
 
             <menuitem id="openai_support_action_menu" action="openai_support_action" parent="menu_learning_japanese" sequence="13"/>
 

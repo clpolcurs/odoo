@@ -66,11 +66,15 @@ def _to_hiragana(match_text: str, cache: dict) -> tuple[str, str]:
         hira = hira.strip()
     else:
         display = match_text.strip()
-        result = _KKS.convert(display)
-        hira = "".join([item['hira'] for item in result])
+        hira = guess_reading(display)
 
     cache[match_text] = (display, hira)
     return display, hira
+
+
+def guess_reading(text: str) -> str:
+    """Hiragana reading guessed by pykakasi, as used for markers without '- reading'."""
+    return "".join(item["hira"] for item in _KKS.convert(text))
 
 
 # ── Main Processing Logic ──────────────────────────────────────────────────────

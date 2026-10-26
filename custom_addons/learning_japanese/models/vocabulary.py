@@ -242,10 +242,37 @@ class Book(models.Model):
     _description = "Book"
     _rec_name = "name"
     _order = "name asc"
+    _inherit = ["learning_japanese.change.tracked.mixin"]
+    _lj_entity = "book"
+
     name = fields.Char(string="Book name", copy=False)
     lesson_ids = fields.One2many(
         comodel_name="learning_japanese.lesson", inverse_name="book_id", string="Lessons"
     )
+    nihongo_published = fields.Boolean(
+        string="Xuất bản NihonGo",
+        default=False,
+        copy=False,
+        help="Chỉ bài và từ vựng thuộc giáo trình đã bật cờ này mới được đồng bộ sang NihonGo.",
+    )
+
+    def write(self, vals):
+        result = super().write(vals)
+        if "nihongo_published" in vals:
+            # Publishing decides what NihonGo shows: every member changes visibility.
+            items, vocabularies = self._lj_lesson_members(self.lesson_ids.ids)
+            self.lesson_ids._lj_log("update")
+            self._lj_log("update", "comprehensive", items)
+            self._lj_log("update", "vocabulary", vocabularies)
+        return result
+
+    def unlink(self):
+        # Lessons lose their book (ondelete set null), so they and their members change.
+        items, vocabularies = self._lj_lesson_members(self.lesson_ids.ids)
+        self.lesson_ids._lj_log("update")
+        self._lj_log("update", "comprehensive", items)
+        self._lj_log("update", "vocabulary", vocabularies)
+        return super().unlink()
 
 
 from odoo import api, fields, models
@@ -256,6 +283,12 @@ class Lesson(models.Model):
     _description = "Lesson"
     _rec_name = "combination"
     _order = "id asc"
+    _inherit = ["learning_japanese.change.tracked.mixin"]
+    _lj_entity = "lesson"
+
+    _LJ_MEMBER_FIELDS = {
+        "vocabulary_ids", "grammar_ids", "example_ids", "reading_ids", "listening_ids", "writing_ids",
+    }
 
     lesson = fields.Char(string="Bài")
     book_id = fields.Many2one(
@@ -327,12 +360,47 @@ class Lesson(models.Model):
             if record.lesson and record.book_id:
                 record.combination = record.book_id.name + " - " + record.lesson
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        lessons = super().create(vals_list)
+        # A book lists its lessons; new members get a new lesson id.
+        lessons.book_id._lj_log("update")
+        items, vocabularies = self._lj_lesson_members(lessons.ids)
+        self._lj_log("update", "comprehensive", items)
+        self._lj_log("update", "vocabulary", vocabularies)
+        return lessons
+
+    def write(self, vals):
+        moves = "book_id" in vals
+        track_members = moves or bool(self._LJ_MEMBER_FIELDS & vals.keys())
+        books_before = self.book_id
+        items_before, vocabularies_before = self._lj_lesson_members(self.ids) if track_members else (set(), set())
+        result = super().write(vals)
+        if track_members:
+            items_after, vocabularies_after = self._lj_lesson_members(self.ids)
+            # Moving a lesson changes the book of every member; otherwise only added/removed ones changed.
+            combine = set.union if moves else set.symmetric_difference
+            self._lj_log("update", "comprehensive", combine(items_before, items_after))
+            self._lj_log("update", "vocabulary", combine(vocabularies_before, vocabularies_after))
+        if moves or "lesson" in vals:
+            (books_before | self.book_id)._lj_log("update")
+        return result
+
+    def unlink(self):
+        items, vocabularies = self._lj_lesson_members(self.ids)
+        self.book_id._lj_log("update")
+        self._lj_log("update", "comprehensive", items)
+        self._lj_log("update", "vocabulary", vocabularies)
+        return super().unlink()
+
 
 class PartOfSpeech(models.Model):
     _name = "learning_japanese.part_of_speech"
     _description = "Part of Speech"
     _rec_name = "combination"
     _order = "id asc"
+    _inherit = ["learning_japanese.change.tracked.mixin"]
+    _lj_entity = "part_of_speech"
 
     kanji = fields.Char(string="Kanji")
     higarana = fields.Char(string="Higarana")
@@ -371,6 +439,8 @@ class ContextTag(models.Model):
     _order = "name"
     _rec_name = "name"
     _parent_store = True
+    _inherit = ["learning_japanese.change.tracked.mixin"]
+    _lj_entity = "context_tag"
 
     name = fields.Char()
     complete_name = fields.Char(
@@ -434,6 +504,14 @@ class ContextTag(models.Model):
                 context_tag.parent_path.split("/")[0]
             )
 
+    def write(self, vals):
+        result = super().write(vals)
+        if "name" in vals or "parent_id" in vals:
+            # complete_name of every descendant is recomputed without a write() of its own.
+            descendants = self.search([("id", "child_of", self.ids), ("id", "not in", self.ids)])
+            descendants._lj_log("update")
+        return result
+
     @api.depends("name", "complete_name")
     def _compute_display_name(self):
         """
@@ -451,6 +529,8 @@ class HanViet(models.Model):
     _description = "Han Viet"
     _rec_name = "kanji"
     _order = "id asc"
+    _inherit = ["learning_japanese.change.tracked.mixin"]
+    _lj_entity = "hanviet"
 
     kanji = fields.Char(string="Kanji")
     han_viet = fields.Char(string="Hán Việt")
@@ -461,7 +541,8 @@ class Vocabulary(models.Model):
     _description = "Learning Japanese"
     _rec_name = "vocabulary"
     _order = "id desc"
-    _inherit = ["learning_japanese.furigana.mixin"]
+    _inherit = ["learning_japanese.furigana.mixin", "learning_japanese.change.tracked.mixin"]
+    _lj_entity = "vocabulary"
 
     part_of_speech_ids = fields.Many2many(
         comodel_name="learning_japanese.part_of_speech",
@@ -483,6 +564,11 @@ class Vocabulary(models.Model):
         string="Giáo trình",
         compute="_compute_book_ids",
         store=True,
+    )
+    nihongo_published = fields.Boolean(
+        string="Có trên NihonGo",
+        compute="_compute_nihongo_published",
+        search="_search_nihongo_published",
     )
     context_tag_ids = fields.Many2many(
         comodel_name="learning_japanese.context_tag",
@@ -966,6 +1052,18 @@ class Vocabulary(models.Model):
         for record in self:
             # mapped() automatically collects unique records and returns a recordset
             record.book_ids = record.lesson_ids.mapped("book_id")
+
+    @api.depends("book_ids.nihongo_published")
+    def _compute_nihongo_published(self):
+        for record in self:
+            record.nihongo_published = any(record.book_ids.mapped("nihongo_published"))
+
+    def _search_nihongo_published(self, operator, value):
+        if operator not in ("=", "!=") or not isinstance(value, bool):
+            return NotImplemented
+        published = (operator == "=") == value
+        domain = [("book_ids.nihongo_published", "=", True)]
+        return domain if published else ["!", *domain]
 
     @api.depends("part_of_speech_ids", "part_of_speech_ids.kanji", "part_of_speech_ids.combination")
     def _compute_is_verb(self):
