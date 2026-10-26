@@ -40,14 +40,6 @@ class Settings:
             timeout=_parse_timeout(env.get("LJ_TIMEOUT", "")),
         )
 
-    def require_api_key(self) -> str:
-        if not self.api_key:
-            raise ConfigError(
-                "LJ_API_KEY is not set. Create an API key for the Odoo user claude-mcp "
-                "(Preferences > Account Security > New API Key), export LJ_API_KEY and restart Claude Code."
-            )
-        return self.api_key
-
 
 def _parse_timeout(raw: str) -> float:
     if not raw.strip():

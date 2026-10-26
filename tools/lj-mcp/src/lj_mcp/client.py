@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping
 from typing import Any
 
@@ -14,7 +15,8 @@ PAGE_MAX = 200
 USER_AGENT = f"lj-mcp/{__version__}"
 
 _HINTS = {
-    401: "the API key is missing, expired or revoked: check LJ_API_KEY",
+    401: "no valid API key reached Odoo: set LJ_API_KEY to the key of the Odoo user claude-mcp, or in a Claude Code "
+    "cloud environment add a network secret for the Odoo host; the key may also be expired or revoked",
     412: "re-read the record, re-apply the change and retry with current_version",
     428: "pass the record's current version",
 }
@@ -42,7 +44,10 @@ class LJApiError(LJError):
             return cls(response.status_code, body)
         if location := response.headers.get("location"):
             return cls(response.status_code, text=f"redirected to {location} (check LJ_BASE_URL)")
-        return cls(response.status_code, text=" ".join(response.text.split())[:300])
+        text = response.text
+        if "html" in response.headers.get("content-type", ""):
+            text = re.sub(r"<[^>]*>", " ", text)
+        return cls(response.status_code, text=" ".join(text.split())[:300])
 
     @property
     def code(self) -> str | None:
@@ -81,7 +86,11 @@ def if_match(version: str) -> str:
 
 
 class LJClient:
-    """Sends requests with the Bearer key and returns the decoded JSON bodies."""
+    """Sends requests with the Bearer key and returns the decoded JSON bodies.
+
+    Without LJ_API_KEY no Authorization header is sent: in a Claude Code cloud environment a network secret makes
+    the agent proxy add it, so the key never enters the session.
+    """
 
     def __init__(self, settings: Settings, transport: httpx.AsyncBaseTransport | None = None) -> None:
         self.settings = settings
@@ -95,13 +104,12 @@ class LJClient:
 
     def _client(self) -> httpx.AsyncClient:
         if self._http is None:
+            headers = {"Accept": "application/json, application/problem+json", "User-Agent": USER_AGENT}
+            if self.settings.api_key:
+                headers["Authorization"] = f"Bearer {self.settings.api_key}"
             self._http = httpx.AsyncClient(
                 base_url=self.settings.api_url,
-                headers={
-                    "Authorization": f"Bearer {self.settings.require_api_key()}",
-                    "Accept": "application/json, application/problem+json",
-                    "User-Agent": USER_AGENT,
-                },
+                headers=headers,
                 timeout=self.settings.timeout,
                 transport=self._transport,
             )

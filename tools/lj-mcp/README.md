@@ -47,29 +47,44 @@ claude
 
 - File `.mcp.json` ở gốc repo khai báo server `learning-japanese` (phạm vi project). Lần đầu mở repo,
   Claude Code hỏi có dùng server này không: chọn đồng ý. Gõ `/mcp` để xem trạng thái và danh sách tool.
-- Claude Code thay `${LJ_API_KEY}` bằng biến môi trường lúc khởi động, nên đừng ghi key vào file.
-  Đổi key thì export lại rồi khởi động lại Claude Code.
+- Claude Code thay `${LJ_API_KEY:-}` bằng biến môi trường lúc khởi động (rỗng nếu chưa đặt), nên đừng ghi key
+  vào file. Đổi key thì export lại rồi khởi động lại Claude Code.
 - Server chạy bằng `uv run --directory tools/lj-mcp lj-mcp`; lần đầu uv tải thư viện nên mất vài giây.
-- Thiếu `LJ_API_KEY` thì server vẫn chạy và vẫn liệt kê tool, nhưng mọi lời gọi tool báo lỗi hướng dẫn tạo key.
+- Thiếu `LJ_API_KEY` thì lj-mcp gửi request không kèm key: Odoo trả 401 và tool báo lỗi kèm hướng dẫn. Trên
+  cloud, network secret (mục 4) thêm key thay cho biến này.
 
 ## 4. Dùng trong môi trường cloud của Claude Code
 
-Mở menu môi trường (cloud environment) trên thanh tiêu đề của session → **Edit**:
+Trên cloud, key nên là một **network secret**: proxy của Anthropic gắn key vào các request tới
+`oht-t4-hcet.com` sau khi request rời máy ảo, nên key không bao giờ vào session. Claude không đọc được key, và
+lj-mcp chạy mà không cần `LJ_API_KEY`. Biến môi trường thì khác: mọi lệnh chạy trong session, kể cả Claude, đều
+đọc được.
 
-- **Secret**: thêm `LJ_API_KEY` ở mục **Network secrets** (app cũ gọi là **API credentials**) nếu có mục này,
-  nếu không thì thêm biến môi trường `LJ_API_KEY`. Chỉ session mới nhận giá trị mới.
-- **Network access**: chọn mức **Limited** và thêm `oht-t4-hcet.com` vào **Allowed domains**, giữ ô
-  **Allow package managers** để uv tải được thư viện từ PyPI (app cũ: mức **Custom**, có ô dùng danh sách
-  package manager mặc định). Chi tiết: <https://code.claude.com/docs/en/cloud-environments#network-access>.
-  Muốn dùng `lj_set_audio_from_url` thì host chứa file audio cũng phải nằm trong Allowed domains.
-- Môi trường cần có `uv` (image mặc định đã có; nếu không, cài trong setup script).
+Mở menu môi trường trên thanh tiêu đề của session (dấu ˅ cạnh tên session) → **Edit cloud environment**:
+
+1. **Network secrets** → **Add secret**, giữ **Secret type** là **Bearer**:
+   - **Name**: tên tùy ý, ví dụ `Odoo learning_japanese`
+   - **Allowed websites**: `oht-t4-hcet.com`
+   - **Custom headers**: **Name** `Authorization`, **Prefix** `Bearer`, **Value** là key của `claude-mcp`
+
+   Bấm **Add**: secret được lưu ngay, không cần **Save changes**, và không xem lại được. Gói Team mà bạn không
+   có quyền admin của tổ chức thì form ngắn hơn: **Host** `oht-t4-hcet.com`, **Secret type** **Token**,
+   **Value** là key.
+2. **Environment variables**: đừng đặt `LJ_API_KEY` ở đây; nếu đã đặt thì xóa dòng đó rồi **Save changes**.
+3. **Network access**: host của một network secret luôn được truy cập, nên `oht-t4-hcet.com` không cần nằm trong
+   **Allowed domains**. Muốn dùng `lj_set_audio_from_url` thì thêm host chứa file audio vào **Allowed domains**
+   (mức **Limited**; app cũ là **Custom**) và giữ ô **Allow package managers** để uv tải được thư viện từ PyPI.
+4. Mở một session mới, rồi nhờ Claude gọi `lj_list_books` để kiểm tra.
+
+Chi tiết: <https://code.claude.com/docs/en/cloud-environments#add-network-secrets>. Môi trường cần có `uv`
+(image mặc định đã có; nếu không, cài trong setup script).
 
 ## Cấu hình
 
 | Biến | Mặc định | Ý nghĩa |
 | --- | --- | --- |
 | `LJ_BASE_URL` | `https://oht-t4-hcet.com` | URL gốc của Odoo (bỏ `/` ở cuối); API là `${LJ_BASE_URL}/api/lj/v1`. |
-| `LJ_API_KEY` | bắt buộc | API key của `claude-mcp`, gửi trong `Authorization: Bearer`. lj-mcp không bao giờ ghi log hay in key. |
+| `LJ_API_KEY` | không có | API key của `claude-mcp`, gửi trong `Authorization: Bearer`; bắt buộc trên máy, để trống trên cloud khi đã có network secret. lj-mcp không bao giờ ghi log hay in key. |
 | `LJ_ALLOW_DELETE` | tắt | `1` hoặc `true` để có thêm hai tool xóa. |
 | `LJ_TIMEOUT` | `30` | Timeout (giây) cho mỗi request tới Odoo và mỗi lần tải audio. |
 

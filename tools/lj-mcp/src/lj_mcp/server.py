@@ -577,7 +577,6 @@ def _add_write_tools(mcp: FastMCP, api: LJClient, download: Callable[[str], Awai
         .oga, .opus, .flac, .weba) unless the server answers with a text or HTML page.
         Returns the updated item (audio, new version).
         """
-        api.settings.require_api_key()  # fail before downloading
         audio = await download(url)
         return await _put_audio(api, comprehensive_id, audio, filename, version)
 

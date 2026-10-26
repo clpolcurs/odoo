@@ -5,9 +5,16 @@ import pytest
 from helpers import API, SETTINGS, FakeApi, problem
 
 from lj_mcp.client import LJApiError, LJClient, LJError
-from lj_mcp.config import ConfigError, Settings
+from lj_mcp.config import Settings
 
 pytestmark = pytest.mark.anyio
+
+ODOO_401 = """<!doctype html>
+<html lang=en>
+<title>401 Unauthorized</title>
+<h1>Unauthorized</h1>
+<p>User not authenticated, use an API Key with a Bearer Authorization header.</p>
+"""
 
 
 def client(fake: FakeApi, settings: Settings = SETTINGS) -> LJClient:
@@ -38,10 +45,11 @@ async def test_sends_the_version_as_quoted_if_match(fake: FakeApi, version: str)
     assert json.loads(request.content) == {"title": "x"}
 
 
-async def test_missing_api_key_fails_before_any_request(fake: FakeApi) -> None:
-    with pytest.raises(ConfigError, match="LJ_API_KEY is not set"):
-        await client(fake, Settings(base_url="https://lj.test")).get("/books")
-    assert fake.requests == []
+async def test_without_a_key_sends_no_authorization(fake: FakeApi) -> None:
+    """A network secret of a Claude Code cloud environment then makes the agent proxy add it."""
+    fake.on("GET", f"{API}/books", {"items": [], "next_cursor": None})
+    await client(fake, Settings(base_url="https://lj.test")).get("/books")
+    assert "Authorization" not in fake.requests[0].headers
 
 
 async def test_412_gives_the_current_version(fake: FakeApi) -> None:
@@ -83,7 +91,7 @@ async def test_422_lists_the_field_errors(fake: FakeApi) -> None:
 
 
 async def test_errors_without_a_problem_body(fake: FakeApi) -> None:
-    fake.on("GET", f"{API}/books", lambda request: httpx.Response(401))
+    fake.on("GET", f"{API}/books", lambda request: httpx.Response(401, html=ODOO_401))
     fake.on("GET", f"{API}/tags", lambda request: httpx.Response(502, text="<html>\n  Bad   Gateway</html>"))
     fake.on(
         "GET", f"{API}/meta", lambda request: httpx.Response(303, headers={"Location": "https://lj.test/web/login"})
@@ -94,7 +102,9 @@ async def test_errors_without_a_problem_body(fake: FakeApi) -> None:
             await client(fake).get(path)
         messages.append(str(caught.value))
     assert messages == [
-        "HTTP 401\nhint: the API key is missing, expired or revoked: check LJ_API_KEY",
+        "HTTP 401: 401 Unauthorized Unauthorized User not authenticated, use an API Key with a Bearer Authorization "
+        "header.\nhint: no valid API key reached Odoo: set LJ_API_KEY to the key of the Odoo user claude-mcp, or in a "
+        "Claude Code cloud environment add a network secret for the Odoo host; the key may also be expired or revoked",
         "HTTP 502: <html> Bad Gateway</html>",
         "HTTP 303: redirected to https://lj.test/web/login (check LJ_BASE_URL)",
     ]

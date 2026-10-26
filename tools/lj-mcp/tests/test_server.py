@@ -95,16 +95,14 @@ async def test_delete_sends_if_match(fake: FakeApi) -> None:
     assert fake.requests[0].headers["If-Match"] == '"a1"'
 
 
-async def test_without_api_key_tools_are_listed_and_calls_fail(fake: FakeApi) -> None:
+async def test_without_api_key_requests_carry_no_authorization(fake: FakeApi) -> None:
+    fake.on("GET", f"{API}/comprehensives", lambda request: httpx.Response(401, html="<h1>Unauthorized</h1>"))
     async with mcp_session(fake, Settings(base_url="https://lj.test")) as session:
         assert len((await session.list_tools()).tools) == len(READ_ONLY_TOOLS | WRITE_TOOLS)
         message = await call_error(session, "lj_search_comprehensives")
-        assert "LJ_API_KEY is not set" in message
-        message = await call_error(
-            session, "lj_set_audio_from_url", comprehensive_id=58, url="https://files.test/a.mp3"
-        )
-        assert "LJ_API_KEY is not set" in message
-    assert fake.requests == []
+    assert "Authorization" not in fake.requests[0].headers
+    assert "HTTP 401: Unauthorized" in message
+    assert "network secret" in message
 
 
 async def test_get_comprehensive_returns_the_api_json_compactly_without_html(fake: FakeApi) -> None:

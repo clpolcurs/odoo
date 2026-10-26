@@ -27,11 +27,9 @@ def test_rejects_a_bad_timeout(raw: str) -> None:
         Settings.from_env({"LJ_TIMEOUT": raw})
 
 
-@pytest.mark.parametrize("raw", ["", "  ", "${LJ_API_KEY}"])
+@pytest.mark.parametrize("raw", ["", "  ", "${LJ_API_KEY}", "${LJ_API_KEY:-}"])
 def test_missing_api_key(raw: str) -> None:
-    settings = Settings.from_env({"LJ_API_KEY": raw})
-    with pytest.raises(ConfigError, match="LJ_API_KEY is not set"):
-        settings.require_api_key()
+    assert Settings.from_env({"LJ_API_KEY": raw}).api_key is None
 
 
 def test_repr_hides_the_api_key() -> None:
