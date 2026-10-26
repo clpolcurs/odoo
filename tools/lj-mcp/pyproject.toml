@@ -1,0 +1,42 @@
+[project]
+name = "lj-mcp"
+dynamic = ["version"]
+description = "MCP server that lets Claude read and edit learning_japanese content in Odoo through its REST API."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "LGPL-3.0-only"
+dependencies = [
+    "anyio>=4",
+    "httpx>=0.28",
+    "mcp>=1.30,<2",
+    "pydantic>=2.11",
+]
+
+[project.scripts]
+lj-mcp = "lj_mcp.server:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/lj_mcp/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lj_mcp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]  # Japanese and Vietnamese text is intended

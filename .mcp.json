@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "learning-japanese": {
+      "command": "uv",
+      "args": ["run", "--directory", "tools/lj-mcp", "lj-mcp"],
+      "env": {
+        "LJ_BASE_URL": "https://oht-t4-hcet.com",
+        "LJ_API_KEY": "${LJ_API_KEY}"
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+# Also read by hatchling instead of the repository's .gitignore, whose "/src/" would exclude the package.
+.venv/
+__pycache__/
+*.py[co]
+.pytest_cache/
+dist/
