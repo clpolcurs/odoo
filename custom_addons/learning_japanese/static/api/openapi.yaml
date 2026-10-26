@@ -172,8 +172,9 @@ paths:
                 properties:
                   items:
                     type: array
+                    description: ComprehensiveSummary objects, or Comprehensive objects with view=full.
                     items:
-                      oneOf:
+                      anyOf:
                         - $ref: '#/components/schemas/ComprehensiveSummary'
                         - $ref: '#/components/schemas/Comprehensive'
                   next_cursor: {$ref: '#/components/schemas/NextCursor'}
