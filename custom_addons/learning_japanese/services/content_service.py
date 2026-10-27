@@ -351,14 +351,22 @@ def _int_list(value):
 
 
 def _markup_vals(record, markup):
-    """Values storing `markup` and its converted HTML, or {} when nothing changes."""
+    """Values storing `markup` and its converted HTML, or {} when nothing changes.
+
+    The same markup is converted again when the stored HTML is not what the converter
+    makes of it now, so a fix in furigana_helper reaches a record when it is saved."""
     current = (markup_lib.to_source(record.backup_text) or "").strip()
     new = (markup_lib.to_source(markup) or "").strip()
-    if new == current and (record.is_finalized or not new):
-        return {}
     if not new:
-        return {"backup_text": False, "content_only_kanji": False, "content": False, "is_finalized": False}
-    return record._apply_furigana({}, markup_lib.to_stored(markup))
+        cleared = {"backup_text": False, "content_only_kanji": False, "content": False, "is_finalized": False}
+        return cleared if current else {}
+    vals = record._apply_furigana({}, markup_lib.to_stored(markup))
+    html_fields = ("content_only_kanji", "content")
+    if new == current and record.is_finalized and all(
+        record._fields[name].convert_to_cache(vals[name], record) == record[name] for name in html_fields
+    ):
+        return {}
+    return vals
 
 
 def create_comprehensive(env, body):

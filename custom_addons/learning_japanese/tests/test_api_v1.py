@@ -178,6 +178,17 @@ class TestApiV1(HttpCase, LearningJapaneseDataCase):
         self.assertEqual(item["markup"], source)
         self.assertIn("kỳ nghỉ hè", item["html_ruby"])
 
+    def test_the_same_markup_converts_stale_html_again(self):
+        path = f"/comprehensives/{self.reading.id}"
+        fresh = self.ok("GET", path)
+        self.reading.with_context(lj_furigana_processed=True).write({"content_only_kanji": "<p>older converter</p>"})
+        self.env.flush_all()
+        stale = self.ok("GET", path)
+        self.assertEqual(stale["html_hover"], "<p>older converter</p>")
+        again = self.ok("PATCH", path, json={"markup": stale["markup"]}, headers={"If-Match": f'"{stale["version"]}"'})
+        self.assertEqual(again["html_hover"], fresh["html_hover"])
+        self.assertEqual(again["version"], fresh["version"])
+
     def test_delete(self):
         path = f"/comprehensives/{self.listening.id}"
         version = self.ok("GET", path)["version"]

@@ -54,6 +54,23 @@ class TestMarkup(BaseCase):
         self.assertEqual(markup.to_source(html_sanitize(markup.to_stored(source))), source)
         self.assertNotIn("kỳ nghỉ hè", html_sanitize(source))  # read as a <kỳ> tag when not escaped
 
+    def test_brackets_stay_text_in_the_rendered_html(self):
+        stored = "<p>&lt;Aの&lt;&lt;意見 - いけん&gt;&gt;&gt;<br>{{&lt;Ý kiến của A&gt;}}</p>"
+        hover, ruby = (html_sanitize(html) for html in markup.render(stored))
+        self.assertIn("<p>&lt;Aの<span", hover)  # was an <aの> tag, dropped with its text
+        self.assertIn('title="いけん">意見</span>&gt;</p>', hover)
+        self.assertIn("&lt;Aの<ruby>", ruby)
+        self.assertIn("&lt;Ý kiến của A&gt;", ruby)
+        hover, _ruby = markup.render("<p>a &lt; b &amp;&amp; c&nbsp;{{x}}</p>")
+        self.assertEqual(hover, "<p>a &lt; b &amp;&amp; c</p>")
+
+    def test_markers_render_in_every_form_they_arrive_in(self):
+        source = "<p><<人 - ひと>>だ。</p>"
+        hover, ruby = markup.render(source)
+        self.assertIn('title="ひと">人</span>', hover)
+        for form in (markup.to_stored(source), str(html_sanitize(markup.to_stored(source)))):
+            self.assertEqual(markup.render(form), (hover, ruby), form)
+
     def test_plain_text(self):
         self.assertEqual(markup.plain_text("<p><<人 - ひと>>です{{là người}}</p>"), "人です")
         self.assertFalse(markup.has_markup("<p><br></p>"))

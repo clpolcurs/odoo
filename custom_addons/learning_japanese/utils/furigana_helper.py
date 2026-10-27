@@ -14,6 +14,12 @@ _RE_VIET_KEEP = re.compile(r"\{\{(.+?)\}\}", re.DOTALL)
 _RE_VIET_REMOVE = re.compile(r"(?:<br\s*/?>)?\s*\{\{.+?\}\}", re.DOTALL)
 _RE_MANUAL_READING = re.compile(r"^(.+?)\s*-\s*(.+)$")  # Matches "Kanji - furigana"
 
+# Markers as Html fields store them (&lt;&lt;人 - ひと&gt;&gt;) and as the API sends them (&lt;&lt;人 - ひと>>)
+_RE_ESCAPED_MARKER = re.compile(r"&lt;&lt;((?:(?!&[lg]t;)[^<>])+)(?:&gt;&gt;|>>)")
+# Entities of the characters that are markup in HTML (< > & "), kept as they are when the
+# rest is unescaped: unescaped, the text `&lt;Aの` would turn into an <aの> tag and vanish.
+_RE_MARKUP_ENTITY = re.compile(r"(&(?:lt|gt|amp|quot|#0*(?:60|62|38|34)|#x0*(?:3c|3e|26|22));)", re.IGNORECASE)
+
 # Matches <pre>...</pre> and <code>...</code> blocks (pasted source code),
 # so their raw content can be shielded from furigana/Vietnamese processing.
 _RE_CODE_BLOCK = re.compile(r"<(pre|code)\b[^>]*>.*?</\1>", re.DOTALL | re.IGNORECASE)
@@ -47,6 +53,16 @@ def _unshield_code_blocks(text: str, blocks: list[str]) -> str:
     if not blocks:
         return text
     return _RE_CODE_PLACEHOLDER.sub(lambda m: blocks[int(m.group(1))], text)
+
+
+def _unescape(text: str) -> str:
+    """
+    Unescape the markers and every entity but those of < > & ", so that the
+    markers can be found while the text stays text.
+    """
+    parts = _RE_MARKUP_ENTITY.split(_RE_ESCAPED_MARKER.sub(r"<<\1>>", text))
+    # split keeps the kept entities at the odd indexes
+    return "".join(part if i % 2 else html.unescape(part) for i, part in enumerate(parts))
 
 
 def _strip_vietnamese(text: str, keep_content: bool) -> str:
@@ -87,8 +103,8 @@ def process_furigana(html_string: str) -> tuple[str, str]:
     #    untouched (no unescape, no {{...}} stripping, no <<...>> conversion).
     shielded_content, code_blocks = _shield_code_blocks(html_string)
 
-    # 1. Normalize Input: Fully unescape the string first.
-    normalized_content = html.unescape(shielded_content)
+    # 1. Normalize Input: unescape the markers and the entities, but keep < > & " escaped.
+    normalized_content = _unescape(shielded_content)
 
     # 2. Separate text bases for the two different tabs
     hover_base = _strip_vietnamese(normalized_content, keep_content=False)
