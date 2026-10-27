@@ -137,7 +137,7 @@ def test_marking_twice_changes_nothing_and_the_visible_text_stays():
         ("<p>もう一つ</p>", "<<一 - ひと>>つ", False),
         ("<p>今電車が止まっています。</p>", "<<今 - いま>>", True),  # not こん of 今世紀
         ("<p>~以上(は)</p>", "<<以上 - いじょう>>(は)", False),  # the dictionary has 以上(は): brackets not read
-        ("<p>何時ごろ行きますか。</p>", "<<何時 - いつ>>ごろ", True),
+        ("<p>何時ごろ行きますか。</p>", "<<何時 - なんじ>>ごろ", True),
     ],
 )
 def test_words_sudachi_reads_badly(markup, expected, doubt):
@@ -163,6 +163,7 @@ def test_partly_marked_words_get_the_rest_of_their_reading():
         ("<p>1月1日です。</p>", "<<1日 - ついたち>>"),
         ("<p>何時に着きますか。</p>", "<<何時 - なんじ>>"),
         ("<p>何時でもいい。</p>", "<<何時 - いつ>>"),
+        ("<p>何時から何時までですか。</p>", "<<何時 - なんじ>>から"),
         ("<p>他にもあります。</p>", "<<他 - ほか>>"),
     ],
 )
@@ -235,6 +236,7 @@ def test_readings_sudachi_takes_for_another_word(markup, expected):
         ("<p>一晩泊まった。</p>", "<<一晩 - ひとばん>>"),
         ("<p>現在形を使う。</p>", "<<形 - けい>>を"),
         ("<p>数を数える。</p>", "<<数 - かず>>を"),
+        ("<p>「…」の数（1000円）と言う</p>", "<<数 - かず>>（"),
         ("<p>猫を抱いたら、毛だらけになった。</p>", "<<抱 - だ>>いたら"),
         ("<p>3時頃に着いた。</p>", "<<頃 - ごろ>>"),
         ("<p>十分気をつけてください。</p>", "<<十分 - じゅうぶん>>"),
@@ -242,7 +244,98 @@ def test_readings_sudachi_takes_for_another_word(markup, expected):
         ("<p>上田さんって人</p>", "<<上田 - うえだ>>"),  # a name keeps its reading
         ("<p>何着ていく？</p>", "<<何 - なに>>"),
         ("<p>体の調子がいい。</p>", "<<体 - からだ>>"),
+        ("<p>部屋中フィギュアでいっぱいだ。</p>", "<<部屋 - へや>><<中 - じゅう>>フィギュア"),  # Sudachi: a prefix
+        ("<p>午前中に来る。</p>", "<<午前中 - ごぜんちゅう>>"),
+        ("<p>といった小動物の数も減った。</p>", "<<小動物 - しょうどうぶつ>>の<<数 - かず>>も"),  # 小動 + 物の数
+        ("<p>この前、行ったんだけど</p>", "この<<前 - まえ>>、"),
+        ("<p>宝くじ1億円当たったなんて</p>", "<<当 - あ>>たった"),  # not 当 (あたり) + たった
+        ("<p>だって腹減ってるんだもん。</p>", "<<腹 - はら>><<減 - へ>>って"),
+        ("<p>休館日以外も閉まっている。</p>", "<<休館 - きゅうかん>><<日 - び>>"),
+        ("<p>引っ越し日を決めた。</p>", "<<日 - び>>を"),
+        ("<p>住み難い町だ。</p>", "<<難 - にく>>い"),
+        ("<p>りんご等を買った。1等になった。</p>", "<<等 - など>>を"),
+        ("<p>毎日用品を買う。日用品を買う。</p>", "<<日用品 - にちようひん>>を"),
     ],
 )
 def test_words_sudachi_splits_or_misreads(markup, expected):
     assert expected in marked(markup)
+
+
+@pytest.mark.parametrize(
+    "markup, expected",
+    [
+        ("<p>パスポート は 他 の 所 に</p>", "<<他 - ほか>> の"),  # Minna no Nihongo: spaces between words
+        ("<p>これは 何 と 読みますか。</p>", "<<何 - なん>> と"),
+        ("<p>こちらの 方 が いいです。</p>", "<<方 - ほう>> が"),
+        ("<p>答え：........7時です。</p>", "<<7時 - しちじ>>"),  # dots, not a decimal point
+        ("<p>玉ねぎ（1/4個）</p>", "1/4<<個 - こ>>"),  # a fraction stays out of the counter
+        ("<p>住み 難いですか。</p>", "<<難 - にく>>いですか"),
+        ("<p>覚え 難いし、</p>", "<<難 - にく>>いし"),
+    ],
+)
+def test_spaces_dots_and_fractions_around_words(markup, expected):
+    assert expected in marked(markup)
+
+
+@pytest.mark.parametrize(
+    "markup, expected",
+    [
+        ("<p>右の方です。</p>", "<<方 - ほう>>です"),  # a direction, not a person
+        ("<p>綺麗な方ですね。</p>", "<<方 - かた>>ですね"),
+        ("<p>N2レベル以上の方に限り</p>", "<<方 - かた>>に"),
+        ("<p>一番上の方にある。</p>", "<<方 - ほう>>に"),
+        ("<p>このカレー、辛すぎて食べられない。</p>", "<<辛 - から>>すぎて"),
+        ("<p>毎日残業で、仕事辛くないですか。</p>", "<<辛 - つら>>くない"),
+    ],
+)
+def test_readings_chosen_by_the_words_around(markup, expected):
+    assert expected in marked(markup)
+
+
+@pytest.mark.parametrize(
+    "markup, expected",
+    [
+        ("<p>と改まった形で話す。</p>", "<<形 - かたち>>で"),  # the た of a verb, not the た形
+        ("<p>少ない形</p>", "<<形 - かたち>>"),
+        ("<p>「ます」形を使う。</p>", "<<形 - けい>>を"),
+        ("<p>、ます形を使う。</p>", "<<形 - けい>>を"),
+        ("<p>和、洋、中なんでもある。</p>", "<<中 - ちゅう>>なんでも"),
+        ("<p>小さいトマトなら鉢でもできる。</p>", "<<鉢 - はち>>でも"),  # Sudachi: ばち
+        ("<p>お降りの際は足元にご注意ください。</p>", "お<<降 - お>>りの"),
+        ("<p>机の下でメールを打っている。</p>", "<<下 - した>>で"),
+        ("<p>実ができはじめたら</p>", "<<実 - み>>が"),
+        ("<p>新聞を火の傍に置いたら</p>", "<<傍 - そば>>に"),
+        ("<p>五分咲き、満開</p>", "<<五分 - ごぶ>>"),
+        ("<p>ジョギングなら金もかからないし。</p>", "<<金 - かね>>も"),
+        ("<p>おなかが空いてしょうがない。</p>", "<<空 - す>>いて"),
+        ("<p>テニスコートは空いてますか。</p>", "<<空 - あ>>いて"),
+        ("<p>開かないわけだ、かぎがかかっているよ。</p>", "<<開 - あ>>かない"),
+        ("<p>銀行が開いているうちに</p>", "<<開 - あ>>いている"),
+        ("<p>画像ファイルを開いたとたん</p>", "<<開 - ひら>>いた"),
+        ("<p>会議が開かれた。</p>", "<<開 - ひら>>かれた"),
+    ],
+)
+def test_forms_and_foods(markup, expected):
+    assert expected in marked(markup)
+
+
+def test_a_reading_sudachi_gives_for_a_symbol_is_not_written():
+    proposal = Proposer().propose("<p>禄々なペット</p>")
+    assert not [m for m in proposal.markers if m.text == "々"]
+    assert [m.text for m in proposal.missing] == ["々"]
+
+
+def test_a_name_sudachi_makes_across_a_marker_is_read_in_pieces():
+    assert "<<親 - おや>>に" in marked("<p>あの<<時 - とき>>親に反対されても</p>")  # not the name 時親 (ときちか)
+
+
+def test_a_marker_with_a_typo_waits_for_its_fix():
+    markup = "<p><<山由>>さんと<<話す>></p>"
+    proposal = Proposer().propose_auto(markup, keep=("山由",))
+    assert apply(markup, proposal.markers, proposal.fixes) == "<p><<山由>>さんと<<話 - はな>>す</p>"
+    assert [(m.text, m.why) for m in proposal.missing] == [("山由", "lỗi gõ, chờ sửa")]
+
+
+def test_a_word_cut_short_by_a_typo_is_read_and_questioned():
+    (marker,) = [m for m in Proposer().propose("<p>とっておいたお好、全部食べた。</p>").markers if m.text == "好"]
+    assert marker.reading == "この" and "お好み" in marker.doubt

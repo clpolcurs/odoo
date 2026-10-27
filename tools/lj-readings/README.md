@@ -37,7 +37,9 @@ Mục QA `auto_readings`: dấu như `<<状態>>`, `<<強く>>` không ghi cách
 - số đứng ngoài dấu được gộp vào: `22<<歳>>` → `<<22歳 - にじゅうにさい>>`; một từ chia hai dấu được gộp lại:
   `<<学>><<校>>` → `<<学校 - がっこう>>`;
 - dấu nào không phủ hết được chữ Hán của nó, hoặc nằm trong bản dịch `{{...}}`, thì giữ nguyên và ghi trong báo cáo;
-  dấu không có chữ Hán (chữ Việt, kana) cũng được liệt kê riêng.
+  dấu không có chữ Hán (chữ Việt, kana) cũng được liệt kê riêng;
+- dấu có lỗi gõ (`TYPOS` trong `propose.py`: 山由 thay cho 山田, 尚け thay cho 向け) cũng giữ nguyên, để sửa chữ và
+  ghi cách đọc cùng lúc.
 
 Đề xuất nằm ở `proposals/auto/`. Việc bỏ ngoặc là `fixes`; dấu mới được đặt vào markup sau khi đã làm các `fixes` đó,
 nên `apply.py` dùng được như với đề xuất thường.

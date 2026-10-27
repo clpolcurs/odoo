@@ -27,6 +27,13 @@ SLUGS = {
 }  # fmt: skip
 # items whose markup must be fixed by hand before any reading is added
 BY_HAND = {}  # {item id: why}; #244 (doubled characters) was rewritten by hand on 27/10
+# markers without reading whose text has a typo (山由 for 山田, 尚け for 向け): --auto leaves them until it is fixed
+TYPOS = {
+    630: ("可愛い",), 726: ("喚いて",), 775: ("体", "体めなければ"), 779: ("可愛い",), 780: ("ー定",), 800: ("山由",),
+    807: ("精雨",), 830: ("快な",), 844: ("書かなきや",), 885: ("謙讓語",), 890: ("小彬",), 891: ("見会いする",),
+    893: ("お好",), 894: ("着火部", "放", "固くして"), 923: ("年来", "禄々な"), 945: ("人口",), 946: ("軋い",),
+    956: ("尚け",),
+}  # fmt: skip
 
 
 def file_name(book):
@@ -83,7 +90,7 @@ def main():
                 missing.append(dict(item=item["id"], text="cả bài", why=BY_HAND[item["id"]], context=item["title"]))
                 continue
             markup = item["markup"] or ""
-            proposal = proposer.propose_auto(markup) if auto else proposer.propose(markup)
+            proposal = proposer.propose_auto(markup, TYPOS.get(item["id"], ())) if auto else proposer.propose(markup)
             if auto:
                 for m in RE_MARKER.finditer(markup):
                     if not RE_KANJI.search(m.group(1)) and not RE_READING.match(m.group(1)):
