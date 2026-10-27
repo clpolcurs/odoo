@@ -27,13 +27,9 @@ SLUGS = {
 }  # fmt: skip
 # items whose markup must be fixed by hand before any reading is added
 BY_HAND = {}  # {item id: why}; #244 (doubled characters) was rewritten by hand on 27/10
-# markers without reading whose text has a typo (山由 for 山田, 尚け for 向け): --auto leaves them until it is fixed
-TYPOS = {
-    630: ("可愛い",), 726: ("喚いて",), 775: ("体", "体めなければ"), 779: ("可愛い",), 780: ("ー定",), 800: ("山由",),
-    807: ("精雨",), 830: ("快な",), 844: ("書かなきや",), 885: ("謙讓語",), 890: ("小彬",), 891: ("見会いする",),
-    893: ("お好",), 894: ("着火部", "放", "固くして"), 923: ("年来", "禄々な"), 945: ("人口",), 946: ("軋い",),
-    956: ("尚け",),
-}  # fmt: skip
+# {item id: (marker text, ...)}: markers without reading whose text has a typo (山由 for 山田), left by --auto until it
+# is fixed; the typos approved on 27/10 were fixed by hand together with their readings
+TYPOS = {}
 
 
 def file_name(book):
