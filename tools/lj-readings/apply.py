@@ -5,8 +5,8 @@ usage: python apply.py proposals/<book>.json            check every item against
 
 An item edited after the proposal was made is skipped: run fetch.py and propose.py again for it. Before writing,
 the new markup must show the same text (but for the typos the proposal fixes), have exactly one explicit reading
-more per proposed marker and no new markup problem in /markup/preview. Only run --apply on proposals the content
-owner approved.
+more per proposed marker, no new markup problem in /markup/preview, and come back unchanged through Odoo's HTML
+sanitizer (odoo_html.py). Only run --apply on proposals the content owner approved.
 """
 
 import json
@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 from fetch import client
+from odoo_html import read_back, to_send
 from readings import Fix, Marker, apply, paragraphs
 
 PROBLEMS = ("unbalanced_marker", "empty_marker", "reading_not_kana", "unbalanced_translation")
@@ -33,6 +34,8 @@ def problem_of(old, new, fixed, before, after, count):
     for code in PROBLEMS:
         if sum(i["code"] == code for i in after["issues"]) > sum(i["code"] == code for i in before["issues"]):
             return f"new {code} issue"
+    if read_back(new) != new:
+        return "Odoo's HTML sanitizer would store a different markup"
     return None
 
 
@@ -62,7 +65,7 @@ def main():
         if not write:
             continue
         response = api.patch(
-            f"/comprehensives/{item_id}", json={"markup": new}, headers={"If-Match": f'"{item["version"]}"'}
+            f"/comprehensives/{item_id}", json={"markup": to_send(new)}, headers={"If-Match": f'"{item["version"]}"'}
         )
         if not response.is_success:
             skipped.append(f"#{item_id}: FAILED {response.status_code} {response.text[:200]}")

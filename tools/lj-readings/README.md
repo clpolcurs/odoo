@@ -44,9 +44,13 @@ uv run pytest -q
   trống `LJ_API_KEY`).
 - Mỗi file đề xuất gắn với phiên bản của từng bài. Bài nào bị sửa sau khi đề xuất thì `apply.py` bỏ qua; khi đó chạy
   lại `fetch.py` và `propose.py`.
-- `apply.py` chỉ ghi một bài khi đủ ba điều kiện:
+- `apply.py` chỉ ghi một bài khi đủ bốn điều kiện:
   - chữ hiển thị không đổi, trừ các chỗ gõ nhầm trong `fixes`;
   - số cách đọc ghi rõ tăng đúng bằng số dấu đề xuất;
-  - `/markup/preview` không báo lỗi markup mới.
+  - `/markup/preview` không báo lỗi markup mới;
+  - markup đi qua bộ lọc HTML của Odoo (`html_sanitize` trong `odoo/tools/mail.py` của repo, xem `odoo_html.py`)
+    mà đọc lại vẫn y nguyên.
+- Markup được gửi với `<<` đã escape thành `&lt;&lt;`, giống cách trình soạn thảo Odoo lưu. Nếu gửi nguyên, bộ lọc
+  đọc `<<kỳ nghỉ hè>>` thành thẻ `<kỳ>` và xoá mất chữ.
 - `propose.py` bỏ qua các bài trong `BY_HAND`, là những bài phải sửa markup bằng tay trước.
 - `data/` và các file `*_report.json` không được commit.
