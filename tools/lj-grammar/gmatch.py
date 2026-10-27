@@ -2,12 +2,14 @@
 
 Pattern notation (one string per pattern, as stored in Odoo grammar_patterns):
   - Japanese in dictionary form: ことにする, わけだ, にすぎない. The last conjugable word of the pattern also
-    matches its conjugated forms (ことにした, わけです, にすぎません).
+    matches its conjugated forms (ことにした, わけです, にすぎません); ない also matches ありません
+    (わけではありません), and a verb suffix does not match its noun form (ぶる does not match 10年ぶり).
   - "…" is a gap of up to 12 characters inside the sentence: さえ…ば, やら…やら; each piece around a gap
     must be whole words.
   - A kanji may carry a reading in brackets, checked against Sudachi: 上[じょう] (not 上[うえ]).
-  - A pattern may start with what must come right before it: N (noun), Vる (dictionary form), Vた, Vて,
-    Vます (masu stem), Vない, Aい, Aな. Example: Vるあまり matches 気にするあまり but not あまり～ない.
+  - A pattern may start with what must come right before it: N (noun), Vる (dictionary form; not いう of
+    という, so Vることだ does not match ということだ), Vた (also 泳いだ), Vて, Vます (masu stem), Vない,
+    Aい (also 出やすい), Aな. Example: Vるあまり matches 気にするあまり but not あまり～ない.
 Matching runs on the surface text; a match must start at a Sudachi word boundary (so まい does not match
 しまい), except right after a volitional verb (伝えよう + とする), and a pattern that does not end with a
 conjugating word must also end at one (so ことか does not match ことから).
@@ -85,6 +87,43 @@ def examples(markup):
     return found
 
 
+RE_NUMBERED = re.compile(r"^[0-9０-９]+(?:\s*[.．]|\s)")
+RE_SPEAKER = re.compile(r"^([A-ZＡ-Ｚ]|[^\s:：]{1,4})\s*[:：]")
+RE_LATIN = re.compile(r"[A-Za-zÀ-ỹ]")
+EXERCISE = "やってみよう"
+
+
+def unmarked_examples(markup):
+    """Examples of books that bold nothing: numbered lines and dialogues (A: / B: lines, one example each),
+    each whole. Exercises (from やってみよう to the next explanation or heading) hold wrong sentences on purpose,
+    so they are left out."""
+    found, dialogue, exercise = [], [], False
+
+    def close_dialogue():
+        if dialogue:
+            text = "\n".join(dialogue)
+            found.append((text, [(0, len(text))]))
+            dialogue.clear()
+
+    for text, _ in blocks(markup):
+        line = text.strip()
+        speaker = RE_SPEAKER.match(line)
+        if EXERCISE in line or not (RE_NUMBERED.match(line) or speaker):
+            close_dialogue()
+            exercise = EXERCISE in line
+            continue
+        if exercise or len(RE_LATIN.findall(line)) > len(RE_JAPANESE.findall(line)):  # Vietnamese
+            continue
+        if not speaker or (dialogue and RE_SPEAKER.match(dialogue[0]).group(1) == speaker.group(1)):
+            close_dialogue()
+        if speaker:
+            dialogue.append(line)
+        else:
+            found.append((line, [(0, len(line))]))
+    close_dialogue()
+    return found
+
+
 # ---------- pattern compiler ----------
 
 KANA_ROWS = {
@@ -99,7 +138,7 @@ KANA_ROWS = {
     "る": "らりるれろっ",
 }
 DA = "(?:だ|です|でし|でしょ|じゃ|である|だっ|だろ|な)"
-NAI = "(?:な(?:い|く|かっ|けれ|さ|し)|ませ|ず|ぬ)"
+NAI = "(?:な(?:い|く|かっ|けれ|さ|し)|ませ|ありませ|ございませ|ず|ぬ)"  # ではない -> ではありません
 ADJ_I = "(?:い|く|かっ|けれ|さ|そ|き)"
 
 
@@ -135,7 +174,10 @@ def _stem_regex(token, previous=None):
     if ctype.startswith("五段"):
         last = surface[-1]
         if last in KANA_ROWS:
-            return re.escape(surface[:-1]) + "[" + KANA_ROWS[last] + "]"
+            row = KANA_ROWS[last]
+            if pos[0] == "接尾辞":  # the i-form of a verb suffix is a noun: 10年ぶり is not ぶる
+                row = row[0] + row[2:]
+            return re.escape(surface[:-1]) + "[" + row + "]"
     return re.escape(surface)
 
 
@@ -160,19 +202,20 @@ def _left_ok(kind, token):
     pos, form, lemma = token.part_of_speech(), token.part_of_speech()[5], token.dictionary_form()
     if kind == "N":
         return pos[0] in ("名詞", "代名詞") or (pos[0] == "接尾辞" and pos[1].startswith("名詞"))
-    if kind == "Vる":
+    if kind == "Vる":  # not いう of という, そういう: ということだ is hearsay, not Vることだ
         verbish = pos[0] == "動詞" or (pos[0] == "助動詞" and lemma in ("れる", "られる", "せる", "させる"))
-        return verbish and form.startswith(("終止形", "連体形"))
-    if kind == "Vた":
-        return pos[0] == "助動詞" and lemma == "た"
+        return verbish and form.startswith(("終止形", "連体形")) and token.surface() != "いう"
+    if kind == "Vた":  # た, and だ of 泳いだ (its lemma is だ)
+        return pos[0] == "助動詞" and pos[4] == "助動詞-タ"
     if kind == "Vて":
         return pos[0] == "助詞" and token.surface() in ("て", "で")
     if kind == "Vます":
         return pos[0] == "動詞" and form.startswith("連用形")
     if kind == "Vない":  # ない is an auxiliary after a verb, an adjective in ことがない
         return pos[0] in ("助動詞", "形容詞") and lemma in ("ない", "無い", "ず", "ぬ")
-    if kind == "Aい":
-        return pos[0] == "形容詞" and form.startswith(("終止形", "連体形"))
+    if kind == "Aい":  # also 出やすい, 分かりにくい: やすい and にくい are adjective suffixes
+        adjective = pos[0] == "形容詞" or (pos[0] == "接尾辞" and pos[1] == "形容詞的")
+        return adjective and form.startswith(("終止形", "連体形"))
     if kind == "Aな":  # 残念な + ことに: the word before is な (attributive だ) or the adjective itself
         return pos[0] == "形状詞" or (token.surface() == "な" and lemma == "だ")
     return True

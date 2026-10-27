@@ -4,6 +4,8 @@ usage: python evaluate.py proposals/<file>.json [--show-noise N]   (after fetch.
 A proposals file maps item ids to patterns: {"2393": ["Vることだ", "Vないことだ"], ...}.
 Writes <file>_report.json next to it and prints one line per point: patterns, examples matched / examples,
 corpus sentences matched, missed examples (MISSED) and examples won by another point's longer match (SHADOWED).
+Examples are the bold spans of the point's sentences; for books that bold nothing, its numbered lines and
+dialogues, each whole (marked "no bold").
 """
 
 import json
@@ -11,7 +13,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from gmatch import Analysed, compile_all, examples, resolve
+from gmatch import Analysed, compile_all, examples, resolve, unmarked_examples
 
 DATA = Path(__file__).parent / "data"
 
@@ -43,14 +45,16 @@ def evaluate(proposals, corpus, show_noise=0):
     rows = []
     for pid, patterns in proposals.items():
         item = items[pid]
-        exs = [(Analysed(text), spans) for text, spans in examples(item["markup"])]
+        bold = examples(item["markup"])
+        exs = [(Analysed(text), spans) for text, spans in bold or unmarked_examples(item["markup"])]
         missed, shadowed = [], []
         for sentence, spans in exs:
             found = all_matches(sentence)
             own = [f for f in found if f[0] == pid]
             if not _hits(own, spans):
-                bold = "".join(sentence.text[s:e] for s, e in spans)
-                missed.append(bold + " ⟨" + sentence.text.strip()[:40] + "⟩")
+                shown = sentence.text.strip().replace("\n", " ")
+                marked = "".join(sentence.text[s:e] for s, e in spans)
+                missed.append(f"{marked} ⟨{shown[:40]}⟩" if bold else shown[:50])
             elif not _hits([f for f in resolve(found) if f[0] == pid], spans):
                 winners = {f[0] for f in resolve(found) if f[0] != pid}
                 shadowed.append(sentence.text.strip()[:30] + " → #" + ",#".join(sorted(winners)))
@@ -60,6 +64,7 @@ def evaluate(proposals, corpus, show_noise=0):
                 "title": item["title"].replace("\n", " ⏎ "),
                 "patterns": patterns,
                 "examples": len(exs),
+                "bold": bool(bold),
                 "recall": len(exs) - len(missed),
                 "missed": missed,
                 "shadowed": shadowed,
@@ -79,9 +84,10 @@ def main():
     low = [r for r in rows if r["examples"] and r["recall"] < r["examples"]]
     matched, total = sum(r["recall"] for r in rows), sum(r["examples"] for r in rows)
     without = sum(1 for r in rows if not r["examples"])
+    unmarked = sum(1 for r in rows if r["examples"] and not r["bold"])
     print(
         f"{len(rows)} points; examples matched {matched}/{total}; {len(low)} points miss some examples; "
-        f"{without} points have no bold examples"
+        f"{without} points have no examples; {unmarked} use numbered lines (no bold)"
     )
     for r in rows:
         flag = ""
@@ -91,6 +97,8 @@ def main():
             flag += "  SHADOWED: " + " | ".join(r["shadowed"][:2])
         hits = ", ".join(f"{p}={n}" for p, n in r["corpus"].items())
         patterns, score = " ; ".join(r["patterns"]), f"{r['recall']}/{r['examples']}"
+        if not r["bold"]:
+            score += " no bold"
         print(f"#{r['id']} {r['title'][:38]} :: {patterns} :: {score} :: corpus {hits or 0}{flag}")
         for p, s in r["samples"].items():
             for sample in s:
