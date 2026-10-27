@@ -86,6 +86,11 @@ class LearningJapaneseApiV1(http.Controller):
         )
         return json_response(item, version=item["version"])
 
+    @http.route(f"{PREFIX}/attachments/<int:attachment_id>", methods=["GET"], **READ)
+    @endpoint()
+    def get_attachment(self, attachment_id):
+        return content.image_stream(request.env, attachment_id).get_response()
+
     @http.route(f"{PREFIX}/comprehensives/<int:item_id>/grammar-overrides", methods=["GET"], **READ)
     @endpoint()
     def get_grammar_overrides(self, item_id):

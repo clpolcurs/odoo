@@ -3,12 +3,13 @@
 import base64
 import binascii
 import os
+import re
 from datetime import datetime, timezone
 from urllib.parse import unquote
 
 import psycopg2
 
-from odoo.fields import Command
+from odoo.fields import Command, Domain
 
 from . import markup as markup_lib
 from . import serializers
@@ -431,6 +432,30 @@ def put_audio(env, item_id, data, content_type, filename, if_match):
     after = get_comprehensive(env, item_id)
     audit(env, "comprehensive", item.id, "audio", {"audio": before["audio"]}, {"audio": after["audio"]})
     return after
+
+
+def image_stream(env, attachment_id):
+    """An image that the markup of an item shows; the API serves no other attachment."""
+    attachment = env["ir.attachment"].sudo().browse(attachment_id).exists()
+    if (not attachment or attachment.type != "binary" or not (attachment.mimetype or "").startswith("image/")
+            or not _shown_by_an_item(env, attachment.id)):
+        raise ApiError(404, "not-found", f"No item shows an image {attachment_id}.")
+    return env["ir.binary"]._get_stream_from(attachment)
+
+
+def _shown_by_an_item(env, attachment_id):
+    """Whether the markup or ruby HTML of an item the user can read points at the attachment.
+
+    The editor writes images as <img src="/web/image/51-96bf0341/a.png?access_token=…" data-attachment-id="51">:
+    ilike finds the candidates, the pattern rules out ids that only start the same (51 in 512).
+    """
+    needles = (f"/web/image/{attachment_id}", f'data-attachment-id="{attachment_id}"')
+    domain = Domain.OR([(field, "ilike", needle)] for field in ("backup_text", "content") for needle in needles)
+    pattern = re.compile(rf'/web/image/{attachment_id}(?!\d)|data-attachment-id="{attachment_id}"')
+    return any(
+        pattern.search(str(item.backup_text or "")) or pattern.search(str(item.content or ""))
+        for item in env[COMPREHENSIVE].search(domain, limit=50)
+    )
 
 
 def get_overrides(env, item_id):

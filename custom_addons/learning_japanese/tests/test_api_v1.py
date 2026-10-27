@@ -219,6 +219,36 @@ class TestApiV1(HttpCase, LearningJapaneseDataCase):
         self.assertEqual(part.status_code, 206)
         self.assertEqual(part.content, sound[:4])
 
+    def test_images_shown_by_items(self):
+        png = b"\x89PNG\r\n\x1a\n" + bytes(range(256))
+        Attachment = self.env["ir.attachment"]
+        shown = Attachment.create({"name": "a.png", "raw": png, "mimetype": "image/png",
+                                   "res_model": "learning_japanese.comprehensive", "res_id": self.reading.id})
+        tagged = Attachment.create({"name": "b.png", "raw": png[:-1], "mimetype": "image/png"})
+        hidden = Attachment.create({"name": "c.png", "raw": png, "mimetype": "image/png"})
+        pdf = Attachment.create({"name": "d.pdf", "raw": b"%PDF-1.4", "mimetype": "application/pdf"})
+        path = f"/comprehensives/{self.reading.id}"
+        item = self.ok("GET", path)
+        markup = (
+            f'<p><img src="/web/image/{shown.id}-{shown.checksum[:8]}/a.png?access_token=7b3b" alt=""></p>'
+            f'<p><img src="/web/image/{hidden.id}5-0a1b2c3d/x.png"><img data-attachment-id="{tagged.id}" src="b.png"></p>'
+            f'<p><img src="/web/image/{pdf.id}"></p>'
+        ) + item["markup"]
+        self.ok("PATCH", path, json={"markup": markup}, headers={"If-Match": f'"{item["version"]}"'})
+
+        image = self.call("GET", f"/attachments/{shown.id}", key=self.reader_key)
+        self.assertEqual(image.status_code, 200, image.text)
+        self.assertEqual(image.content, png)
+        self.assertEqual(image.headers["Content-Type"], "image/png")
+        self.assertEqual(image.headers["ETag"].strip('"'), hashlib.sha1(png).hexdigest())
+        again = self.call("GET", f"/attachments/{shown.id}", key=self.reader_key,
+                          headers={"If-None-Match": image.headers["ETag"]})
+        self.assertEqual(again.status_code, 304)
+        self.assertEqual(self.call("GET", f"/attachments/{tagged.id}", key=self.reader_key).content, png[:-1])
+        for attachment_id in (hidden.id, pdf.id, 10**9):
+            self.problem("GET", f"/attachments/{attachment_id}", 404, "not-found", key=self.reader_key)
+        self.problem("GET", f"/attachments/{shown.id}", 403, "forbidden", key=self.outsider_key)
+
     def test_grammar_overrides(self):
         path = f"/comprehensives/{self.reading.id}/grammar-overrides"
         saved = self.ok("PUT", path, json={"items": [{"grammar_id": self.grammar.id, "action": "pin", "note": "とした"}]})

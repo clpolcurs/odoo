@@ -376,6 +376,27 @@ paths:
         '404': {$ref: '#/components/responses/NotFound'}
         '412': {$ref: '#/components/responses/PreconditionFailed'}
         '422': {$ref: '#/components/responses/Unprocessable'}
+  /attachments/{id}:
+    get:
+      tags: [comprehensives]
+      operationId: getAttachment
+      description: |
+        An image shown by the markup of an item, for clients that keep a copy of the images of the content. The editor
+        writes images as `<img src="/web/image/51-96bf0341/a.png?access_token=…" data-attachment-id="51">`; `51` is the
+        id here. No other attachment is served. Supports `Range` and conditional requests; the ETag is the SHA-1 of the
+        file.
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: The image
+          headers: {ETag: {$ref: '#/components/headers/ETag'}}
+          content:
+            image/*:
+              schema: {type: string, contentMediaType: application/octet-stream}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
 
   /vocabularies:
     get:
