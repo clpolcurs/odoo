@@ -55,3 +55,15 @@ uv run pytest -q
 - Mỗi file trong `proposals/` là một giáo trình, dạng `{"<id điểm ngữ pháp>": ["mẫu", ...]}`. Bảng duyệt nằm trong
   tài liệu "NihonGo — Mẫu khớp ngữ pháp"; sửa mẫu ở đó, rồi cập nhật file và chạy lại `evaluate.py`.
 - `data/` (nội dung tải về) và `*_report.json` không được commit.
+
+## Đối chiếu với NihonGo
+
+Module `annotation` của NihonGo chạy bản Java của `gmatch.py`. Sửa bộ khớp hay đổi phiên bản Sudachi/SudachiDict thì
+sinh lại kết quả tham chiếu rồi chạy `GrammarParityTests` bên NihonGo (hai bên phải ra đúng các vị trí giống nhau):
+
+```bash
+uv run python fetch.py
+uv run python parity.py ../../../nihongo/services/api/src/test/resources/grammar/parity.json.gz
+```
+
+File nén không ghi thời gian, nên dữ liệu và bộ khớp không đổi thì file cũng không đổi.
