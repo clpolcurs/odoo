@@ -60,6 +60,11 @@ thay vì nằm trong `{{...}}`, nên tab Nội dung của Odoo vẫn hiện nó 
   kế tiếp (không áp cho hai ô bảng hay hai mục danh sách khác nhau) → `日本語の文。<br>{{Câu tiếng Việt.}}`.
 - Câu giải thích bằng tiếng Việt có xen thuật ngữ Nhật (`できます biểu thị năng lực…`) không phải bản dịch: nó không
   đứng sau một câu tiếng Nhật chưa có bản dịch. Mỗi câu tiếng Nhật nhận nhiều nhất một bản dịch.
+- Câu giải thích một mẫu ngữ pháp cũng không phải bản dịch: viết tiếp bằng chữ thường sau thuật ngữ trong ngoặc
+  (`「しか」 được dùng sau danh từ…`), hoặc đứng sau một mẫu riêng một dòng (`〜ために`, `Vます がたい`) và nói cách
+  dùng (`Dùng khi…`, `Đây là…`). Câu nói nghĩa của mẫu vẫn là bản dịch (`〜はずがない` → `Tuyệt đối không ~`).
+- Ký tự zero-width (U+200B…) mà trình soạn thảo để lại không tính là chữ; dòng tiếng Việt có thể mở đầu bằng dấu
+  đầu dòng `・`, `*` hay ngoặc `[` như dòng tiếng Nhật nó dịch.
 - Không đổi chữ nào; bản dịch bị một thẻ định dạng (đậm, màu…) cắt ngang thì để người sửa tay (`doubts` trong báo
   cáo).
 
@@ -70,9 +75,14 @@ uv run python apply_translations.py proposals/translations/158-minna-1.json  # k
 uv run python apply_translations.py proposals/translations/158-minna-1.json --apply  # chỉ sau khi đã duyệt
 ```
 
-`apply_translations.py` chỉ ghi một bài khi markup mới chỉ khác markup cũ ở các dấu ngoặc, `/markup/preview` đếm thêm
-đúng số bản dịch (và bớt đúng số `untagged_translations` khi Odoo đã có mục QA này), không có lỗi markup mới, và bộ lọc
-HTML của Odoo giữ nguyên markup.
+`propose_translations.py` cũng đề xuất gỡ `{{` `}}` khỏi những câu giải thích đã bị bọc (`unwraps` trong file đề
+xuất): luật trước 28/10/2026 chưa phân biệt câu giải thích và đã bọc 24 câu như vậy, làm chúng biến mất khỏi tab Nội
+dung của Odoo.
+
+`apply_translations.py` chỉ ghi một bài khi markup mới chỉ khác markup cũ ở các dấu ngoặc thêm vào hay gỡ ra,
+`/markup/preview` đếm thêm (bớt) đúng số bản dịch (và bớt đúng số `untagged_translations` khi Odoo đã có mục QA này),
+không có lỗi markup mới, và bộ lọc HTML của Odoo giữ nguyên markup. Odoo phải chạy cùng luật với công cụ: sau khi
+đổi `translations.py`, deploy addon trước rồi mới ghi, không thì mọi bài bị bỏ qua vì số `untagged_translations`.
 
 ## Quy trình
 

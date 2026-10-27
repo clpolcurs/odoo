@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from apply_translations import problem_of
-from translations import apply, find
+from translations import Unwrap, apply, explanations, find
 
 ADDON = Path(__file__).resolve().parents[2] / "custom_addons" / "learning_japanese" / "services" / "translations.py"
 _spec = importlib.util.spec_from_file_location("addon_translations", ADDON)
@@ -44,6 +44,26 @@ CASES = [
         "<p>雪がたくさん降りました。Tuyết đã rơi nhiều.<br>Trường hợp động từ</p>",
         "<p>雪がたくさん降りました。{{Tuyết đã rơi nhiều.}}<br>Trường hợp động từ</p>",
     ),
+    # the editor leaves zero-width spaces between sentences
+    ("<p>そうですか。\u200b\u200bVậy à, thế thì tốt.</p>", "<p>そうですか。\u200b\u200b{{Vậy à, thế thì tốt.}}</p>"),
+    ("<p>雪が降った。<br>\u200bTuyết đã rơi rồi.</p>", "<p>雪が降った。<br>\u200b{{Tuyết đã rơi rồi.}}</p>"),
+    (
+        "<p>・明日雨が降ったら、お祭りがありません。<br>・Nếu ngày mai trời mưa, sẽ không có lễ hội.</p>",
+        "<p>・明日雨が降ったら、お祭りがありません。<br>{{・Nếu ngày mai trời mưa, sẽ không có lễ hội.}}</p>",
+    ),
+    (
+        "<p>* 変化を表す動詞が使われる。<br>* Động từ mô tả sự thay đổi cũng được sử dụng.</p>",
+        "<p>* 変化を表す動詞が使われる。<br>{{* Động từ mô tả sự thay đổi cũng được sử dụng.}}</p>",
+    ),
+    (
+        "<p>【相談】朝起きられません。<br>[Tư vấn] Tôi không thể thức dậy vào buổi sáng.</p>",
+        "<p>【相談】朝起きられません。<br>{{[Tư vấn] Tôi không thể thức dậy vào buổi sáng.}}</p>",
+    ),
+    # what a term means is its translation
+    (
+        "<p>〜はずがない<br>Tuyệt đối không ~ / Làm gì có chuyện ~</p>",
+        "<p>〜はずがない<br>{{Tuyệt đối không ~ / Làm gì có chuyện ~}}</p>",
+    ),
 ]
 
 LEFT_ALONE = [
@@ -54,6 +74,11 @@ LEFT_ALONE = [
     "<table><tr><td>日本語です。</td><td>Đây là tiếng Nhật.</td></tr></table>",
     "<ul><li>学校へ行きます。</li><li>Tôi đi đến trường.</li></ul>",
     "<pre>コードです。Đây là mã nguồn.</pre>",
+    # how a term is used is an explanation
+    "<p>「しか」 được dùng sau danh từ, lượng từ.</p>",
+    "<p>～ため（に）<br>sử dụng khi nói rằng “~” là nguyên nhân.</p>",
+    "<p>( 4 ) お／ご～ ください<br>Đây là hình thức tôn kính của câu nhờ vả.</p>",
+    "<p>Vます がたい<br>Chủ yếu dùng với động từ chỉ ý chí.</p>",
 ]
 
 
@@ -68,6 +93,17 @@ def test_braces_go_around_the_translation_only(markup, expected):
 def test_explanations_and_translated_lines_are_left_alone(markup):
     found = find(markup)
     assert found.wraps == [] and found.doubts == []
+
+
+def test_braces_come_off_the_explanations_they_hold():
+    markup = "<p>「しか」 {{được dùng sau danh từ, lượng từ.}}</p><p>雨だ。{{Trời mưa rồi đấy.}}</p>"
+    unwraps = explanations(markup)
+    assert unwraps == [Unwrap(8, 44, "được dùng sau danh từ, lượng từ.", "「しか」")]
+    assert (
+        apply(markup, [], unwraps)
+        == "<p>「しか」 được dùng sau danh từ, lượng từ.</p><p>雨だ。{{Trời mưa rồi đấy.}}</p>"
+    )
+    assert explanations("<p>〜はずがない<br>{{Tuyệt đối không ~ / Làm gì có chuyện ~}}</p>") == []
 
 
 def test_formatting_that_cuts_a_translation_is_left_to_a_person():
@@ -110,3 +146,11 @@ def test_only_the_expected_change_is_written():
         "new unbalanced_translation issue"
     )
     assert problem_of(old, new.replace("mưa", "nắng"), preview(0), preview(1), 1) == "more than braces would change"
+
+
+def test_only_the_braces_of_the_explanations_come_off():
+    old = "<p>「しか」 {{được dùng sau danh từ, lượng từ.}}</p>"
+    new = apply(old, [], explanations(old))
+    assert problem_of(old, new, preview(1, 0), preview(0, 0), 0, 1) is None
+    # an Odoo whose QA still reads the explanation as a translation
+    assert problem_of(old, new, preview(1, 0), preview(0, 1), 0, 1) == "-1 untagged translations less instead of 0"

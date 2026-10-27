@@ -37,6 +37,26 @@ class TestUntaggedTranslations(BaseCase):
             with self.subTest(source=source):
                 self.assertEqual(untagged(source), [])
 
+    def test_zero_width_spaces_bullets_and_brackets_hide_no_translation(self):
+        self.assertEqual(untagged("<p>そうですか。\u200b\u200bVậy à, thế thì tốt.</p>"), ["Vậy à, thế thì tốt."])
+        self.assertEqual(untagged("<p>雪が降った。<br>&#8203;Tuyết đã rơi rồi.</p>"), ["Tuyết đã rơi rồi."])
+        self.assertEqual(untagged("<p>・明日雨が降ったら、お祭りがありません。<br>・Nếu ngày mai trời mưa, sẽ không có lễ hội.</p>"),
+                         ["・Nếu ngày mai trời mưa, sẽ không có lễ hội."])
+        self.assertEqual(untagged("<p>【相談】朝起きられません。<br>[Tư vấn] Tôi không thể thức dậy vào buổi sáng.</p>"),
+                         ["[Tư vấn] Tôi không thể thức dậy vào buổi sáng."])
+
+    def test_what_a_term_means_is_a_translation_how_it_is_used_is_not(self):
+        self.assertEqual(untagged("<p>〜はずがない<br>Tuyệt đối không ~ / Làm gì có chuyện ~</p>"),
+                         ["Tuyệt đối không ~ / Làm gì có chuyện ~"])
+        for source in (
+            "<p>「しか」 được dùng sau danh từ, lượng từ.</p>",
+            "<p>～ため（に）<br>sử dụng khi nói rằng “~” là nguyên nhân.</p>",
+            "<p>( 4 ) お／ご～ ください<br>Đây là hình thức tôn kính của câu nhờ vả.</p>",
+            "<p>Vます がたい<br>Chủ yếu dùng với động từ chỉ ý chí.</p>",
+        ):
+            with self.subTest(source=source):
+                self.assertEqual(untagged(source), [])
+
     def test_a_sentence_has_one_translation(self):
         self.assertEqual(untagged("<p>雪がたくさん降りました。Tuyết đã rơi nhiều.<br>Trường hợp động từ</p>"),
                          ["Tuyết đã rơi nhiều."])
