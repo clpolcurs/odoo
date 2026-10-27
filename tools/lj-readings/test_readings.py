@@ -179,3 +179,23 @@ def test_a_long_vowel_typed_as_the_kanji_one_is_fixed_not_read():
         assert [f.replacement for f in proposal.fixes] == ["ー"]
         assert apply(markup, proposal.markers, proposal.fixes) == fixed
     assert not Proposer().propose("<p>もう一つ</p>").fixes
+
+
+def test_markers_without_reading_are_marked_again_in_the_house_style():
+    for markup, expected in (
+        (
+            "<p><<強く>><<握手した>>。<<3日>>に<<kỳ nghỉ hè>>、<<人 - ひと>></p>",
+            "<p><<強 - つよ>>く<<握手 - あくしゅ>>した。<<3日 - みっか>>に<<kỳ nghỉ hè>>、<<人 - ひと>></p>",
+        ),
+        ("<p>22<<歳>>になりました。</p>", "<p><<22歳 - にじゅうにさい>>になりました。</p>"),  # the number joins
+        ("<p><<学>><<校>>へ<<行 - い>>く</p>", "<p><<学校 - がっこう>>へ<<行 - い>>く</p>"),  # one word, two markers
+    ):
+        proposal = Proposer().propose_auto(markup)
+        assert apply(markup, proposal.markers, proposal.fixes) == expected
+        assert not proposal.missing
+
+
+def test_a_marker_without_reading_in_a_translation_is_kept():
+    proposal = Proposer().propose_auto("<p>{{<<日本>>}}</p>")
+    assert not proposal.markers and not proposal.fixes
+    assert [m.why for m in proposal.missing] == ["nằm trong bản dịch hoặc khối code"]

@@ -28,6 +28,20 @@ Odoo `learning_japanese`. Đây là mục QA `kanji_without_reading`: chữ Hán
   - 今 đứng trước danh từ;
   - chữ mà nội dung đang ghi cách đọc khác.
 
+## Dấu không ghi cách đọc (`--auto`)
+
+Mục QA `auto_readings`: dấu như `<<状態>>`, `<<強く>>` không ghi cách đọc, nên Odoo để pykakasi đoán furigana.
+`propose.py --auto` bỏ ngoặc của các dấu đó rồi đề xuất lại như với chữ Hán chưa có dấu, theo cùng các quy tắc:
+
+- `<<強く>>` → `<<強 - つよ>>く`, `<<取り入れる>>` → `<<取 - と>>り<<入 - い>>れる`;
+- số đứng ngoài dấu được gộp vào: `22<<歳>>` → `<<22歳 - にじゅうにさい>>`; một từ chia hai dấu được gộp lại:
+  `<<学>><<校>>` → `<<学校 - がっこう>>`;
+- dấu nào không phủ hết được chữ Hán của nó, hoặc nằm trong bản dịch `{{...}}`, thì giữ nguyên và ghi trong báo cáo;
+  dấu không có chữ Hán (chữ Việt, kana) cũng được liệt kê riêng.
+
+Đề xuất nằm ở `proposals/auto/`. Việc bỏ ngoặc là `fixes`; dấu mới được đặt vào markup sau khi đã làm các `fixes` đó,
+nên `apply.py` dùng được như với đề xuất thường.
+
 ## Quy trình
 
 ```bash
@@ -35,6 +49,7 @@ cd tools/lj-readings
 uv sync                                                    # Python ≥ 3.11, sudachipy, SudachiDict core
 uv run python fetch.py                                     # tải bài đã xuất bản (Reading, Listening, Grammar) vào data/
 uv run python propose.py                                   # proposals/<sách>.json và <sách>_report.json cho mọi sách
+uv run python propose.py --auto 158                        # proposals/auto/: dấu không ghi cách đọc
 uv run python apply.py proposals/158-minna-1.json          # kiểm tra với Odoo, không ghi
 uv run python apply.py proposals/158-minna-1.json --apply  # chỉ chạy sau khi đã duyệt
 uv run pytest -q

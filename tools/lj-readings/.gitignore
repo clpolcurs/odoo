@@ -6,3 +6,4 @@ __pycache__/
 data/
 proposals/*_report.json
 proposals/*_review.md
+proposals/auto/*_report.json

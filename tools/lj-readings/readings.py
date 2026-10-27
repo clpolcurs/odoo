@@ -279,7 +279,8 @@ class Missing:
 
 
 class Fix:
-    """A typo in the text itself, replaced instead of read: 一 typed for the long vowel ー (助けて一, ノ一残業)."""
+    """An edit of the text itself: a typo replaced instead of read (一 typed for the long vowel ー: 助けて一, ノ一残業),
+    or the brackets of a marker without reading that new markers replace (why == BRACKETS)."""
 
     def __init__(self, start, end, text, replacement, why, context=""):
         self.start, self.end, self.text, self.replacement = start, end, text, replacement
@@ -291,6 +292,14 @@ class Proposal:
     markers: list = field(default_factory=list)
     missing: list = field(default_factory=list)
     fixes: list = field(default_factory=list)
+    replaced: list = field(default_factory=list)  # (start, end, text): markers without reading propose_auto replaces
+
+
+BRACKETS = "ngoặc của dấu không ghi cách đọc"
+
+
+def _around(markup, match, width=40):
+    return re.sub(r"\s+", " ", RE_TAG.sub("", markup[max(0, match.start() - width) : match.end() + width]))
 
 
 NAN_BEFORE = ("で", "だ", "です", "の", "と", "て", "ど", "なら", "じゃ")
@@ -365,6 +374,46 @@ class Proposer:
         out = Proposal()
         for paragraph in paragraphs(markup):
             self._paragraph(paragraph, out)
+        return out
+
+    def propose_auto(self, markup):
+        """Readings for the markers written without one (<<状態>>, <<強く>>, 22<<歳>>): their brackets go (fixes) and
+        their kanji are read in context like unmarked ones, in the house style: <<強 - つよ>>く,
+        <<22歳 - にじゅうにさい>>. The new markers are placed in the markup the fixes leave; out.replaced has where
+        the old markers' words are in it, out.missing the markers kept: a new marker would not cover all of their
+        kanji, or they lie in a translation or a code block."""
+        excluded = [m.span() for m in RE_EXCLUDED.finditer(markup)]
+        out, candidates = Proposal(), []
+        for m in RE_MARKER.finditer(markup):
+            if RE_KANJI.search(m.group(1)) and not RE_READING.match(m.group(1)):
+                if any(a <= m.start() < b for a, b in excluded):
+                    out.missing.append(Missing(m.group(1), "nằm trong bản dịch hoặc khối code", _around(markup, m)))
+                else:
+                    candidates.append(m)
+        while True:  # a marker that cannot be replaced keeps its brackets, which moves what follows: propose again
+            stripped, spans = markup, []
+            for m in candidates:
+                start = m.start() - 4 * len(spans)
+                stripped = stripped[:start] + m.group(1) + stripped[start + len(m.group(0)) :]
+                spans.append((start, start + len(m.group(1))))
+            found = self.propose(stripped).markers
+            kept = []
+            for i, (start, end) in enumerate(spans):
+                covered = {j for k in found if k.start < end and k.end > start for j in range(k.start, k.end)}
+                if any(RE_KANJI.match(stripped[j]) and j not in covered for j in range(start, end)):
+                    kept.append(i)
+            if not kept:
+                break
+            out.missing += [Missing(candidates[i].group(1), "không tách được cách đọc", _around(markup, candidates[i]))
+                            for i in kept]  # fmt: skip
+            candidates = [m for i, m in enumerate(candidates) if i not in kept]
+        out.markers = [k for k in found if any(k.start < end and k.end > start for start, end in spans)]
+        out.replaced = [(start, end, m.group(1)) for (start, end), m in zip(spans, candidates, strict=True)]
+        for m in candidates:
+            out.fixes += [
+                Fix(m.start(), m.start() + 2, "<<", "", BRACKETS),
+                Fix(m.end() - 2, m.end(), ">>", "", BRACKETS),
+            ]
         return out
 
     @staticmethod
@@ -597,12 +646,14 @@ class Proposer:
 
 
 def apply(markup, markers, fixes=()):
-    """The markup with the markers inserted and the typos fixed (none of them may overlap)."""
-    edits = [(m.start, m.end, m.text, f"<<{m.text} - {m.reading}>>") for m in markers]
-    edits += [(f.start, f.end, f.text, f.replacement) for f in fixes]
-    for start, end, text, new in sorted(edits, reverse=True):
-        assert markup[start:end] == text, (start, text, markup[start:end])
-        markup = markup[:start] + new + markup[end:]
+    """The markup with the fixes made (typos, brackets taken away), then the markers inserted where the fixes leave
+    their text; none of them may overlap."""
+    for fix in sorted(fixes, key=lambda f: f.start, reverse=True):
+        assert markup[fix.start : fix.end] == fix.text, (fix.start, fix.text, markup[fix.start : fix.end])
+        markup = markup[: fix.start] + fix.replacement + markup[fix.end :]
+    for m in sorted(markers, key=lambda m: m.start, reverse=True):
+        assert markup[m.start : m.end] == m.text, (m.start, m.text, markup[m.start : m.end])
+        markup = markup[: m.start] + f"<<{m.text} - {m.reading}>>" + markup[m.end :]
     return markup
 
 
