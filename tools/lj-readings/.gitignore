@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.py[co]
+.pytest_cache/
+# downloaded content and generated reports
+data/
+proposals/*_report.json
+proposals/*_review.md

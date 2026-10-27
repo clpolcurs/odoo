@@ -1,0 +1,50 @@
+# lj-readings
+
+Công cụ đề xuất và ghi **cách đọc** cho các chữ Hán chưa nằm trong dấu `<<漢字 - よみ>>` trong markup của addon
+Odoo `learning_japanese`. Đây là mục QA `kanji_without_reading`: chữ Hán ngoài dấu thì không có furigana.
+
+## Cách đề xuất
+
+- Sudachi (chế độ tách C) đọc cả đoạn, kể cả các từ đã có dấu, để có ngữ cảnh.
+- Dấu chỉ bọc phần chữ Hán, cách đọc là của chính phần đó, giống các dấu đã ghi tay: `<<言 - い>>って`,
+  `<<食 - た>>べる`, `<<引 - ひ>>っ<<越 - こ>>し`.
+- Số đứng trước đơn vị đếm được gộp vào cùng một dấu, ví dụ `<<3日 - みっか>>`, `<<10分 - じゅっぷん>>`,
+  `<<1人 - ひとり>>`, `<<3万円 - さんまんえん>>`. Cách đọc lấy từ bảng số đếm trong `readings.py` (âm biến っ, ぱ, ば),
+  không lấy của Sudachi, vì Sudachi đọc 10 là いちれい.
+- 何 đọc なん khi đứng trước で, だ, の, と, て, ど và đơn vị đếm; ở các chỗ khác đọc なに.
+- Một danh từ đứng riêng mà Sudachi đọc khác mọi cách ghi tay trong nội dung đã xuất bản thì lấy theo nội dung:
+  私 わたし, 日本 にほん, 明日 あした, 富士山 ふじさん. Chữ Hán nằm trong từ dài hơn (好 của いたずら好き, 店 của
+  駅前店) thì không lấy theo nội dung mà gắn cờ cần xem.
+- Từ đã có dấu một phần thì lấy phần còn lại của cách đọc: 2<<年 - ねん>>間 → 間 = かん. Nếu dấu cũ không ghi cách
+  đọc thì tách theo từ ngắn của Sudachi.
+- Không đụng vào thẻ HTML, dấu có sẵn, bản dịch `{{...}}`, khối `<pre>`/`<code>`. Chữ hiển thị giữ nguyên.
+- Những chỗ cần người xem (`doubt`) gồm:
+  - từ đọc theo nghĩa, liệt kê trong `AMBIGUOUS` (方, 家, 後, 間, 皆, 今日…);
+  - tên riêng chưa có cách đọc nào trong nội dung;
+  - 何で, 1日, 20歳;
+  - 一 có thể là dấu ー gõ nhầm;
+  - 今 đứng trước danh từ;
+  - chữ mà nội dung đang ghi cách đọc khác.
+
+## Quy trình
+
+```bash
+cd tools/lj-readings
+uv sync                                                    # Python ≥ 3.11, sudachipy, SudachiDict core
+uv run python fetch.py                                     # tải bài đã xuất bản (Reading, Listening, Grammar) vào data/
+uv run python propose.py                                   # proposals/<sách>.json và <sách>_report.json cho mọi sách
+uv run python apply.py proposals/158-minna-1.json          # kiểm tra với Odoo, không ghi
+uv run python apply.py proposals/158-minna-1.json --apply  # chỉ chạy sau khi đã duyệt
+uv run pytest -q
+```
+
+- Key API giống `tools/lj-grammar`: biến `LJ_API_KEY`, hoặc network secret của môi trường cloud Claude Code (khi đó để
+  trống `LJ_API_KEY`).
+- Mỗi file đề xuất gắn với phiên bản của từng bài. Bài nào bị sửa sau khi đề xuất thì `apply.py` bỏ qua; khi đó chạy
+  lại `fetch.py` và `propose.py`.
+- `apply.py` chỉ ghi một bài khi đủ ba điều kiện:
+  - chữ hiển thị không đổi;
+  - số cách đọc ghi rõ tăng đúng bằng số dấu đề xuất;
+  - `/markup/preview` không báo lỗi markup mới.
+- `propose.py` bỏ qua các bài trong `BY_HAND`, là những bài phải sửa markup bằng tay trước.
+- `data/` và các file `*_report.json` không được commit.
