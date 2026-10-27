@@ -353,18 +353,18 @@ def _int_list(value):
 def _markup_vals(record, markup):
     """Values storing `markup` and its converted HTML, or {} when nothing changes."""
     current = (markup_lib.to_source(record.backup_text) or "").strip()
-    new = markup.strip()
+    new = (markup_lib.to_source(markup) or "").strip()
     if new == current and (record.is_finalized or not new):
         return {}
     if not new:
         return {"backup_text": False, "content_only_kanji": False, "content": False, "is_finalized": False}
-    return record._apply_furigana({}, markup)
+    return record._apply_furigana({}, markup_lib.to_stored(markup))
 
 
 def create_comprehensive(env, body):
     vals, markup = _comprehensive_vals(env, body, creating=True)
     if markup:
-        vals["content_only_kanji"] = markup  # converted by the furigana mixin on create
+        vals["content_only_kanji"] = markup_lib.to_stored(markup)  # converted by the furigana mixin on create
     item = env[COMPREHENSIVE].create(vals)
     after = get_comprehensive(env, item.id)
     audit(env, "comprehensive", item.id, "create", after=after)
@@ -614,7 +614,7 @@ def _save_vocabulary(env, record, vals, markup, index=None):
     _check_unique_term(env, record, vals, index)
     if record is None:
         if markup:
-            vals["content_only_kanji"] = markup
+            vals["content_only_kanji"] = markup_lib.to_stored(markup)
         return env[VOCABULARY].create(vals)
     if markup is not None:
         vals.update(_markup_vals(record, markup))

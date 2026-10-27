@@ -1,4 +1,5 @@
 from odoo.tests import BaseCase, tagged
+from odoo.tools import html_sanitize
 
 from ..services import markup
 from ..services.serializers import display_title, patterns_of
@@ -46,6 +47,12 @@ class TestMarkup(BaseCase):
         self.assertEqual(markup.to_source(stored), "<p><<人 - ひと>>です</p>")
         self.assertTrue(markup.same_markup(stored, "<p><<人 - ひと>>です</p>"))
         self.assertEqual(self.codes(stored), [])
+
+    def test_markers_are_stored_escaped(self):
+        source = "<p>Khi đến <<kỳ nghỉ hè>>, <<休 - やす>>みます。</p>"
+        self.assertEqual(markup.to_stored(source), "<p>Khi đến &lt;&lt;kỳ nghỉ hè>>, &lt;&lt;休 - やす>>みます。</p>")
+        self.assertEqual(markup.to_source(html_sanitize(markup.to_stored(source))), source)
+        self.assertNotIn("kỳ nghỉ hè", html_sanitize(source))  # read as a <kỳ> tag when not escaped
 
     def test_plain_text(self):
         self.assertEqual(markup.plain_text("<p><<人 - ひと>>です{{là người}}</p>"), "人です")

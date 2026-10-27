@@ -166,6 +166,18 @@ class TestApiV1(HttpCase, LearningJapaneseDataCase):
         again = self.ok("PATCH", path, json={"markup": updated["markup"]}, headers={"If-Match": updated["version"]})
         self.assertEqual(again["version"], updated["version"])
 
+    def test_markup_reads_back_as_written(self):
+        source = "<p><<夏休 - なつやす>>みに行きます。<br>{{Đi vào <<kỳ nghỉ hè>>.}}</p>"
+        item = self.ok("POST", "/comprehensives", status=201, json={
+            "title": "夏休み", "level": "N5", "tags": ["reading"], "lesson_ids": [self.lesson.id], "markup": source,
+        })
+        self.assertEqual(item["markup"], source)
+        source = source.replace("行", "<<行 - い>>")
+        item = self.ok("PATCH", f"/comprehensives/{item['id']}", json={"markup": source},
+                       headers={"If-Match": f'"{item["version"]}"'})
+        self.assertEqual(item["markup"], source)
+        self.assertIn("kỳ nghỉ hè", item["html_ruby"])
+
     def test_delete(self):
         path = f"/comprehensives/{self.listening.id}"
         version = self.ok("GET", path)["version"]

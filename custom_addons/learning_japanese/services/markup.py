@@ -1,6 +1,6 @@
 """Markup helpers shared by the API: `<<漢字 - よみ>>` readings and `{{...}}` translations.
 
-Odoo stores the markup inside Html fields, whose sanitizer escapes the markers
+Odoo stores the markup inside Html fields with the markers escaped
 (`&lt;&lt;人 - ひと&gt;&gt;`). The API shows and accepts them unescaped.
 """
 
@@ -25,6 +25,15 @@ def to_source(stored):
     if not stored:
         return None
     return str(stored).replace("&lt;&lt;", "<<").replace("&gt;&gt;", ">>")
+
+
+def to_stored(source):
+    """Markup as people write it -> the value to store, with `<<` escaped as the Odoo editor saves it.
+
+    Left as is, the Html sanitizer reads `<<kỳ nghỉ hè>>` as a `<kỳ>` tag and drops it with
+    its text. `>` never opens a tag, so `>>` needs no escaping.
+    """
+    return source.replace("<<", "&lt;&lt;") if source else source
 
 
 def same_markup(a, b):
