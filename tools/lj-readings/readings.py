@@ -13,6 +13,7 @@ wraps characters that are plain text of the markup, so the visible text stays th
 
 import html
 import re
+from collections import Counter
 from dataclasses import dataclass, field
 from itertools import pairwise
 
@@ -199,13 +200,16 @@ PLAIN = {
     "番線": "ばんせん", "名": "めい", "秒": "びょう", "倍": "ばい", "位": "い", "号": "ごう", "割": "わり",
     "代": "だい", "部": "ぶ", "年": "ねん", "年間": "ねんかん", "年生": "ねんせい", "年前": "ねんまえ",
     "年後": "ねんご", "年代": "ねんだい", "時": "じ", "時間": "じかん", "時半": "じはん", "時頃": "じごろ",
-    "月": "がつ", "人": "にん", "人前": "にんまえ",
+    "月": "がつ", "人": "にん", "人前": "にんまえ", "周": "しゅう",
 }  # fmt: skip
 YO_BEFORE = {"円", "年", "年間", "年生", "年前", "年後", "年代", "時", "時間", "時半", "時頃", "人", "人前"}  # よじ
 HOURS = {"時", "時間", "時半", "時頃"}  # しちじ, くじ
 DAYS = {1: "ついたち", 2: "ふつか", 3: "みっか", 4: "よっか", 5: "いつか", 6: "むいか", 7: "なのか", 8: "ようか",
         9: "ここのか", 10: "とおか", 14: "じゅうよっか", 20: "はつか", 24: "にじゅうよっか"}  # fmt: skip
 VOICE = str.maketrans("かきくけこさしすせそたちつてとはひふへほ", "がぎぐげござじずぜぞだぢづでどばびぶべぼ")
+UNVOICE = str.maketrans(
+    "がぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ", "かきくけこさしすせそたちつてとはひふへほはひふへほ"
+)
 HALF_VOICE = str.maketrans("はひふへほ", "ぱぴぷぺぽ")
 COUNTER_WORDS = set(K_ROW) | set(S_ROW) | set(H_ROW) | set(PLAIN) | {"日", "日間", "日目", "人目"}
 
@@ -298,6 +302,31 @@ class Proposal:
 BRACKETS = "ngoặc của dấu không ghi cách đọc"
 
 
+class Word:
+    """A word of WORDS, standing in for the Sudachi words it spans."""
+
+    def __init__(self, surface, begin, end, reading):
+        self._surface, self._begin, self._end, self._reading = surface, begin, end, reading
+
+    def surface(self):
+        return self._surface
+
+    def begin(self):
+        return self._begin
+
+    def end(self):
+        return self._end
+
+    def reading_form(self):
+        return self._reading
+
+    def dictionary_form(self):
+        return self._surface
+
+    def part_of_speech(self):
+        return ("名詞", "普通名詞", "一般", "*", "*", "*")
+
+
 def _around(markup, match, width=40):
     return re.sub(r"\s+", " ", RE_TAG.sub("", markup[max(0, match.start() - width) : match.end() + width]))
 
@@ -307,6 +336,8 @@ NAN_BEFORE = ("で", "だ", "です", "の", "と", "て", "ど", "なら", "じ
 
 def nani_or_nan(following):
     """(reading, doubt) of 何 from the text after it; Sudachi always says なん."""
+    if following.startswith(("着て", "着た", "着る", "着ま", "着よ", "着せ", "着な")):  # 何着ていく: the verb 着る
+        return "なに", ""
     if following.startswith(tuple(COUNTER_WORDS)) or following.startswith(("曜日", "種類", "通り", "日")):
         return "なん", ""
     if not following.startswith(NAN_BEFORE):
@@ -317,6 +348,27 @@ def nani_or_nan(following):
 
 
 VARIANTS = {("言", "ゆ"): "い"}  # 言う: Sudachi gives ゆう as often as いう
+# 一つ … 九つ: Sudachi reads 四 よん and 八 よう before つ
+NATIVE_COUNT = {"一": "ひと", "二": "ふた", "三": "みっ", "四": "よっ", "五": "いつ", "六": "むっ", "七": "なな",
+                "八": "やっ", "九": "ここの"}  # fmt: skip
+NAME_READINGS = {"良子": "よしこ", "木山": "きやま", "大山": "おおやま"}  # 松本良子 of Minna no Nihongo; 大山様
+# words Sudachi splits (一 + 晩, 大 + けが) or reads otherwise (鶏肉 けいにく, 不味い まじい), read whole
+WORDS = {
+    "一晩": "ひとばん", "鶏肉": "とりにく", "雪道": "ゆきみち", "昼飯": "ひるめし", "上品": "じょうひん",
+    "不味い": "まずい", "小動物": "しょうどうぶつ", "四葉": "よつば", "大けが": "おおけが", "大怪我": "おおけが",
+    "企業人": "きぎょうじん", "自由形": "じゆうがた", "彼奴": "あいつ", "何日間": "なんにちかん", "一音": "いちおん",
+    "興味深い": "きょうみぶかい", "注意深い": "ちゅういぶかい", "用心深い": "ようじんぶかい",
+    "疑い深い": "うたがいぶかい",
+    "我慢強い": "がまんづよい", "粘り強い": "ねばりづよい", "心強い": "こころづよい", "力強い": "ちからづよい",
+    "辛抱強い": "しんぼうづよい", "練習試合": "れんしゅうじあい", "思い出話": "おもいでばなし", "昔話": "むかしばなし",
+    "世間話": "せけんばなし", "立ち話": "たちばなし",
+}  # fmt: skip
+THROUGHOUT = ("部屋", "今日", "世界", "一日", "顔", "体", "家", "町", "国", "年", "夜", "会社", "学校", "日本", "午前",
+              "午後", "頭")  # fmt: skip  # 部屋中: へやじゅう
+GRAMMAR_FORMS = ("現在", "過去", "辞書", "可能", "意向", "命令", "受身", "使役", "尊敬", "謙譲", "普通", "丁寧", "否定",
+                 "肯定", "連用", "終止", "仮定", "未然", "連体", "基本", "活用", "ます", "て", "た", "ない", "ば",
+                 "よう")  # fmt: skip  # 現在形: げんざいけい
+FEELINGS = ("夢", "希望", "不安", "疑問", "関心", "思い", "感情", "興味", "恐怖", "期待", "疑い", "不満", "好意")
 
 # Sudachi words whose reading depends on what the sentence means; the others it reads right from their part of
 # speech, inflection and neighbours (人: ひと / 3人: にん, 来ます: き / 来ない: こ, 調査を行った: おこなっ / 学校へ
@@ -437,12 +489,22 @@ class Proposer:
             out.missing += [Missing(m.group(0), "đoạn có dấu << hỏng", text[:40]) for m in runs]
             return
         words = list(TOKENIZER.tokenize(text))
+        whole = self._whole_words(text, words)
         short_words = None
         k = 0
         while k < len(words):
             word = words[k]
             start, end = word.begin(), word.end()
             k += 1
+            if start in whole:  # 一 + 晩, 興味 + 深い: one word of WORDS
+                word = whole[start]
+                while k < len(words) and words[k].begin() < word.end():
+                    k += 1
+                if self._unmarked(paragraph, word.begin(), word.end()) and not any(
+                    paragraph.marked[word.begin() : word.end()]
+                ):
+                    self._word(paragraph, word, out)
+                continue
             if not self._unmarked(paragraph, start, end):
                 continue
             if any(paragraph.marked[start:end]):  # part of the word is marked already (昼ご<<飯>>, 2<<年>>間)
@@ -470,6 +532,12 @@ class Proposer:
                 if split and split.group(2) in COUNTER_WORDS and parse_number(split.group(1)) is not None:
                     value = parse_number(text[begin : words[last - 1].end()] + split.group(1))  # 三 + 十分: 三十 + 分
                     counter_word = split.group(2)
+                if (
+                    counter_word == "分" and text[begin : counter.end()] == "十分" and not text[:begin].endswith("時")
+                ):  # 十分気をつけて: じゅうぶん, not ten minutes (Sudachi: 十 + 分)
+                    self._word(paragraph, Word("十分", begin, counter.end(), "じゅうぶん"), out)
+                    k = last + 1
+                    continue
                 if counter is not None and value is not None and not any(paragraph.marked[begin : counter.end()]):
                     counted = counter_reading(value, counter_word)
                     if counted is not None:
@@ -492,6 +560,16 @@ class Proposer:
                     self._number(paragraph, number[0], end, counted, word.surface(), out)
                     continue
             self._word(paragraph, word, out)
+
+    @staticmethod
+    def _whole_words(text, words):
+        """{start: Word} of the WORDS in the text that begin and end where Sudachi's words do."""
+        starts, ends, out = {w.begin() for w in words}, {w.end() for w in words}, {}
+        for surface, reading in WORDS.items():
+            for m in re.finditer(re.escape(surface), text):
+                if m.start() in starts and m.end() in ends:
+                    out[m.start()] = Word(surface, m.start(), m.end(), reading)
+        return out
 
     @staticmethod
     def _digits_start(paragraph, start):
@@ -540,8 +618,39 @@ class Proposer:
                 if span is not None:  # ノ一残業, 助けて一」: the long vowel ー, typed as the kanji 一
                     out.fixes.append(Fix(*span, "一", "ー", "dấu kéo dài ー gõ nhầm thành 一", context))
                     return True
-        elif surface == "何時":  # 何時に着く, 何時まで: なんじ; 何時でも: いつ (Sudachi: いつ, なんどき)
-            reading = "なんじ" if text[end : end + 2].startswith(("に", "から", "まで", "半", "間")) else "いつ"
+        elif surface == "何時":  # 何時に着く, 何時まで, 今何時: なんじ; 何時でも: いつ (Sudachi: いつ, なんどき)
+            clock = text[end : end + 2].startswith(("に", "から", "まで", "半", "間")) or text[:start].endswith("今")
+            reading = "なんじ" if clock else "いつ"
+        elif surface == "何分":  # 何時何分: Sudachi reads なにぶん (anyway) when it stands alone
+            reading, doubt = "なんぷん", "なんぷん (mấy phút) hay なにぶん (dù sao)"
+        elif surface in NATIVE_COUNT and text[end : end + 1] == "つ":  # 四つ, 八つ: Sudachi よん, よう
+            reading, doubt = NATIVE_COUNT[surface], "-"
+        elif surface in NAME_READINGS and pos[1] == "固有名詞":
+            reading, doubt = NAME_READINGS[surface], "-"
+        elif surface[:1] == "重" and text[start + 1 : start + 3] == "そう":  # 重そう: おもそう (Sudachi: 重曹)
+            reading = "おも" if surface == "重" else "おもそう"
+        elif surface == "日" and text[:start].endswith("曜"):  # 何曜 + 日: なんようび (Sudachi: ひ)
+            reading, doubt = "び", "-"
+        elif surface[:1] == "来" and text[start + 1 : start + 3] == "させ":  # 来させる: こさせる (Sudachi: 来す)
+            reading = "こ" + hiragana(surface[1:])  # 来さ (of 来す) + せる, 来させ
+        elif surface[:1] == "弾" and reading.startswith("はじ") and text[start + 1 : start + 2] in "かきくけこ":
+            reading, doubt = "ひ" + reading[2:], "ひく (chơi đàn) hay はじく, はじける"  # ピアノが弾けない
+        elif surface[:1] == "辛" and text[start + 1 : start + 2] in "いくそさかけ":
+            doubt = "から (cay) hay つら (khổ)"
+        elif surface == "十分" and text[:start].endswith("時"):  # 9時十分: じゅっぷん (Sudachi: じゅうぶん)
+            reading, doubt = "じゅっぷん", "-"
+        elif surface == "中" and pos[0] == "接尾辞" and text[:start].endswith(THROUGHOUT):  # 部屋中, 今日中
+            reading, doubt = "じゅう", "-"
+        elif surface == "形" and text[:start].endswith(GRAMMAR_FORMS):  # 現在形, ます形: けい (Sudachi: かたち)
+            reading, doubt = "けい", "-"
+        elif surface == "頃" and (text[start - 1 : start].isdigit() or text[:start].endswith(("時", "日", "月", "年"))):
+            reading, doubt = "ごろ", "-"  # 3時頃: さんじごろ (Sudachi: ころ)
+        elif surface == "数" and pos[0] == "名詞" and text[end : end + 1] in tuple("をがはもの"):
+            reading = "かず"  # 数を数える (Sudachi: すう)
+        elif surface[:1] == "抱" and reading.startswith("いだ") and not text[:start].rstrip("をに").endswith(FEELINGS):
+            reading, doubt = "だ" + reading[2:], "だく (ôm) hay いだく (ôm ấp ước mơ)"  # 猫を抱いたら
+        elif surface[:1] == "楽" and text[start + 1 : start + 3] == "そう":  # 楽そう: らくそう (Sudachi: 楽しそう)
+            reading = "らく" + reading[len(reading) - len(surface) + 1 :] if surface != "楽" else "らく"
         elif surface == "他" and text[end : end + 1] in ("に", "の", "は", "も"):  # 他にも: ほか (Sudachi: た)
             reading, doubt = "ほか", "-"
         elif surface == "今日":  # Sudachi says こんにち before a noun (今日会議がある): it is きょう but in 今日では
@@ -556,12 +665,6 @@ class Proposer:
             reading, doubt = "あと", AMBIGUOUS["後"] if not text[:start].endswith("この") else "-"
         elif surface == "家" and reading in ("や", "か", "け") and text[end : end + 1] in "でにへをがはの":
             reading = "いえ"  # 明日家でパーティー: Sudachi takes it for the や of 八百屋
-        elif (
-            pos[1] == "固有名詞"
-            and text[end:].lstrip(" \u3000")[:1] in tuple("へをにでがはのもと")  # 宇宙へ, not 本田さん
-            and (common := self._common_reading(surface)) not in (None, reading)
-        ):
-            reading, doubt = common, "Sudachi coi là tên riêng"  # 宇宙へ行ける: うちゅう, not そら
         number = RE_KANJI_NUMBER_WORD.fullmatch(surface)
         if number and surface not in AMBIGUOUS and number.group(2) in COUNTER_WORDS - {"日", "日間", "日目"}:
             begin = self._digits_start(paragraph, start)  # 3 + 万円
@@ -635,6 +738,8 @@ class Proposer:
         reads 私 わたくし and 日本 にっぽん on their own, the books write わたし and にほん. Only a whole word takes
         the reading of the content; the kanji of a longer word (好 of 世話好き: ず) is left for a person."""
         seen = self.known.get(piece)
+        if seen and len(piece) == 1 and piece != "私":  # 飯 of ご飯 (はん), 体 of 全体 (たい): not 飯って, 体の調子
+            seen = Counter({r: c for r, c in seen.items() if r.translate(UNVOICE) == reading.translate(UNVOICE)})
         if seen and reading not in seen:
             top, count = seen.most_common(1)[0]
             if whole and count >= 3 and count >= 0.8 * sum(seen.values()):
@@ -659,7 +764,7 @@ def apply(markup, markers, fixes=()):
 
 def known_readings(markups):
     """{kanji: Counter(reading)} of the explicit <<漢字 - よみ>> markers of the markups."""
-    from collections import Counter, defaultdict
+    from collections import defaultdict
 
     known = defaultdict(Counter)
     for markup in markups:

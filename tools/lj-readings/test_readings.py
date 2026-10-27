@@ -199,3 +199,50 @@ def test_a_marker_without_reading_in_a_translation_is_kept():
     proposal = Proposer().propose_auto("<p>{{<<日本>>}}</p>")
     assert not proposal.markers and not proposal.fixes
     assert [m.why for m in proposal.missing] == ["nằm trong bản dịch hoặc khối code"]
+
+
+@pytest.mark.parametrize(
+    "markup, expected",
+    [
+        ("<p>林檎を四つ、卵を八つ買った。</p>", "<<四 - よっ>>つ、<<卵 - たまご>>を<<八 - やっ>>つ"),  # not よん, よう
+        ("<p>中国のお茶です。</p>", "<<中国 - ちゅうごく>>の"),  # a place name keeps its reading
+        ("<p>今何時ですか。</p>", "<<何時 - なんじ>>ですか"),
+        ("<p>松本良子さん</p>", "<<良子 - よしこ>>さん"),
+    ],
+)
+def test_counted_things_place_names_and_times(markup, expected):
+    assert expected in marked(markup)
+
+
+@pytest.mark.parametrize(
+    "markup, expected",
+    [
+        ("<p>重そうですね。</p>", "<<重 - おも>>そう"),  # not 重曹 じゅうそう
+        ("<p>休みは何曜日ですか。</p>", "<<日 - び>>ですか"),
+        ("<p>ピアノが弾けません。</p>", "<<弾 - ひ>>けません"),
+        ("<p>子供を来させます。</p>", "<<来 - こ>>させます"),
+    ],
+)
+def test_readings_sudachi_takes_for_another_word(markup, expected):
+    assert expected in marked(markup)
+
+
+@pytest.mark.parametrize(
+    "markup, expected",
+    [
+        ("<p>部屋中が散らかって、今日中に片付ける。</p>", "<<部屋 - へや>><<中 - じゅう>>が"),
+        ("<p>興味深い話を聞いた。</p>", "<<興味深 - きょうみぶか>>い"),  # one word of WORDS, not 興味 + 深い
+        ("<p>一晩泊まった。</p>", "<<一晩 - ひとばん>>"),
+        ("<p>現在形を使う。</p>", "<<形 - けい>>を"),
+        ("<p>数を数える。</p>", "<<数 - かず>>を"),
+        ("<p>猫を抱いたら、毛だらけになった。</p>", "<<抱 - だ>>いたら"),
+        ("<p>3時頃に着いた。</p>", "<<頃 - ごろ>>"),
+        ("<p>十分気をつけてください。</p>", "<<十分 - じゅうぶん>>"),
+        ("<p>9時十分に着いた。</p>", "<<十分 - じゅっぷん>>"),
+        ("<p>上田さんって人</p>", "<<上田 - うえだ>>"),  # a name keeps its reading
+        ("<p>何着ていく？</p>", "<<何 - なに>>"),
+        ("<p>体の調子がいい。</p>", "<<体 - からだ>>"),
+    ],
+)
+def test_words_sudachi_splits_or_misreads(markup, expected):
+    assert expected in marked(markup)
