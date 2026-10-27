@@ -76,8 +76,8 @@ uv run python apply_translations.py proposals/translations/158-minna-1.json --ap
 ```
 
 `propose_translations.py` cũng đề xuất gỡ `{{` `}}` khỏi những câu giải thích đã bị bọc (`unwraps` trong file đề
-xuất): luật trước 28/10/2026 chưa phân biệt câu giải thích và đã bọc 24 câu như vậy, làm chúng biến mất khỏi tab Nội
-dung của Odoo.
+xuất): luật đầu tiên (commit `e20a06df`) chưa phân biệt câu giải thích và ngày 27/10/2026 đã bọc 24 câu như vậy, làm
+chúng biến mất khỏi tab Nội dung của Odoo.
 
 `apply_translations.py` chỉ ghi một bài khi markup mới chỉ khác markup cũ ở các dấu ngoặc thêm vào hay gỡ ra,
 `/markup/preview` đếm thêm (bớt) đúng số bản dịch (và bớt đúng số `untagged_translations` khi Odoo đã có mục QA này),
