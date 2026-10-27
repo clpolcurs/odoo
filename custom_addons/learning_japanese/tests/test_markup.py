@@ -54,6 +54,14 @@ class TestMarkup(BaseCase):
         self.assertEqual(markup.to_source(html_sanitize(markup.to_stored(source))), source)
         self.assertNotIn("kỳ nghỉ hè", html_sanitize(source))  # read as a <kỳ> tag when not escaped
 
+    def test_a_bracket_before_a_marker_stays_a_bracket(self):
+        source = "<p>&lt;<<質問 - しつもん>>&gt;</p>"
+        stored = html_sanitize(markup.to_stored(source))
+        self.assertEqual(stored, "<p>&lt;&lt;&lt;質問 - しつもん&gt;&gt;&gt;</p>")
+        self.assertEqual(markup.to_source(stored), source)
+        self.assertEqual(markup.plain_text(source), "<質問>")
+        self.assertEqual(markup.to_source("<p>&lt;&lt;&lt;&lt;</p>"), "<p><<<<</p>")
+
     def test_brackets_stay_text_in_the_rendered_html(self):
         stored = "<p>&lt;Aの&lt;&lt;意見 - いけん&gt;&gt;&gt;<br>{{&lt;Ý kiến của A&gt;}}</p>"
         hover, ruby = (html_sanitize(html) for html in markup.render(stored))

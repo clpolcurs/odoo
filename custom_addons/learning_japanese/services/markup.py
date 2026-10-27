@@ -18,13 +18,24 @@ _RE_BLOCK_END = re.compile(r"</p\s*>|</div\s*>|</li\s*>", re.IGNORECASE)
 _RE_KANJI_RUN = re.compile(r"[㐀-䶿一-鿿豈-﫿々〆ヶ]+")
 _RE_JAPANESE = re.compile(r"[぀-ヿ㐀-䶿一-鿿]")
 _RE_KANA_READING = re.compile(r"^[぀-ヿー・\s]+$")
+_RE_ESCAPED_LT_RUN = re.compile(r"(?:&lt;){2,}")
+
+
+def _pair_from_the_right(run):
+    """`&lt;` × n -> `<<` pairs, an odd one left first: it is a bracket before a marker."""
+    count = len(run.group(0)) // len("&lt;")
+    return "&lt;" * (count % 2) + "<<" * (count // 2)
 
 
 def to_source(stored):
-    """Stored Html value -> markup as people write it (markers unescaped)."""
+    """Stored Html value -> markup as people write it (markers unescaped).
+
+    `&lt;&lt;&lt;質問 - しつもん&gt;&gt;&gt;` is `&lt;<<質問 - しつもん>>&gt;`: the `<` pairs
+    are taken from the right and the `>` pairs from the left, as the converter reads them.
+    """
     if not stored:
         return None
-    return str(stored).replace("&lt;&lt;", "<<").replace("&gt;&gt;", ">>")
+    return _RE_ESCAPED_LT_RUN.sub(_pair_from_the_right, str(stored)).replace("&gt;&gt;", ">>")
 
 
 def to_stored(source):

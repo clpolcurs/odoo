@@ -7,6 +7,7 @@ repository, loaded without the rest of Odoo.
 """
 
 import importlib.util
+import re
 import sys
 import types
 from pathlib import Path
@@ -49,8 +50,14 @@ def to_send(markup):
 
 
 def to_source(stored):
-    """What the API shows for a stored value (custom_addons/learning_japanese/services/markup.py)."""
-    return stored.replace("&lt;&lt;", "<<").replace("&gt;&gt;", ">>")
+    """What the API shows for a stored value (custom_addons/learning_japanese/services/markup.py): `<` pairs are
+    taken from the right, so `&lt;&lt;&lt;質問 - しつもん&gt;&gt;&gt;` is `&lt;<<質問 - しつもん>>&gt;`."""
+
+    def pairs(run):
+        count = len(run.group(0)) // len("&lt;")
+        return "&lt;" * (count % 2) + "<<" * (count // 2)
+
+    return re.sub(r"(?:&lt;){2,}", pairs, stored).replace("&gt;&gt;", ">>")
 
 
 def read_back(markup):

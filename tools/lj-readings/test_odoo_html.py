@@ -14,5 +14,6 @@ def test_brackets_and_tags_next_to_markers_read_back_unchanged():
         "<p><b><<人 - ひと>></b>>></p>",
         "<p><<<b>人</b></p>",
         "<pre>cout<<endl;</pre>",
+        "<p>&lt;<<質問 - しつもん>>&gt;<br>{{&lt;Câu hỏi&gt;}}</p>",
     ):
         assert read_back(markup) == markup
