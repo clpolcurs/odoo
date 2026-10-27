@@ -22,7 +22,7 @@ SLUGS = {
     168: "drill-n2-choukai-dokkai", 175: "mimi-bunpo-n2",
 }  # fmt: skip
 # items whose markup must be fixed by hand before any reading is added
-BY_HAND = {244: "chữ bị lặp (傾向向, 依存症症, 名名, 実実) và 大<<人 - ひと>> sai (大人: おとな)"}
+BY_HAND = {}  # {item id: why}; #244 (doubled characters) was rewritten by hand on 27/10
 
 
 def file_name(book):
