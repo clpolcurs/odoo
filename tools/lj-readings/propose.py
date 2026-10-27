@@ -2,7 +2,8 @@
 
 usage: python propose.py [book id ...]     every book with published items when no id is given
 
-  proposals/<book>.json         {"<item id>": {"version": "...", "markers": [[start, end, text, reading], ...]}}
+  proposals/<book>.json         {"<item id>": {"version": "...", "markers": [[start, end, text, reading], ...],
+                                               "fixes": [[start, end, text, replacement], ...]}}  (fixes: typos)
                                 what apply.py writes, pinned to the version of the item it was made from
   proposals/<book>_report.json  the same grouped by kanji and reading, with examples, for the review
 """
@@ -53,19 +54,23 @@ def main():
     for book_id, book_items in sorted(by_book.items()):
         if wanted and book_id not in wanted:
             continue
-        proposals, rows, missing = {}, {}, []
+        proposals, rows, missing, fixes = {}, {}, [], []
         for item in sorted(book_items, key=lambda i: i["id"]):
             if item["id"] in BY_HAND:
                 missing.append(dict(item=item["id"], text="cả bài", why=BY_HAND[item["id"]], context=item["title"]))
                 continue
             proposal = proposer.propose(item["markup"] or "")
             missing += [dict(item=item["id"], text=m.text, why=m.why, context=m.context) for m in proposal.missing]
-            if not proposal.markers:
+            if not proposal.markers and not proposal.fixes:
                 continue
             proposals[str(item["id"])] = {
                 "version": item["version"],
                 "markers": [[m.start, m.end, m.text, m.reading] for m in sorted(proposal.markers, key=start_of)],
             }
+            if proposal.fixes:
+                proposals[str(item["id"])]["fixes"] = [[f.start, f.end, f.text, f.replacement] for f in proposal.fixes]
+                fixes += [dict(item=item["id"], text=f.text, to=f.replacement, why=f.why, context=f.context)
+                          for f in proposal.fixes]  # fmt: skip
             for m in proposal.markers:
                 key = (m.text, m.reading, m.doubt, m.note)
                 row = rows.setdefault(key, {"text": m.text, "reading": m.reading, "kind": kind_of(m), "doubt": m.doubt,
@@ -85,6 +90,7 @@ def main():
             "markers": sum(len(p["markers"]) for p in proposals.values()),
             "rows": sorted(rows.values(), key=lambda r: (order[r["kind"]], -r["count"], r["text"])),
             "missing": missing,
+            "fixes": fixes,
         }
         (HERE / "proposals" / f"{name}_report.json").write_text(json.dumps(report, ensure_ascii=False, indent=1))
         counts = defaultdict(int)

@@ -17,12 +17,14 @@ Odoo `learning_japanese`. Đây là mục QA `kanji_without_reading`: chữ Hán
   駅前店) thì không lấy theo nội dung mà gắn cờ cần xem.
 - Từ đã có dấu một phần thì lấy phần còn lại của cách đọc: 2<<年 - ねん>>間 → 間 = かん. Nếu dấu cũ không ghi cách
   đọc thì tách theo từ ngắn của Sudachi.
-- Không đụng vào thẻ HTML, dấu có sẵn, bản dịch `{{...}}`, khối `<pre>`/`<code>`. Chữ hiển thị giữ nguyên.
+- 一 đứng ngay sau katakana (ノ一残業) hoặc sau kana và trước dấu câu (助けて一」) là dấu kéo dài ー gõ nhầm: đề xuất
+  sửa thành ー (`fixes` trong file đề xuất) chứ không ghi cách đọc.
+- Không đụng vào thẻ HTML, dấu có sẵn, bản dịch `{{...}}`, khối `<pre>`/`<code>`. Chữ hiển thị giữ nguyên, trừ các
+  chỗ gõ nhầm trong `fixes`.
 - Những chỗ cần người xem (`doubt`) gồm:
   - từ đọc theo nghĩa, liệt kê trong `AMBIGUOUS` (方, 家, 後, 間, 皆, 今日…);
   - tên riêng chưa có cách đọc nào trong nội dung;
   - 何で, 1日, 20歳;
-  - 一 có thể là dấu ー gõ nhầm;
   - 今 đứng trước danh từ;
   - chữ mà nội dung đang ghi cách đọc khác.
 
@@ -43,7 +45,7 @@ uv run pytest -q
 - Mỗi file đề xuất gắn với phiên bản của từng bài. Bài nào bị sửa sau khi đề xuất thì `apply.py` bỏ qua; khi đó chạy
   lại `fetch.py` và `propose.py`.
 - `apply.py` chỉ ghi một bài khi đủ ba điều kiện:
-  - chữ hiển thị không đổi;
+  - chữ hiển thị không đổi, trừ các chỗ gõ nhầm trong `fixes`;
   - số cách đọc ghi rõ tăng đúng bằng số dấu đề xuất;
   - `/markup/preview` không báo lỗi markup mới.
 - `propose.py` bỏ qua các bài trong `BY_HAND`, là những bài phải sửa markup bằng tay trước.

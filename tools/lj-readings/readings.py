@@ -278,10 +278,19 @@ class Missing:
     context: str = ""
 
 
+class Fix:
+    """A typo in the text itself, replaced instead of read: 一 typed for the long vowel ー (助けて一, ノ一残業)."""
+
+    def __init__(self, start, end, text, replacement, why, context=""):
+        self.start, self.end, self.text, self.replacement = start, end, text, replacement
+        self.why, self.context = why, context
+
+
 @dataclass
 class Proposal:
     markers: list = field(default_factory=list)
     missing: list = field(default_factory=list)
+    fixes: list = field(default_factory=list)
 
 
 NAN_BEFORE = ("で", "だ", "です", "の", "と", "て", "ど", "なら", "じゃ")
@@ -478,7 +487,10 @@ class Proposer:
         elif surface == "一" and start and RE_KANA.match(text[start - 1]):
             after = text[end : end + 1]
             if RE_KATAKANA.match(text[start - 1]) or not after or not RE_KANA_OR_KANJI.match(after):
-                doubt = "có thể là dấu kéo dài ー gõ nhầm thành 一 (ノー, 助けてー)"
+                span = self._span(paragraph, start, end)
+                if span is not None:  # ノ一残業, 助けて一」: the long vowel ー, typed as the kanji 一
+                    out.fixes.append(Fix(*span, "一", "ー", "dấu kéo dài ー gõ nhầm thành 一", context))
+                    return True
         elif surface == "何時":  # 何時に着く, 何時まで: なんじ; 何時でも: いつ (Sudachi: いつ, なんどき)
             reading = "なんじ" if text[end : end + 2].startswith(("に", "から", "まで", "半", "間")) else "いつ"
         elif surface == "他" and text[end : end + 1] in ("に", "の", "は", "も"):  # 他にも: ほか (Sudachi: た)
@@ -584,11 +596,13 @@ class Proposer:
         return reading, doubt, ""
 
 
-def apply(markup, markers):
-    """The markup with the markers inserted (they must not overlap)."""
-    for marker in sorted(markers, key=lambda m: m.start, reverse=True):
-        assert markup[marker.start : marker.end] == marker.text, (marker, markup[marker.start : marker.end])
-        markup = markup[: marker.start] + f"<<{marker.text} - {marker.reading}>>" + markup[marker.end :]
+def apply(markup, markers, fixes=()):
+    """The markup with the markers inserted and the typos fixed (none of them may overlap)."""
+    edits = [(m.start, m.end, m.text, f"<<{m.text} - {m.reading}>>") for m in markers]
+    edits += [(f.start, f.end, f.text, f.replacement) for f in fixes]
+    for start, end, text, new in sorted(edits, reverse=True):
+        assert markup[start:end] == text, (start, text, markup[start:end])
+        markup = markup[:start] + new + markup[end:]
     return markup
 
 

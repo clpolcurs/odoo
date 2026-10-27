@@ -136,8 +136,6 @@ def test_marking_twice_changes_nothing_and_the_visible_text_stays():
         ("<p>二十の国</p>", "<<二十 - にじゅう>>", False),
         ("<p>もう一つ</p>", "<<一 - ひと>>つ", False),
         ("<p>今電車が止まっています。</p>", "<<今 - いま>>", True),  # not こん of 今世紀
-        ("<p>助けて一」</p>", "<<一 - いち>>", True),  # ー typed as 一
-        ("<p>ノ一残業デー</p>", "<<一 - いち>>", True),
         ("<p>~以上(は)</p>", "<<以上 - いじょう>>(は)", False),  # the dictionary has 以上(は): brackets not read
         ("<p>何時ごろ行きますか。</p>", "<<何時 - いつ>>ごろ", True),
     ],
@@ -170,3 +168,14 @@ def test_partly_marked_words_get_the_rest_of_their_reading():
 )
 def test_readings_that_follow_the_next_words(markup, expected):
     assert expected in marked(markup)
+
+
+def test_a_long_vowel_typed_as_the_kanji_one_is_fixed_not_read():
+    for markup, fixed in (
+        ("<p>助けて一」</p>", "<p><<助 - たす>>けてー」</p>"),
+        ("<p>ノ一残業デー</p>", "<p>ノー<<残業 - ざんぎょう>>デー</p>"),
+    ):
+        proposal = Proposer().propose(markup)
+        assert [f.replacement for f in proposal.fixes] == ["ー"]
+        assert apply(markup, proposal.markers, proposal.fixes) == fixed
+    assert not Proposer().propose("<p>もう一つ</p>").fixes
