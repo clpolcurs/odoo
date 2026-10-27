@@ -1,0 +1,2327 @@
+{
+"59": {
+"version": "4f84978618142116",
+"wraps": [
+[
+2503,
+2536,
+"Người phụ nữ làm gì khi trời mưa?"
+]
+]
+},
+"64": {
+"version": "8ada45897713993c",
+"wraps": [
+[
+85,
+123,
+"1. Sơ yếu lý lịch, ảnh và sổ\nngân hàng"
+],
+[
+206,
+254,
+"2. Sơ yếu lý lịch, thẻ sinh\nviên và sổ ngân hàng"
+],
+[
+322,
+361,
+"3. Sơ yếu lý lịch, thẻ sinh\nviên và ảnh"
+],
+[
+442,
+479,
+"4. Ảnh, thẻ sinh viên và sổ\nngân hàng"
+],
+[
+640,
+733,
+"Người đàn ông và người phụ nữ\nđang nói chuyện. Người phụ nữ sẽ mang theo gì khi đi phỏng vấn?"
+],
+[
+826,
+890,
+"F:  Xin lỗi, tôi đã thấy tờ rơi tuyển dụng làm\nthêm."
+],
+[
+939,
+977,
+"M:  À, bạn là sinh viên à?"
+],
+[
+1065,
+1151,
+"F:  Vâng, tôi là sinh viên năm nhất đại học. Đây\nlà thẻ sinh viên của tôi."
+],
+[
+1217,
+1293,
+"M:  À, cảm ơn. Bạn đã từng làm việc ở siêu thị như\nthế này chưa?"
+],
+[
+1343,
+1386,
+"F:  Không, đây là lần đầu tiên."
+],
+[
+1477,
+1555,
+"M:  Vậy à. Bạn có thể đến để phỏng vấn với quản lý\ncửa hàng không?"
+],
+[
+1621,
+1672,
+"F:  Vâng, không vấn đề gì. Xin nhờ anh."
+],
+[
+1763,
+1834,
+"M:  Khi đi phỏng vấn, hãy viết và mang theo sơ yếu\nlý lịch."
+],
+[
+1881,
+1914,
+"F:  Sơ yếu lý lịch à?"
+],
+[
+2107,
+2272,
+"M:  Vâng, hãy viết ngày tháng năm sinh, năm nhập học\nvà tốt nghiệp trung học cơ sở và trung học phổ thông. Tất nhiên, cũng viết địa\nchỉ và số điện thoại."
+],
+[
+2307,
+2336,
+"F:  Tôi hiểu rồi."
+],
+[
+2417,
+2467,
+"M:  À, và cả thẻ sinh viên và ảnh nữa."
+],
+[
+2542,
+2600,
+"F:  À, trên thẻ sinh viên này cũng có ảnh rồi."
+],
+[
+2672,
+2726,
+"M:  Ngoài cái đó ra, xin thêm một tấm nữa."
+],
+[
+2761,
+2790,
+"F:  Tôi hiểu rồi."
+],
+[
+2940,
+3052,
+"M:  À, và nếu bạn làm việc, lương sẽ được chuyển\nvào tài khoản ngân hàng, bạn có sổ ngân hàng không?"
+],
+[
+3133,
+3205,
+"F:  Vâng, tôi có. Nếu là thẻ ngân hàng thì tôi có\nmang theo."
+],
+[
+3275,
+3353,
+"M:  Không, cái đó thì sau khi công việc được quyết\nđịnh cũng được."
+],
+[
+3408,
+3450,
+"F:  Tôi hiểu rồi. Xin nhờ anh."
+],
+[
+3548,
+3594,
+"Người phụ nữ sẽ mang theo gì khi đi phỏng vấn?"
+],
+[
+3666,
+3704,
+"1. Sơ yếu lý lịch, ảnh và sổ\nngân hàng"
+],
+[
+3787,
+3835,
+"2. Sơ yếu lý lịch, thẻ sinh\nviên và sổ ngân hàng"
+],
+[
+3928,
+3967,
+"3. Sơ yếu lý lịch, thẻ sinh\nviên và ảnh"
+],
+[
+4057,
+4094,
+"4. Ảnh, thẻ sinh viên và sổ\nngân hàng"
+]
+]
+},
+"65": {
+"version": "ec75d6ca26a86a20",
+"wraps": [
+[
+42,
+56,
+"1. Sửa dữ liệu"
+],
+[
+80,
+97,
+"2. Kiểm tra email"
+],
+[
+130,
+150,
+"3. Sao chép tài liệu"
+],
+[
+183,
+202,
+"4. Xác nhận dữ liệu"
+],
+[
+338,
+417,
+"Người đàn ông và người\nphụ nữ đang nói chuyện. Sau đó, người đàn ông sẽ làm gì?"
+],
+[
+479,
+535,
+"F: Tài liệu cho cuộc họp\nngày mai đã sao chép xong chưa?"
+],
+[
+564,
+596,
+"M: À, tôi đang chuẩn bị\nlàm đây."
+],
+[
+644,
+680,
+"F: Tài liệu đã chuẩn bị\nđầy đủ chưa?"
+],
+[
+727,
+765,
+"M: Vâng. ... À, tôi\nnghĩ là đã đủ rồi."
+],
+[
+900,
+993,
+"F: Chiều hôm qua, anh\nSato nói rằng số liệu dữ liệu bị sai nên phải sửa lại. Anh đã sửa chưa?"
+],
+[
+1074,
+1136,
+"M: Ồ, số liệu dữ liệu\nà? Chưa. Bây giờ tôi sẽ đi hỏi anh Sato."
+],
+[
+1232,
+1335,
+"F: Đúng rồi. À, nhưng\ntrước tiên anh kiểm tra email đi? Có thể dữ liệu tài liệu đã sửa đã được gửi đến."
+],
+[
+1355,
+1367,
+"M: Đúng vậy."
+],
+[
+1522,
+1637,
+"F: Nếu chưa đến, thì\nanh phải hỏi trực tiếp anh Sato. Phải sao chép hôm nay. Ngày mai không kịp thì\nsẽ rắc rối đấy."
+],
+[
+1661,
+1686,
+"M: Vâng, tôi sẽ làm\nngay."
+],
+[
+1760,
+1792,
+"Sau đó, người đàn ông sẽ làm gì?"
+],
+[
+1821,
+1835,
+"1. Sửa dữ liệu"
+],
+[
+1884,
+1901,
+"2. Kiểm tra email"
+],
+[
+1943,
+1963,
+"3. Sao chép tài liệu"
+],
+[
+1996,
+2015,
+"4. Xác nhận dữ liệu"
+]
+]
+},
+"66": {
+"version": "777aa186f7d027dd",
+"wraps": [
+[
+420,
+481,
+"Cha và con đang nói\nchuyện. Từ bây giờ, con sẽ bỏ gì vào cặp?"
+],
+[
+550,
+630,
+"M: Hiromi, từ ngày mai\ncon sẽ đi cắm trại phải không? Con đã chuẩn bị xong chưa?"
+],
+[
+667,
+697,
+"F: Chưa, bây giờ con\nđang làm."
+],
+[
+791,
+875,
+"M: Vì sẽ ngủ lại một\nđêm trong lều, nên phải chuẩn bị kỹ càng. Con đã bỏ ô vào chưa?"
+],
+[
+967,
+1018,
+"F: Rồi, con đã bỏ ô gấp\nvào. Vì ô dài sẽ vướng víu."
+],
+[
+1138,
+1238,
+"M: Và, áo thun ngắn\ntay mỏng như thế này không được đâu. Áo dài tay bền và quần dài này thì tốt\nhơn."
+],
+[
+1280,
+1314,
+"F: Ừ, vì nóng nên con\nkhông thích."
+],
+[
+1385,
+1432,
+"M: Vì có thể bị côn\ntrùng đốt. Dài thì tốt hơn."
+],
+[
+1501,
+1581,
+"F: Con hiểu rồi. Vậy\nthì con chỉ bỏ cái này vào, còn quần dài thì con sẽ mặc đi."
+],
+[
+1724,
+1816,
+"M: À, cái này nhất định\nphải mang theo. Vì khu cắm trại vào ban đêm rất tối, nên cần có đèn."
+],
+[
+1842,
+1855,
+"F: Vâng vâng."
+],
+[
+1961,
+2020,
+"M: Và, hãy mang thêm một\nchiếc áo thun dài tay để thay đổi."
+],
+[
+2079,
+2122,
+"F: Cái đó con đã bỏ\nvào rồi, nên không sao."
+],
+[
+2195,
+2228,
+"Từ bây giờ, con sẽ bỏ gì vào cặp?"
+]
+]
+},
+"67": {
+"version": "fb069404778cef1b",
+"wraps": [
+[
+493,
+605,
+"Người đàn ông và người\nphụ nữ đang thảo luận về việc thay đổi vị trí bàn trong công ty. Họ sẽ di chuyển\nbàn nào?"
+],
+[
+751,
+878,
+"M: Từ tuần sau, vì đội\nquản lý sản phẩm và đội kinh doanh sẽ sử dụng phòng này nên chúng ta sẽ thay đổi\nvị trí bàn, đúng không?"
+],
+[
+929,
+988,
+"F: Đúng vậy, tôi muốn\nsắp xếp bàn thành từng nhóm theo đội."
+],
+[
+1018,
+1037,
+"M: Ồ, thành nhóm à?"
+],
+[
+1121,
+1196,
+"F: Đúng vậy, tôi muốn\nchia thành hai nhóm giống như hai hòn đảo trong biển."
+],
+[
+1414,
+1590,
+"M: Vậy là sẽ chia đội\nquản lý sản phẩm và đội kinh doanh thành từng nhóm. Đội quản lý sản phẩm có 5\nngười, đội kinh doanh có 6 người. Vậy thì cần mang thêm 2 cái bàn từ kho ra."
+],
+[
+1787,
+1911,
+"F: Đúng vậy. Kéo 4 cái\nbàn đối diện gần lối vào sang bên phải. Như vậy sẽ tạo ra lối đi giữa 5 cái bàn\ncòn lại ở phía trong."
+],
+[
+1970,
+2022,
+"M: Hiểu rồi. Sẽ có 5\ncái bên trái và 4 cái bên phải."
+],
+[
+2145,
+2250,
+"F: 5 cái ở phía trong\nlà của đội quản lý sản phẩm, còn gần lối vào thì thêm 2 cái nữa cho đội kinh\ndoanh."
+],
+[
+2308,
+2367,
+"M: Vâng, tôi hiểu rồi.\nVậy thì tôi sẽ mang 2 cái từ kho ra."
+],
+[
+2407,
+2443,
+"F: À, không phải 2\ncái, mà là 3 cái."
+],
+[
+2465,
+2480,
+"M: Hả? 3 cái à?"
+],
+[
+2611,
+2703,
+"F: Đúng vậy. Cái ở\ntrong cùng đang nằm ngang, ngăn kéo của nó bị hỏng nên tôi muốn thay thế."
+],
+[
+2756,
+2805,
+"M: Vâng. Vậy thì tôi sẽ\ngọi mọi người và bắt đầu."
+],
+[
+2857,
+2881,
+"Họ sẽ di chuyển bàn nào?"
+]
+]
+},
+"68": {
+"version": "8493ee7585110626",
+"wraps": [
+[
+339,
+474,
+"Một người đàn ông và một\nngười phụ nữ đang nói chuyện về trận đấu tập của câu lạc bộ bóng đá. Người đàn\nông sẽ gọi điện cho ai sau đây?"
+],
+[
+576,
+647,
+"F: Này này! Trận đấu tập\ncuối tuần, đội bên kia có tất cả 40 người đấy!"
+],
+[
+726,
+792,
+"M: Ồ, không phải là\nquá nhiều sao? Chỉ có 11 người ra sân thôi mà?"
+],
+[
+915,
+1021,
+"F: Ừ, nhưng tất cả các\nthành viên không ra sân cũng sẽ đến cổ vũ. Bạn có thể liên lạc với mọi người\nkhông?"
+],
+[
+1043,
+1065,
+"M: Ừ, mọi người là ai?"
+],
+[
+1157,
+1233,
+"F: Đầu tiên, vì không\nđủ ghế, hãy nói với anh Kimura phụ trách để tăng thêm."
+],
+[
+1252,
+1264,
+"M: Được rồi."
+],
+[
+1323,
+1350,
+"F: Và số lượng đặt cơm\nhộp."
+],
+[
+1413,
+1463,
+"M: Người phụ trách cơm\nhộp là anh Sato phải không?"
+],
+[
+1497,
+1521,
+"F: Không, là anh\nSuzuki."
+],
+[
+1541,
+1553,
+"M: Đúng rồi."
+],
+[
+1736,
+1895,
+"F: Nhưng cô ấy vẫn\nđang trong giờ học, nên bây giờ không được. Sau đó, về quản lý là anh Tanaka và\nanh Ueno, hai người họ sẽ đến đây sớm nên tôi sẽ nói với họ."
+],
+[
+1949,
+1998,
+"M: Ừ. Được rồi. Vậy\ntôi sẽ gọi điện ngay bây giờ."
+],
+[
+2159,
+2300,
+"F: À, chờ đã. Cũng nhờ\nanh Ota phụ trách tài chính nữa. Vì ngân sách sẽ bị vượt quá. Dù sao thì cũng\ncó quỹ dự phòng nên tôi nghĩ sẽ ổn thôi."
+],
+[
+2329,
+2341,
+"M: Hiểu rồi!"
+],
+[
+2416,
+2457,
+"Người đàn ông sẽ gọi điện cho ai sau đây?"
+]
+]
+},
+"69": {
+"version": "510ce7bdc16bf41f",
+"wraps": [
+[
+51,
+70,
+"1. Đi đến ngân hàng"
+],
+[
+106,
+115,
+"2. Về nhà"
+],
+[
+152,
+171,
+"3. Đi đến hiệu sách"
+],
+[
+201,
+215,
+"4. Đi làm thêm"
+],
+[
+350,
+427,
+"Nam sinh viên và nữ sinh viên đang nói chuyện. Sau đó nữ sinh viên sẽ làm\ngì?"
+],
+[
+631,
+813,
+"F: Bạn đã đăng ký kỳ thi kiểm định chưa? Hạn chót là ngày mai đúng không.\nNgày mai nhất định phải đăng ký. Hôm nay mình có việc làm thêm. Mình lúc nào\ncũng làm mọi thứ vào phút chót."
+],
+[
+903,
+971,
+"M: Ngày mai? Bạn đang nói gì vậy. Hôm nay mà. Vì hôm nay là ngày 31."
+],
+[
+1087,
+1192,
+"F: Hả? Hôm nay là ngày 30 mà. ... À, là ngày 31. Không thể nào, mình cứ\nnghĩ là ngày 30! Làm sao bây giờ!"
+],
+[
+1316,
+1404,
+"M: Vẫn kịp mà. Hôm nay chỉ cần gửi từ bưu điện là được. Phí dự thi thì sao?\nĐã trả chưa?"
+],
+[
+1451,
+1486,
+"F: Chưa. Mình phải trả ở ngân hàng."
+],
+[
+1610,
+1703,
+"M: Quầy giao dịch ngân hàng chỉ mở đến 3 giờ, nếu là ngân hàng trước ga thì\nnếu nhanh sẽ kịp!"
+],
+[
+1862,
+2017,
+"F: Ngân hàng trước ga nhỉ! Mình đi đây! Mình sẽ liên lạc với chỗ làm thêm\nlà sẽ đến muộn một chút. À, đúng rồi, mình không mang theo đơn đăng ký. Nó ở\nnhà."
+],
+[
+2266,
+2451,
+"M: Hả? Không có đơn đăng ký thì không thể trả phí dự thi đâu. Trên đơn đăng\nký cần có dấu của ngân hàng. Dấu xác nhận đã trả. Nhưng nếu về nhà rồi mới đi\nngân hàng thì sẽ quá 3 giờ mất."
+],
+[
+2501,
+2540,
+"F: Ừ. Không kịp rồi. Làm sao bây giờ..."
+],
+[
+2654,
+2778,
+"M: Ừm. Không còn cách nào khác. Chỉ còn cách mua thêm một đơn đăng ký ở hiệu\nsách thôi. Nếu bạn thực sự muốn dự thi lần này."
+],
+[
+2873,
+2929,
+"F: Lần này mình nhất định phải đậu. Mình đi đây! Cảm ơn!"
+],
+[
+2996,
+3026,
+"Sau đó nữ sinh viên sẽ làm gì?"
+],
+[
+3064,
+3083,
+"1. Đi đến ngân hàng"
+],
+[
+3119,
+3128,
+"2. Về nhà"
+],
+[
+3190,
+3209,
+"3. Đi đến hiệu sách"
+],
+[
+3248,
+3262,
+"4. Đi làm thêm"
+]
+]
+},
+"70": {
+"version": "94146d13838452a2",
+"wraps": [
+[
+58,
+84,
+"1. Đi đến phòng hành chính"
+],
+[
+131,
+156,
+"2. Đi đến phòng sinh viên"
+],
+[
+198,
+222,
+"3. Đi đến phòng việc làm"
+],
+[
+264,
+291,
+"4. Đi đến chỗ của giáo viên"
+],
+[
+403,
+501,
+"Tại trường đại học, sinh viên và nhân viên hành chính đang nói chuyện. Sau\nđó sinh viên sẽ làm gì?"
+],
+[
+654,
+775,
+"Xin lỗi. Tôi đã chuyển nhà và địa chỉ đã thay đổi, khi tôi đến chỗ của giáo\nviên thì được bảo là đi đến phòng hành chính."
+],
+[
+824,
+865,
+"À, thay đổi địa chỉ không phải ở đây đâu."
+],
+[
+908,
+942,
+"Không phải ở phòng hành chính sao?"
+],
+[
+1319,
+1594,
+"Vâng. Có mẫu đơn ở phòng sinh viên, hãy nhận mẫu đơn ở phòng sinh viên, viết\nđịa chỉ mới vào đó và nộp cùng với thẻ sinh viên. Bạn cũng có thể thực hiện thủ\ntục thay đổi qua internet, nhưng vì sẽ đổi thẻ sinh viên mới, nên sau khi hoàn\ntất thủ tục hãy mang thẻ sinh viên đến."
+],
+[
+1679,
+1757,
+"Vâng, tôi hiểu rồi. Trước tiên, tôi sẽ nhận mẫu đơn. À, phòng sinh viên\nthì..."
+],
+[
+1832,
+1891,
+"À, bạn có thấy phòng việc làm ở đó không? Nó ở bên cạnh đó."
+],
+[
+1937,
+1967,
+"Bên phải của phòng việc làm à?"
+],
+[
+1986,
+1995,
+"Đúng vậy."
+],
+[
+2027,
+2052,
+"Tôi hiểu rồi. Cảm ơn bạn."
+],
+[
+2107,
+2134,
+"Sau đó sinh viên sẽ làm gì?"
+],
+[
+2179,
+2205,
+"1. Đi đến phòng hành chính"
+],
+[
+2277,
+2302,
+"2. Đi đến phòng sinh viên"
+],
+[
+2353,
+2377,
+"3. Đi đến phòng việc làm"
+],
+[
+2419,
+2446,
+"4. Đi đến chỗ của giáo viên"
+]
+]
+},
+"71": {
+"version": "4908685f21f189a9",
+"wraps": [
+[
+51,
+73,
+"1. Đi đến đồn cảnh sát"
+],
+[
+113,
+131,
+"2. Được gửi về nhà"
+],
+[
+180,
+212,
+"Đi đến phòng làm việc của nhà ga"
+],
+[
+276,
+310,
+"Đi đến \"Trung tâm giữ đồ thất lạc\""
+],
+[
+455,
+552,
+"Nhân viên nhà ga và người phụ nữ đang nói chuyện tại nhà ga. Người phụ nữ sẽ\nlàm gì để lấy lại ô?"
+],
+[
+668,
+748,
+"Xin lỗi. Tôi đã để quên ô trong tàu điện ngày hôm qua. Đó là một chiếc ô\nmàu đỏ."
+],
+[
+778,
+791,
+"M: Hôm qua à?"
+],
+[
+834,
+856,
+"F: Vâng. Sáng hôm qua."
+],
+[
+1026,
+1170,
+"M: Nếu bạn để quên hôm nay, chúng tôi giữ tại phòng làm việc của nhà ga, nhưng\nđồ của ngày hôm qua thì được giữ tại \"Trung tâm giữ đồ thất lạc\"."
+],
+[
+1194,
+1214,
+"F: Hả? Nó ở đâu vậy?"
+],
+[
+1261,
+1298,
+"M: Nó ở cổng phía nam của nhà ga này."
+],
+[
+1357,
+1398,
+"F: Cổng phía nam à? Vậy là phía đối diện."
+],
+[
+1528,
+1642,
+"M: Vâng, vui lòng mang theo con dấu và giấy tờ chứng minh nhân thân. Nếu chúng\ntôi đang giữ, bạn có thể nhận ngay."
+],
+[
+1728,
+1801,
+"F: À, hôm nay tôi không có nhiều thời gian, liệu có thể gửi về nhà không?"
+],
+[
+1908,
+1959,
+"M: Xin lỗi, nhưng ô thì bạn phải đến lấy trực tiếp."
+],
+[
+2013,
+2046,
+"F: Vậy à. Ngày mai có được không?"
+],
+[
+2173,
+2261,
+"M: Chúng tôi giữ tại trung tâm trong 4 ngày. Sau đó, nó sẽ được chuyển đến đồn\ncảnh sát."
+],
+[
+2309,
+2348,
+"Vậy à. Vậy thì, tôi sẽ đi vào ngày mai."
+],
+[
+2429,
+2465,
+"Người phụ nữ sẽ làm gì để lấy lại ô?"
+],
+[
+2503,
+2525,
+"1. Đi đến đồn cảnh sát"
+],
+[
+2565,
+2583,
+"2. Được gửi về nhà"
+],
+[
+2632,
+2664,
+"Đi đến phòng làm việc của nhà ga"
+],
+[
+2753,
+2787,
+"Đi đến \"Trung tâm giữ đồ thất lạc\""
+]
+]
+},
+"74": {
+"version": "da3d884ad8f071bd",
+"wraps": [
+[
+86,
+127,
+"1. Đặt bản thảo lên\nbàn của người đàn ông"
+],
+[
+179,
+208,
+"2. Gọi điện cho người\nđàn ông"
+],
+[
+254,
+284,
+"3. Gửi email cho thầy\nYamamoto"
+],
+[
+327,
+347,
+"4. Xác nhận bản thảo"
+],
+[
+526,
+644,
+"Tại công ty, một người\nđàn ông và một người phụ nữ đang nói chuyện. Khi bản thảo đến, người phụ nữ sẽ\nlàm gì đầu tiên?"
+],
+[
+713,
+753,
+"M: Yamada-san, tôi có\nmột việc muốn nhờ."
+],
+[
+786,
+807,
+"F: Vâng, việc gì vậy?"
+],
+[
+913,
+991,
+"M: Ngày mai, bản thảo\ncủa thầy Yamamoto sẽ đến, bạn có thể giữ giúp tôi không?"
+],
+[
+1059,
+1105,
+"F: À, ngày mai anh đi\ncông tác ở Hokkaido nhỉ."
+],
+[
+1228,
+1362,
+"M: Ừ. Còn một việc nữa,\nkhi bản thảo đến, tôi muốn bạn gọi điện cho tôi. Vì tôi phải gửi email cho thầy\nYamamoto rằng bản thảo đã đến."
+],
+[
+1407,
+1449,
+"F: Nếu vậy, để tôi gửi\nemail giúp anh nhé."
+],
+[
+1541,
+1606,
+"M: Không, vì đã nhờ bạn\nviệc khó nên tôi phải cảm ơn, để tôi làm."
+],
+[
+1697,
+1783,
+"F: Tôi hiểu rồi. Khi bản\nthảo đến, tôi chỉ cần đặt lên bàn của anh là được phải không?"
+],
+[
+1901,
+1999,
+"M: Không, bạn có thể bỏ\nvào ngăn kéo bàn của tôi và khóa lại không? Vì đây là bản thảo quan trọng."
+],
+[
+2050,
+2078,
+"F: Ngăn kéo bàn của\nanh nhỉ."
+],
+[
+2288,
+2455,
+"M: Đúng rồi. Đây là\nchìa khóa. Sau đó, khi bản thảo đến, trước tiên hãy mở phong bì và kiểm tra số\ntrang của bản thảo. Nếu thiếu trang nào, bạn phải báo ngay cho thầy."
+],
+[
+2476,
+2492,
+"F: Tôi hiểu rồi."
+],
+[
+2595,
+2645,
+"Khi bản thảo đến, người phụ nữ sẽ làm gì đầu tiên?"
+],
+[
+2718,
+2759,
+"1. Đặt bản thảo lên\nbàn của người đàn ông"
+],
+[
+2811,
+2840,
+"2. Gọi điện cho người\nđàn ông"
+],
+[
+2886,
+2916,
+"3. Gửi email cho thầy\nYamamoto"
+],
+[
+2984,
+3004,
+"4. Xác nhận bản thảo"
+]
+]
+},
+"75": {
+"version": "d80e0dcfd8de5c9b",
+"wraps": [
+[
+52,
+71,
+"1. Đi đến bệnh viện"
+],
+[
+117,
+137,
+"2. Đi đến hiệu thuốc"
+],
+[
+209,
+253,
+"3. Viết những điều cần\nthiết vào đơn đăng ký"
+],
+[
+302,
+322,
+"4. Đi đến chỗ bạn bè"
+],
+[
+444,
+541,
+"Tại trường đại học,\nsinh viên và nhân viên văn phòng đang nói chuyện. Sau đó sinh viên sẽ làm\ngì?"
+],
+[
+638,
+721,
+"M: Xin lỗi. Vì bị bệnh\nnên tôi không thể tham gia kỳ thi, tôi muốn tham gia kỳ thi."
+],
+[
+782,
+811,
+"F: À, đăng ký thi phải\nkhông?"
+],
+[
+835,
+843,
+"M: Vâng."
+],
+[
+919,
+960,
+"F: Lý do bạn vắng mặt\ntrong kỳ thi là gì?"
+],
+[
+1017,
+1042,
+"M: Vì bị cảm. Vì sốt\ncao."
+],
+[
+1100,
+1135,
+"F: Vậy à. Bạn đã đi bệnh\nviện chưa?"
+],
+[
+1233,
+1294,
+"M: Vâng. Tôi đã đi bệnh\nviện, sau đó nhận thuốc ở hiệu thuốc."
+],
+[
+1379,
+1445,
+"F: Bạn có nhận được tài\nliệu chứng minh bị cảm từ bệnh viện không?"
+],
+[
+1472,
+1494,
+"M: Cái này phải\nkhông?"
+],
+[
+1574,
+1621,
+"F: À, đó là tờ giấy có\nghi giải thích về thuốc."
+],
+[
+1667,
+1699,
+"M: Vâng. Tôi nhận từ hiệu\nthuốc."
+],
+[
+1786,
+1853,
+"F: Dù vậy, vẫn biết là bị\ncảm, nhưng phải có tài liệu từ bệnh viện."
+],
+[
+1901,
+1940,
+"M: Tôi hiểu rồi. Hôm nay\ntôi sẽ đi lấy."
+],
+[
+2040,
+2117,
+"F: Vậy thì trước tiên,\nhãy điền những điều cần thiết vào đơn đăng ký thi này."
+],
+[
+2151,
+2186,
+"M: Vâng. ...Như thế này\nđược không?"
+],
+[
+2229,
+2247,
+"F: Vâng. Được rồi."
+],
+[
+2360,
+2436,
+"M: À, tôi có thể nhận tờ\nđơn cho bạn tôi không? Vì bạn tôi cũng nói đã nghỉ."
+],
+[
+2514,
+2547,
+"F: Không, hãy bảo bạn tự\nđến lấy."
+],
+[
+2602,
+2629,
+"Sau đó sinh viên sẽ làm gì?"
+],
+[
+2693,
+2712,
+"1. Đi đến bệnh viện"
+],
+[
+2767,
+2787,
+"2. Đi đến hiệu thuốc"
+],
+[
+2859,
+2903,
+"3. Viết những điều cần\nthiết vào đơn đăng ký"
+],
+[
+2952,
+2972,
+"4. Đi đến chỗ bạn bè"
+]
+]
+},
+"76": {
+"version": "f685eca0b602d5ce",
+"wraps": [
+[
+48,
+82,
+"1. Tiến hành khảo sát\nbảng câu hỏi"
+],
+[
+145,
+196,
+"2. Báo cáo nội\ndung và phương pháp của bảng câu hỏi"
+],
+[
+253,
+286,
+"3. Tập hợp người\nđể cùng làm việc"
+],
+[
+356,
+416,
+"4. Điều\ntra ghi chép của khảo sát bảng\ncâu hỏi trong quá khứ"
+],
+[
+539,
+633,
+"Tại công\nty, trưởng phòng đang nói chuyện với\nnhân viên nữ. Người phụ nữ sẽ làm gì trước\ntiên?"
+],
+[
+934,
+1153,
+"M: Để\ntăng doanh số tại công ty của\nchúng ta, chúng ta phải phát triển sản phẩm mới\nchưa từng có trước đây. Để làm điều đó, cần phải điều tra kỹ lưỡng\nxem người ở độ tuổi nào đang cần\ngì. Tôi muốn bạn đảm nhận việc này."
+],
+[
+1177,
+1201,
+"F: Vâng, tôi sẽ cố gắng."
+],
+[
+1275,
+1354,
+"M: Ừ, trước tiên, tôi\nmuốn bạn ra thành phố và tiến hành khảo sát bảng câu hỏi."
+],
+[
+1371,
+1379,
+"F: Vâng."
+],
+[
+1518,
+1627,
+"M: Vì công việc\nnày rất quan trọng, hãy tập hợp những\nngười mà bạn dễ dàng làm việc cùng và tiến hành\nvới họ."
+],
+[
+1651,
+1673,
+"F: Vâng, tôi hiểu rồi."
+],
+[
+1720,
+1750,
+"M: Có người\nphù hợp nào không?"
+],
+[
+1813,
+1866,
+"F: Vâng, để tôi xem.\nAnh Tamura và anh Oyama thì sao?"
+],
+[
+1936,
+1994,
+"M: À, tôi có việc khác\nmuốn nhờ anh Oyama, nên không được."
+],
+[
+2090,
+2172,
+"F: Vậy thì, tôi sẽ\nnói chuyện với anh Tamura. Tôi nghĩ sẽ\nnhờ thêm 2, 3 người nữa."
+],
+[
+2306,
+2445,
+"M: Hãy làm như vậy.\nKhi quyết định xong, hãy báo cáo cho tôi. Và\nhãy quyết định nội dung và phương\npháp của bảng câu hỏi càng sớm càng tốt."
+],
+[
+2599,
+2738,
+"F: Vâng. Có\nghi chép khi trưởng phòng Maeda đã tiến\nhành khảo sát bảng câu hỏi trước đây, nên trước tiên,\ntôi sẽ tham khảo và lập kế hoạch."
+],
+[
+2836,
+2921,
+"M: À, không chỉ của\ncậu Maeda, hãy điều tra kỹ cả ghi\nchép của các khảo sát khác nữa."
+],
+[
+3018,
+3128,
+"F: Tôi hiểu rồi. Vậy\nthì, tôi sẽ bắt đầu từ đó. Sau đó là thành viên\nnhỉ. Khi quyết định xong, tôi sẽ báo cáo."
+],
+[
+3191,
+3225,
+"Người phụ nữ sẽ làm gì trước tiên?"
+],
+[
+3260,
+3294,
+"1. Tiến hành khảo sát\nbảng câu hỏi"
+],
+[
+3357,
+3408,
+"2. Báo cáo nội\ndung và phương pháp của bảng câu hỏi"
+],
+[
+3465,
+3498,
+"3. Tập hợp người\nđể cùng làm việc"
+],
+[
+3568,
+3628,
+"4. Điều\ntra ghi chép của khảo sát bảng\ncâu hỏi trong quá khứ"
+]
+]
+},
+"77": {
+"version": "19d4d464f7f76297",
+"wraps": [
+[
+58,
+83,
+"1. Đặt hàng thuốc vitamin"
+],
+[
+127,
+162,
+"2. Thanh toán tại cửa\nhàng tiện lợi"
+],
+[
+218,
+243,
+"3. Thanh toán từ bưu điện"
+],
+[
+296,
+332,
+"4. Quyết định phương thức\nthanh toán"
+],
+[
+455,
+528,
+"Người phụ nữ và cháu\ntrai đang nói chuyện. Sau đó người phụ nữ sẽ làm gì?"
+],
+[
+597,
+656,
+"M: Này, bà ơi, bà đã\nnói muốn mua thuốc vitamin phải không?"
+],
+[
+711,
+763,
+"F: Ừ, vì cái mà tôi\nthường uống chỉ còn một ít thôi."
+],
+[
+860,
+950,
+"M: Nếu mua trên\ninternet thì chắc sẽ rẻ hơn một chút, nên bây giờ cháu sẽ đặt hàng cho bà."
+],
+[
+1051,
+1143,
+"F: Ồ, thật à. Cảm ơn\ncháu. Vậy thì nhờ cháu nhé. Lần này chỉ cần một hộp thuốc vitamin thôi."
+],
+[
+1186,
+1220,
+"M: Bà sẽ thanh toán bằng\ncách nào?"
+],
+[
+1255,
+1284,
+"F: Bằng tiền mặt gửi bảo\nđảm."
+],
+[
+1385,
+1465,
+"M: Ở đây không có bưu\nđiện đâu. Thanh toán bằng thẻ là dễ nhất, bà có thẻ không?"
+],
+[
+1500,
+1526,
+"F: Không, bà không có\nthẻ."
+],
+[
+1641,
+1745,
+"M: Vậy thì bà có thể\ntrả tiền khi hàng được giao đến nhà, hoặc thanh toán tại cửa hàng tiện lợi gần\nđây."
+],
+[
+1779,
+1821,
+"F: Ủa, thanh toán tại\ncửa hàng tiện lợi à?"
+],
+[
+2027,
+2205,
+"M: Đúng vậy. Nhận hàng\ntại cửa hàng tiện lợi và thanh toán lúc đó. Khi hàng đến cửa hàng tiện lợi, sẽ\ncó email thông báo. Cách này tiện lợi cho những người thường xuyên vắng nhà."
+],
+[
+2342,
+2483,
+"F: Tôi thường ở nhà,\nnhưng cũng có lúc ra ngoài nên hơi phiền. Nhưng đi đến cửa hàng tiện lợi cũng\nphiền. Khó xử quá. Tôi thích bưu điện hơn."
+],
+[
+2549,
+2628,
+"M: Bà ơi! Nếu không\nquyết định thì không thể đăng ký được đâu. Bà chọn cái nào?"
+],
+[
+2701,
+2731,
+"Sau đó người phụ nữ sẽ làm gì?"
+],
+[
+2776,
+2801,
+"1. Đặt hàng thuốc vitamin"
+],
+[
+2845,
+2880,
+"2. Thanh toán tại cửa\nhàng tiện lợi"
+],
+[
+2936,
+2961,
+"3. Thanh toán từ bưu điện"
+],
+[
+3039,
+3075,
+"4. Quyết định phương thức\nthanh toán"
+]
+]
+},
+"78": {
+"version": "dbd495af5b8ef910",
+"wraps": [
+[
+471,
+563,
+"Người đàn ông và người phụ nữ đang nói chuyện với nhau. Người đàn ông sẽ cho cái gì vào hộp?"
+],
+[
+651,
+724,
+"F: Xin lỗi nhé, ngày nghỉ quý giá thế này mà lại bắt cậu giúp chuyển nhà."
+],
+[
+802,
+870,
+"M: Không sao đâu. Chuyển nhà vất vả mà. Nào, bắt đầu từ việc gì đây?"
+],
+[
+933,
+990,
+"F: Vậy, cậu cho đống bát đĩa ở đây vào hộp giúp mình nhé?"
+],
+[
+1012,
+1032,
+"M: Ừ, mình hiểu rồi."
+],
+[
+1096,
+1147,
+"F: Hãy dùng chỗ báo này để bọc lại cho khỏi vỡ nhé."
+],
+[
+1219,
+1275,
+"M: Ơ? Cái đĩa này hình như cạnh bị sứt một chút rồi này."
+],
+[
+1422,
+1588,
+"F: Cái nào cơ? Á, cái to đó là đồ quan trọng mẹ mình tặng nên đừng vứt đi nhé. Với lại, mấy cái nhỏ này mình cũng không hay dùng nên không cần cho vào cũng được."
+],
+[
+1605,
+1617,
+"M: Được rồi."
+],
+[
+1771,
+1963,
+"F: A, mình thích cái cốc cà phê này lắm. Nhưng mà nó bẩn quá rồi nhỉ. Cái này chắc không dùng nữa đâu. Còn cái cốc cà phê này vẫn còn mới nên cậu cho vào cẩn thận nhé. Cái có hình hoa ấy."
+],
+[
+2019,
+2047,
+"M: Hình hoa nhỉ. A, đây rồi."
+],
+[
+2135,
+2171,
+"Người đàn ông sẽ cho cái gì vào hộp?"
+]
+]
+},
+"79": {
+"version": "6ab8458f992f5dd5",
+"wraps": [
+[
+472,
+564,
+"Người đàn\nông và người phụ nữ đang nói chuyện với nhau. Người đàn ông sẽ cho cái gì vào\ntúi?"
+],
+[
+638,
+686,
+"M: Đang\nlàm cái gì vào lúc đêm muộn thế này vậy?"
+],
+[
+761,
+829,
+"F: Chuẩn bị\ncho bữa tiệc sẽ tổ chức tại nhà anh Yamada vào ngày mai."
+],
+[
+931,
+998,
+"M: À, mọi người sẽ mỗi người mang một ít\nđồ ăn và thức uống đi nhỉ."
+],
+[
+1165,
+1324,
+"F: Này,\ngiúp mình một chút được không? Mình định phân chia những đồ mang đi vào cái túi\nnày và cái giỏ kia. Mình sẽ cho vào giỏ, nên muốn nhờ cậu phần cái túi."
+],
+[
+1342,
+1355,
+"M: Được thôi."
+],
+[
+1479,
+1624,
+"F: Trước tiên, rượu vang thì cho vào túi\nnhé. Sau đó là dâu tây nữa. À, nhưng mà dâu tây thì nên cho vào tủ lạnh để đến\nsáng mai thì tốt hơn nhỉ."
+],
+[
+1658,
+1715,
+"M: Ừ, như\nvậy tốt hơn đấy. Còn cái bánh ngọt này thì sao?"
+],
+[
+1799,
+1897,
+"F: À, cái\nđó thì cho vào giỏ. Còn lại là bánh mì nhé. Sau đó, nhờ cậu cả chỗ trà và\nsocola đó nữa."
+],
+[
+1960,
+2020,
+"M: Cũng mang cả trà đi à? Chẳng phải là không cần thiết\nsao."
+],
+[
+2060,
+2103,
+"F: Thế à?\nNhưng mà đây là loại trà ngon mà."
+],
+[
+2147,
+2209,
+"M: Chắc là không sao đâu. Vì mình đã mang\nrượu vang đi rồi mà."
+],
+[
+2268,
+2308,
+"F: Nhưng mà anh Yamada thích trà lắm đó."
+],
+[
+2376,
+2457,
+"M: Hiểu rồi. Nhưng cái túi này, vì chai\nrượu nặng nên cân bằng không tốt lắm nhỉ."
+],
+[
+2517,
+2587,
+"F: Vậy thì cái nào nặng mình sẽ cho vào giỏ. Đưa cho\nmình bên này nào."
+],
+[
+2676,
+2712,
+"Người đàn ông sẽ cho cái gì vào túi?"
+]
+]
+},
+"80": {
+"version": "125f9d5d7e3bc435",
+"wraps": [
+[
+73,
+100,
+"1. Thứ Hai, thứ Tư, thứ Bảy"
+],
+[
+161,
+188,
+"2. Thứ Tư, thứ Năm, thứ Sáu"
+],
+[
+249,
+276,
+"3. Thứ Hai, thứ Tư, thứ Năm"
+],
+[
+337,
+365,
+"4. Thứ Hai, thứ Năm, thứ Sáu"
+],
+[
+499,
+584,
+"Bạn nữ sinh và bạn nam sinh đang nói chuyện với nhau. Bạn nam sinh khi nào sẽ dự thi?"
+],
+[
+644,
+689,
+"F: Ái chà, từ tuần sau là thi học kỳ rồi nhỉ."
+],
+[
+823,
+930,
+"M: Ừ. Nhưng vì một nửa số tiết học của mình là đánh giá qua báo cáo, nên thực tế số môn phải dự thi ít lắm."
+],
+[
+1064,
+1189,
+"F: Hể, thích nhỉ. Mình thì chỉ có 3 môn đánh giá qua báo cáo thôi. Rốt cuộc là ngày nào cũng phải dự thi đấy. Cả thứ Bảy nữa."
+],
+[
+1220,
+1237,
+"M: Hả, thứ Bảy á?"
+],
+[
+1342,
+1450,
+"F: Đúng vậy. Tại vì các môn thi thứ Sáu bị trùng giờ với nhau mà. Nên mình đã được đổi một môn sang thứ Bảy."
+],
+[
+1546,
+1614,
+"M: Chà, vất vả nhỉ. Mình thì chỉ có thứ Hai, thứ Tư và thứ Năm thôi."
+],
+[
+1717,
+1815,
+"F: Ơ. Môn Chính trị học của giáo sư Tanaka vào thứ Sáu, cậu không đăng ký à? Môn đó có thi mà nhỉ."
+],
+[
+1914,
+1990,
+"M: Điêu! Thầy bảo là thi cử chỉ dành cho những người chuyên cần kém thôi mà."
+],
+[
+2068,
+2126,
+"F: Đó là môn Tâm lý học của giáo sư Yamada vào thứ Tư chứ."
+],
+[
+2168,
+2189,
+"M: Hả, thầy Yamada á?"
+],
+[
+2312,
+2414,
+"F: Này, không phải tiết học tuần trước thầy Yamada đã cho mọi người xem bảng tỉ lệ chuyên cần rồi sao?"
+],
+[
+2573,
+2772,
+"M: Ra là vậy. Vì chuyên cần của mình không có vấn đề gì nên môn đó không cần thi cũng được. Hóa ra là thế. Nhưng mà, môn Chính trị học thì tính sao đây. Giờ mới bắt đầu học thì liệu có kịp không nhỉ."
+],
+[
+2847,
+2878,
+"Bạn nam sinh khi nào sẽ dự thi?"
+],
+[
+2940,
+2967,
+"1. Thứ Hai, thứ Tư, thứ Bảy"
+],
+[
+3028,
+3055,
+"2. Thứ Tư, thứ Năm, thứ Sáu"
+],
+[
+3116,
+3143,
+"3. Thứ Hai, thứ Tư, thứ Năm"
+],
+[
+3229,
+3257,
+"4. Thứ Hai, thứ Năm, thứ Sáu"
+]
+]
+},
+"81": {
+"version": "61ec8e8114110288",
+"wraps": [
+[
+92,
+139,
+"1. Đăng ký bằng điện thoại vào ngày 15 tháng 5."
+],
+[
+213,
+257,
+"2. Đăng ký qua internet vào ngày 15 tháng\n5."
+],
+[
+347,
+396,
+"3. Gửi 3000 yên từ ngân hàng vào ngày 15\ntháng 5."
+],
+[
+486,
+537,
+"4. Trả 3000 yên tại hội trường vào ngày 15 tháng 5."
+],
+[
+665,
+759,
+"Người đàn ông và người phụ nữ đang nói chuyện qua điện thoại. Người đàn ông sau đây sẽ làm gì?"
+],
+[
+905,
+1015,
+"M: Alo. Tôi muốn đăng ký buổi diễn thuyết có tên là \"Đề xuất cho các nhà khởi nghiệp trẻ\" vào ngày 15 tháng 6."
+],
+[
+1083,
+1147,
+"F: A, xin lỗi ông. Theo quy định là phải đăng ký qua internet ạ."
+],
+[
+1187,
+1227,
+"M: Ơ, qua điện thoại này không được sao?"
+],
+[
+1376,
+1525,
+"F: Vâng, thành thật xin lỗi ông. Trên trang chủ có \"Đơn đăng ký\" của buổi diễn thuyết. Ông vui lòng điền các thông tin cần thiết vào đó rồi gửi đi ạ."
+],
+[
+1629,
+1726,
+"M: Tôi hiểu rồi. Vậy phí tham gia 3000 yên\nthì trả vào ngày diễn ra buổi diễn thuyết là được nhỉ."
+],
+[
+1778,
+1842,
+"F: Dạ không, khoản đó chúng tôi muốn nhờ ông thanh toán trước ạ."
+],
+[
+1888,
+1914,
+"M: Hả, gửi qua bưu điện à?"
+],
+[
+2101,
+2264,
+"F: Dạ không. Sau khi nhận được đăng ký, chúng tôi sẽ\nthông báo số tài khoản ngân hàng qua email. Xin ông hãy gửi tiền vào đó trong vòng 10\nngày kể từ ngày\nđăng ký."
+],
+[
+2285,
+2301,
+"M: Tôi hiểu rồi."
+],
+[
+2399,
+2459,
+"F: A, việc đăng ký bắt đầu từ 10 giờ sáng ngày 15 tháng 5 ạ."
+],
+[
+2562,
+2666,
+"M: Ơ, vẫn chưa được sao? Nói đến ngày\n15 thì là thứ Hai tuần sau nhỉ. Phải chú ý để không quên mới được."
+],
+[
+2736,
+2768,
+"Người đàn ông sau đây sẽ làm gì?"
+],
+[
+2847,
+2894,
+"1. Đăng ký bằng điện thoại vào ngày 15 tháng 5."
+],
+[
+2993,
+3037,
+"2. Đăng ký qua internet vào ngày 15 tháng\n5."
+],
+[
+3136,
+3185,
+"3. Gửi 3000 yên từ ngân hàng vào ngày 15\ntháng 5."
+],
+[
+3275,
+3326,
+"4. Trả 3000 yên tại hội trường vào ngày 15 tháng 5."
+]
+]
+},
+"82": {
+"version": "1e8bcf22cd1212b7",
+"wraps": [
+[
+86,
+135,
+"1. Tuyệt đối không ăn những thực phẩm dễ gây béo."
+],
+[
+190,
+227,
+"2. Ăn uống vào một khung giờ cố định."
+],
+[
+258,
+283,
+"3. Bắt đầu chơi thể thao."
+],
+[
+330,
+344,
+"4. Về nhà sớm."
+],
+[
+454,
+535,
+"Người đàn ông đang nói chuyện tại bệnh viện. Người đàn ông sẽ làm gì để giảm cân?"
+],
+[
+673,
+824,
+"F: A, lại một chút nữa, cân nặng của ông đang tăng lên rồi này. Ở lần khám sức khỏe trước, tôi đã nói về việc phải quản lý sức khỏe thật kỹ rồi mà nhỉ."
+],
+[
+983,
+1207,
+"M: Đúng là vậy, nhưng mãi mà tôi không\ngiảm cân được. Tất nhiên là bia yêu thích\nvà đồ ngọt tôi\ncũng đang giảm bớt, và cũng đang cố gắng đi bộ đến nhà ga, nhưng mà... Có lẽ tôi phải thực hiện một cách triệt để hơn nữa chăng?"
+],
+[
+1361,
+1549,
+"F: À thì, cũng tùy vào lượng tiêu thụ nữa, nhưng nếu việc nghĩ rằng \"tuyệt đối không uống bia\" hay\n\"tuyệt đối không\năn đồ ngọt\"\nlàm ông thấy khổ sở, thì không cần quá ép buộc bản thân đâu."
+],
+[
+1710,
+1848,
+"M: Vậy sao ạ? May quá. Vì khi làm việc đến muộn, bụng đói nên tôi lỡ muốn ăn đồ ngọt mất. Với lại nếu về nhà mới ăn thì đã quá 10 giờ rồi."
+],
+[
+2038,
+2249,
+"F: A, thế thì không được rồi. Trước tiên, hãy dùng bữa tối vào thời gian sớm hơn. Việc quan trọng là mỗi ngày phải ăn uống chỉn chu vào một khung giờ phù hợp. Ăn trước khi ngủ là chuyện không thể chấp nhận được."
+],
+[
+2345,
+2435,
+"M: Ơ, nhưng mà vào ngày thường,\nkhông có chuyện tôi có thể quay về nhà vào giờ ăn tối đâu."
+],
+[
+2578,
+2701,
+"F: Nếu vậy thì hãy ăn uống tử tế tại nơi làm\nviệc vào giờ ăn tối. Vì nếu ăn dở dang nửa vời thì trái lại sẽ bị béo lên đấy."
+],
+[
+2806,
+2906,
+"M: Còn vận động thì sao? Tôi đang định đi bơi ở hồ bơi hay chạy bộ, nhưng mãi mà không có\nthời gian."
+],
+[
+3060,
+3265,
+"F: Tất nhiên thể thao là tốt, nhưng quan trọng hơn hết là phải tạo ra nhịp điệu sinh hoạt điều độ. Vì chỉ có thể thao thôi thì không thể tạo nên\nmột cơ thể khỏe mạnh được. Hãy làm từ những việc có\nthể nhé."
+],
+[
+3332,
+3368,
+"Người đàn ông sẽ làm gì để giảm cân?"
+],
+[
+3441,
+3490,
+"1. Tuyệt đối không ăn những thực phẩm dễ gây béo."
+],
+[
+3570,
+3607,
+"2. Ăn uống vào một khung giờ cố định."
+],
+[
+3647,
+3672,
+"3. Bắt đầu chơi thể thao."
+],
+[
+3719,
+3733,
+"4. Về nhà sớm."
+]
+]
+},
+"83": {
+"version": "c63906b0d5461213",
+"wraps": [
+[
+84,
+141,
+"1. Người bạn được giới thiệu tham gia buổi \"trải nghiệm\"."
+],
+[
+201,
+242,
+"2. Đi cùng với người bạn được giới thiệu."
+],
+[
+303,
+360,
+"3. Người bạn được giới thiệu đăng ký gia nhập câu lạc bộ."
+],
+[
+439,
+496,
+"4. Người bạn được giới thiệu xuất trình giấy tờ tùy thân."
+],
+[
+649,
+776,
+"Người đàn ông đang nói chuyện với một người phụ nữ tại phòng tập thể dục. Để được giảm học phí ở phòng tập này thì cần điều gì?"
+],
+[
+877,
+968,
+"M: Xin lỗi, tôi nghe nói nếu giới thiệu bạn bè thì sẽ được giảm lệ phí hội viên phải không?"
+],
+[
+1156,
+1315,
+"F: Vâng. Nếu ông giới thiệu bạn bè và người đó tham gia buổi \"trải nghiệm\", chúng tôi sẽ tặng phiếu bơi miễn phí 1 lần cho cả người giới thiệu và người bạn đó."
+],
+[
+1351,
+1383,
+"M: \"Trải nghiệm\" nghĩa là sao ạ?"
+],
+[
+1530,
+1675,
+"F: Vâng. Những người lần đầu đến sẽ được giới thiệu sử dụng phòng tập này duy nhất 1 lần. Vì là \"dùng thử\" nên tất nhiên chúng tôi không\nthu phí."
+],
+[
+1780,
+1889,
+"M: À, nghĩa là khi đó cũng sẽ nhận được phiếu bơi miễn phí nhỉ. Vậy còn việc được giảm lệ phí hội viên thì..."
+],
+[
+2043,
+2178,
+"F: À, đó là trường hợp người đó đăng ký gia nhập hội. Trong trường hợp đó, cả hai người sẽ được miễn phí lệ phí hội viên trong 3 tháng."
+],
+[
+2316,
+2416,
+"M: À, ra vậy. Một người bạn của tôi có vẻ hơi quan tâm, nên tôi đang\nđịnh lần tới sẽ dẫn cậu ấy đến."
+],
+[
+2543,
+2659,
+"F: Vậy ạ. Rất mong được phục vụ ông. À, khi đến cần có giấy tờ tùy thân nên phiền ông nhắn lại với bạn của mình nhé."
+],
+[
+2677,
+2693,
+"M: Tôi hiểu rồi."
+],
+[
+2735,
+2764,
+"F: Rất mong được phục vụ ông."
+],
+[
+2845,
+2882,
+"Để được giảm học phí thì cần điều gì?"
+],
+[
+2953,
+3010,
+"1. Người bạn được giới thiệu tham gia buổi \"trải nghiệm\"."
+],
+[
+3070,
+3111,
+"2. Đi cùng với người bạn được giới thiệu."
+],
+[
+3197,
+3254,
+"3. Người bạn được giới thiệu đăng ký gia nhập câu lạc bộ."
+],
+[
+3342,
+3399,
+"4. Người bạn được giới thiệu xuất trình giấy tờ tùy thân."
+]
+]
+},
+"84": {
+"version": "7d3e25ecbe55fe2e",
+"wraps": [
+[
+461,
+533,
+"Người đàn ông đang nói chuyện tại cửa hàng hoa. Người đàn ông sẽ mua gì?"
+],
+[
+610,
+720,
+"M: A, cái này là cà phê phải không nhỉ? Tôi nghe nói nếu là loại cà chua nhỏ thì có thể trồng trong chậu được."
+],
+[
+924,
+1153,
+"F: Vâng. Loại này ra rất nhiều cà chua nhỏ đấy ạ. Vì chiều cao của cây cũng không tăng\nlên quá nhiều nên cũng không cần gậy chống đâu. Với cà chua thông thường, vì cây sẽ bị đổ khi gió thổi nên người ta mới cần dùng gậy để chống."
+],
+[
+1227,
+1292,
+"M: Vậy sao? Thực sự không cần trồng xuống đất cũng không sao chứ?"
+],
+[
+1349,
+1408,
+"F: Vâng. Ông hãy cho vào một cái chậu hơi lớn một chút nhé."
+],
+[
+1459,
+1510,
+"M: Tôi có cái chậu hình chữ nhật thì có được không?"
+],
+[
+1749,
+2020,
+"F: Vâng, chỉ cần cho được nhiều đất vào là tốt rồi ạ. Nếu là chậu hình chữ nhật thì có thể trồng được 2 cây đấy. Điều quan trọng nhất chính là đất. Vì đất cũ không thể sử dụng được nên ông hãy thay mới toàn bộ nhé. Ở đây chúng tôi có loại đất chuyên dụng cho rau củ."
+],
+[
+2173,
+2303,
+"M: Phải thay mới hết nhỉ. Còn những viên đá nhỏ trải dưới lớp đất, tôi có thể dùng lại những viên có sẵn trong chậu cũ được không?"
+],
+[
+2368,
+2446,
+"F: À thì... cũng không phải là không dùng được nhưng... ông\nnên thay mới đi ạ."
+],
+[
+2529,
+2628,
+"M: Còn lại là phân bón nhỉ. Nếu không cung cấp dinh dưỡng thì chắc là sẽ không có cà chua ngon đâu."
+],
+[
+2812,
+2993,
+"F: Vì trong đất mới đã có sẵn dinh dưỡng rồi nên lúc đầu chưa cần phân bón đâu ạ, nhưng khi quả bắt đầu đậu thì ông hãy đặt loại phân bón này vào chậu nhé. Một hộp là đủ dùng rồi ạ."
+],
+[
+3034,
+3075,
+"M: Tôi hiểu rồi. Vậy thì tôi sẽ mua luôn."
+],
+[
+3199,
+3271,
+"Người đàn\nông đang nói chuyện tại cửa hàng hoa. Người đàn\nông sẽ mua gì?"
+]
+]
+},
+"85": {
+"version": "a7a0dd13faf85693",
+"wraps": [
+[
+583,
+696,
+"Người đàn ông vừa xem bản đồ tàu điện vừa nói chuyện với người phụ nữ. Người đàn ông sẽ đi qua những ga\nnào?"
+],
+[
+804,
+922,
+"M: Phải quyết định xem đi đến sân bay bằng cách nào thôi. Chuyến du lịch Hokkaido cuối cùng cũng đến vào tuần sau rồi."
+],
+[
+1035,
+1156,
+"F: Tuyệt quá nhỉ. Để xem nào, từ \"Hanada\" đi tàu JR nhé. Tàu JR là đường màu đen, nên \"Hanada\" ở đây, phía trên bên trái."
+],
+[
+1178,
+1192,
+"M: À,\nđây rồi."
+],
+[
+1330,
+1439,
+"F: Từ \"Hanada\" đi\ntàu JR đến \"Kitamachi\", rồi từ \"Kitamachi\"\nđi monorail là gần nhất và nhàn nhất phải không?"
+],
+[
+1627,
+1811,
+"M: Nhưng tàu monorail đắt lắm. Hay là đi tuyến Minami từ ga \"Midoricho\" nhỉ? Cái tuyến đi từ \"Midoricho\" đến\n\"Sakuragawa\" này này. Rồi từ \"Sakuragawa\"\nmình đổi sang tàu điện ngầm."
+],
+[
+2014,
+2189,
+"F: Từ ga JR\n\"Sakuragawa\" đến ga\n\"Nakayama\" vừa đông đúc lại vừa tốn thời gian nữa. Với lại, tuyến Minami ít chuyến lắm. Nếu không chuyển tàu khớp được thì vất vả lắm đấy."
+],
+[
+2288,
+2399,
+"M: Ra vậy. Thế thì đi tàu điện ngầm thôi. Vừa rẻ lại vừa nhanh. Giá mà đi toàn bằng tàu\nđiện ngầm được thì tốt."
+],
+[
+2575,
+2759,
+"F: Nếu thế thì đi bộ đến \"Nishi-Hanada\", rồi từ đó lên tàu điện ngầm chẳng phải tốt sao? Dù giữa đường phải chuyển tàu ở \"Higashiyama\" nhưng có thể đi toàn bằng tàu điện ngầm đấy."
+],
+[
+2815,
+2862,
+"M: Từ đây đi bộ đến \"Nishi-Hanada\" mất bao lâu?"
+],
+[
+2910,
+2943,
+"F: Chắc đi bộ mất khoảng 20 phút."
+],
+[
+3027,
+3097,
+"M: Xa nhỉ. Thế thì dù có rẻ đến mấy cũng mệt mà lại tốn thời gian nữa."
+],
+[
+3217,
+3315,
+"F: Vậy thì từ \"Hanada\" đến\n\"Nishi-Hanada\" cậu cứ đi tàu JR đi. Tốn thêm một ít tiền nhưng mà\nnhàn."
+],
+[
+3338,
+3354,
+"M: Ừ, cứ thế đi."
+],
+[
+3444,
+3481,
+"Người đàn\nông sẽ đi qua những ga nào?"
+]
+]
+},
+"86": {
+"version": "b5b60e183da8b4cd",
+"wraps": [
+[
+75,
+99,
+"1. Chiều thứ Tư tuần sau"
+],
+[
+162,
+185,
+"2. Sáng thứ Tư tuần sau"
+],
+[
+248,
+272,
+"3. Sáng thứ Năm tuần sau"
+],
+[
+336,
+386,
+"4. Sáng thứ Tư của tuần sau nữa (tuần kế tiếp nữa)"
+],
+[
+520,
+592,
+"Người nam và người nữ đang nói chuyện. Người nữ sẽ đặt lịch\nvào khi nào?"
+],
+[
+729,
+817,
+"Nam: Cậu Hayashi này, về cuộc họp bị trì hoãn mãi đó, chiều\nthứ Tư tuần sau thì thế nào?"
+],
+[
+898,
+953,
+"Nữ: Chiều thứ Tư thì ông Yamada của Tokyo Glass sẽ đến."
+],
+[
+1007,
+1053,
+"Nam: À đúng rồi nhỉ. Vậy ngày hôm sau thì sao?"
+],
+[
+1177,
+1260,
+"Nữ: À… à, từ thứ Năm tuần sau tôi đi công tác 2 đêm, đến chi\nnhánh Nagoya và Osaka."
+],
+[
+1401,
+1543,
+"Nam: À đúng rồi, là cuộc họp ở Nagoya. Vì xuất phát vào buổi\ntrưa nên buổi sáng không phải là không thể họp, nhưng tôi sẽ phải rời giữa chừng."
+],
+[
+1599,
+1650,
+"Nữ: Vâng. Không thể họp mà thiếu trưởng phòng được."
+],
+[
+1761,
+1851,
+"Nam: Khó thật. Nếu sau\nchuyến công tác thì sẽ thành tuần sau nữa mất. Sáng thứ Tư thì sao?"
+],
+[
+1960,
+2029,
+"Nữ: Sáng thứ Tư tuần sau đã có cuộc họp bàn về quảng cáo từ\nsáng rồi."
+],
+[
+2160,
+2298,
+"Nam: Ừm, vậy chỉ còn\ncách dời cuộc họp đó thôi. Cuộc họp đó thì chắc làm sau khi gặp khách\ncũng được. Ừ, chỉ còn cách đó thôi. Làm vậy\nđi."
+],
+[
+2363,
+2412,
+"Nữ: Vậy à. Nếu thế thì tôi sẽ đặt phòng họp ngay."
+],
+[
+2475,
+2539,
+"Nam: Sau đó nhớ liên lạc với những người liên quan giúp tôi\nnhé."
+],
+[
+2622,
+2664,
+"Người phụ nữ sẽ đặt phòng họp vào khi nào?"
+],
+[
+2726,
+2750,
+"1. Chiều thứ Tư tuần sau"
+],
+[
+2838,
+2861,
+"2. Sáng thứ Tư tuần sau"
+],
+[
+2933,
+2957,
+"3. Sáng thứ Năm tuần sau"
+],
+[
+3021,
+3071,
+"4. Sáng thứ Tư của tuần sau nữa (tuần kế tiếp nữa)"
+]
+]
+},
+"87": {
+"version": "5edfc1f3a2f17d44",
+"wraps": [
+[
+55,
+73,
+"1. Đi đến bưu điện"
+],
+[
+137,
+176,
+"2. Đi đến chi nhánh ngân hàng AB gần đó"
+],
+[
+230,
+264,
+"3. Đi đến ngân hàng nơi đã làm thẻ"
+],
+[
+307,
+333,
+"4. Gửi email đến ngân hàng"
+],
+[
+475,
+577,
+"Một người phụ nữ đang nói chuyện qua điện thoại. Người phụ nữ sẽ làm gì tiếp\ntheo để thay đổi địa chỉ?"
+],
+[
+650,
+712,
+"M: Alo, đây là ngân hàng AB, có phải chị Tanaka Kaoru không ạ?"
+],
+[
+735,
+753,
+"F: Vâng, đúng vậy."
+],
+[
+874,
+981,
+"M: Thực ra, thông báo chúng tôi gửi vào tháng trước đã bị gửi trả lại, địa\nchỉ của chị có thay đổi không ạ?"
+],
+[
+1087,
+1171,
+"F: À đúng rồi. Xin lỗi. Vì tôi đã chuyển nhà nên đang nghĩ là phải thay đổi\nđịa chỉ."
+],
+[
+1262,
+1363,
+"M: Vậy à. Nếu tiện thì chúng tôi có thể tiếp nhận việc thay đổi địa chỉ\nngay qua cuộc điện thoại này."
+],
+[
+1420,
+1472,
+"F: Thật vậy sao? Tôi không cần phải đến ngân hàng à?"
+],
+[
+1574,
+1683,
+"M: Việc thay đổi địa chỉ nhận thông báo có thể làm qua điện thoại này,\nnhưng chị có thẻ ngân hàng đúng không?"
+],
+[
+1700,
+1708,
+"F: Vâng."
+],
+[
+1816,
+1921,
+"M: Việc thay đổi địa chỉ cho thẻ đó cũng cần thiết, nên chúng tôi muốn nhờ\nchị làm thủ tục tại ngân hàng."
+],
+[
+2080,
+2239,
+"F: Vậy là vẫn phải đi đúng không. Ngân hàng nơi tôi làm thẻ thì xa chỗ tôi\nđang sống bây giờ. Không thể làm thủ tục qua bưu điện sao? Hoặc qua email chẳng\nhạn."
+],
+[
+2333,
+2427,
+"M: Chúng tôi rất xin lỗi. Nhưng chị có thể làm ở chi nhánh ngân hàng AB gần\nchỗ chị cũng được."
+],
+[
+2451,
+2463,
+"F: À, vậy à."
+],
+[
+2614,
+2732,
+"M: À, khi đến xin chị mang theo con dấu. Thời gian tiếp nhận là từ thứ Hai\nđến thứ Sáu, từ 9 giờ sáng đến 3 giờ chiều."
+],
+[
+2756,
+2778,
+"F: Vâng, tôi hiểu rồi."
+],
+[
+2888,
+2952,
+"Sau cuộc điện thoại, người phụ nữ sẽ làm gì để thay đổi\nđịa chỉ?"
+],
+[
+2994,
+3012,
+"1. Đi đến bưu điện"
+],
+[
+3101,
+3140,
+"2. Đi đến chi nhánh ngân hàng AB gần đó"
+],
+[
+3203,
+3237,
+"3. Đi đến ngân hàng nơi đã làm thẻ"
+],
+[
+3280,
+3306,
+"4. Gửi email đến ngân hàng"
+]
+]
+},
+"156": {
+"version": "9493c075d4be26e4",
+"wraps": [
+[
+223,
+273,
+"F: Có vẻ anh không thích cá nhỉ. Không cần cố đâu."
+]
+]
+},
+"189": {
+"version": "751e3a0b3e545ad2",
+"wraps": [
+[
+237,
+309,
+"M: Bố ơi, không biết có về sớm không nhỉ. Chuẩn bị nhiều thế\nnày rồi mà."
+]
+]
+}
+}

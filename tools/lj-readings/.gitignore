@@ -7,3 +7,4 @@ data/
 proposals/*_report.json
 proposals/*_review.md
 proposals/auto/*_report.json
+proposals/translations/*_report.json

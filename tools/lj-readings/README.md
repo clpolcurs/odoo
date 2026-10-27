@@ -44,6 +44,36 @@ Mục QA `auto_readings`: dấu như `<<状態>>`, `<<強く>>` không ghi cách
 Đề xuất nằm ở `proposals/auto/`. Việc bỏ ngoặc là `fixes`; dấu mới được đặt vào markup sau khi đã làm các `fixes` đó,
 nên `apply.py` dùng được như với đề xuất thường.
 
+## Bản dịch chưa bọc `{{...}}` (`untagged_translation`)
+
+Mục QA `untagged_translation` của addon (`services/translations.py`): bản dịch tiếng Việt viết thẳng sau câu tiếng Nhật
+thay vì nằm trong `{{...}}`, nên tab Nội dung của Odoo vẫn hiện nó và NihonGo không ẩn được. `propose_translations.py`
+đề xuất thêm `{{` và `}}` quanh các bản dịch đó theo đúng quy tắc của addon (hai bên phải giữ giống nhau; test
+`test_the_addon_reports_what_the_tool_proposes` so hai bên):
+
+- Một dòng là phần giữa hai thẻ khối (`<p>`, `<li>`, `<td>`…) hoặc hai `<br>`. Dòng tiếng Nhật có ít nhất 2 chữ kana
+  hoặc Hán và không có chữ có dấu tiếng Việt; dòng tiếng Việt mở đầu bằng một chữ Việt (sau số thứ tự, người nói
+  `A:`, `佐藤:` hay thuật ngữ đang giải thích như `~という`), không có `。`, chữ Nhật chỉ là trích dẫn (≤ 0,35 lần số
+  chữ Latin).
+- Cùng dòng: câu tiếng Nhật kết thúc bằng `。！？」』）` rồi đến câu tiếng Việt → `日本語の文。{{Câu tiếng Việt.}}`.
+- Dòng sau: dòng tiếng Việt ngay sau một dòng tiếng Nhật chưa có bản dịch, trong cùng khối (sau `<br>`) hoặc ở đoạn
+  kế tiếp (không áp cho hai ô bảng hay hai mục danh sách khác nhau) → `日本語の文。<br>{{Câu tiếng Việt.}}`.
+- Câu giải thích bằng tiếng Việt có xen thuật ngữ Nhật (`できます biểu thị năng lực…`) không phải bản dịch: nó không
+  đứng sau một câu tiếng Nhật chưa có bản dịch. Mỗi câu tiếng Nhật nhận nhiều nhất một bản dịch.
+- Không đổi chữ nào; bản dịch bị một thẻ định dạng (đậm, màu…) cắt ngang thì để người sửa tay (`doubts` trong báo
+  cáo).
+
+```bash
+uv run python fetch.py
+uv run python propose_translations.py                                        # proposals/translations/<sách>.json
+uv run python apply_translations.py proposals/translations/158-minna-1.json  # kiểm tra với Odoo, không ghi
+uv run python apply_translations.py proposals/translations/158-minna-1.json --apply  # chỉ sau khi đã duyệt
+```
+
+`apply_translations.py` chỉ ghi một bài khi markup mới chỉ khác markup cũ ở các dấu ngoặc, `/markup/preview` đếm thêm
+đúng số bản dịch (và bớt đúng số `untagged_translations` khi Odoo đã có mục QA này), không có lỗi markup mới, và bộ lọc
+HTML của Odoo giữ nguyên markup.
+
 ## Quy trình
 
 ```bash
