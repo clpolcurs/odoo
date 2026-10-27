@@ -23,6 +23,7 @@ CODES = [
     "unbalanced_markup",
     "kanji_without_reading",
     "auto_readings",
+    "untagged_translation",
     "missing_audio",
     "grammar_missing_patterns",
     "not_published",
@@ -98,6 +99,9 @@ def item_issues(item, has_audio):
         guessed = [f"{i['text']} → {i['reading']}" for i in found if i["code"] == "auto_reading"]
         if guessed:
             issues.append({"code": "auto_readings", "count": len(guessed), "details": _unique(guessed)})
+        untagged = [_short(i["text"]) for i in found if i["code"] == "untagged_translation"]
+        if untagged:
+            issues.append({"code": "untagged_translation", "count": len(untagged), "details": _unique(untagged)})
         if not item.is_finalized:
             issues.append({"code": "not_finalized"})
     elif tags & {"reading", "listening"}:
@@ -114,3 +118,7 @@ def item_issues(item, has_audio):
 
 def _unique(values):
     return list(dict.fromkeys(values))[:DETAILS_MAX]
+
+
+def _short(text, width=60):
+    return text if len(text) <= width else text[: width - 1] + "…"

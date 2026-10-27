@@ -762,6 +762,8 @@ paths:
       description: |
         Items that need fixing before they go to NihonGo. Only items that have at least one issue are listed;
         `summary` counts every issue code over the whole filtered set, not only the current page.
+        `untagged_translation` counts the Vietnamese translations written as plain text after a Japanese sentence
+        instead of in `{{...}}` (details: the start of each).
       parameters:
         - $ref: '#/components/parameters/Limit'
         - $ref: '#/components/parameters/Cursor'
@@ -1198,7 +1200,8 @@ components:
       properties:
         code:
           type: string
-          enum: [unbalanced_marker, empty_marker, auto_reading, kanji_without_reading, reading_not_kana, unbalanced_translation, missing_translation]
+          enum: [unbalanced_marker, empty_marker, auto_reading, kanji_without_reading, reading_not_kana, unbalanced_translation, missing_translation,
+                 untagged_translation]
         message: {type: string}
         text: {type: string, description: The marker or characters concerned.}
         reading: {type: string, description: For auto_reading, the reading the server guessed.}
@@ -1218,6 +1221,7 @@ components:
             explicit_readings: {type: integer}
             auto_readings: {type: integer}
             translations: {type: integer}
+            untagged_translations: {type: integer, description: Vietnamese translations written outside {{...}}.}
         issues: {type: array, items: {$ref: '#/components/schemas/MarkupIssue'}}
 
     ChangeEvent:
@@ -1260,7 +1264,7 @@ components:
         code:
           type: string
           enum: [missing_level, missing_markup, not_finalized, unbalanced_markup, kanji_without_reading,
-                 auto_readings, missing_audio, grammar_missing_patterns, not_published]
+                 auto_readings, untagged_translation, missing_audio, grammar_missing_patterns, not_published]
         count: {type: integer}
         details: {type: array, items: {type: string}, description: For example the kanji concerned.}
 

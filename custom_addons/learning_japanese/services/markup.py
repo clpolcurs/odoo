@@ -8,6 +8,7 @@ import html
 import re
 
 from ..utils.furigana_helper import guess_reading, process_furigana
+from . import translations
 
 _RE_CODE_BLOCK = re.compile(r"<(pre|code)\b[^>]*>.*?</\1>", re.DOTALL | re.IGNORECASE)
 _RE_MARKER = re.compile(r"<<([^<>]*)>>")
@@ -134,6 +135,11 @@ def analyze(markup):
         for index, count in enumerate(translation_counts):
             if not count:
                 issues.append(_issue("missing_translation", "Đoạn chưa có bản dịch {{...}}.", block=index))
+
+    untagged = translations.untagged(source)
+    stats["untagged_translations"] = len(untagged)
+    for text in untagged:
+        issues.append(_issue("untagged_translation", "Bản dịch tiếng Việt chưa nằm trong {{...}}.", text=text))
     return {"stats": stats, "issues": issues}
 
 
