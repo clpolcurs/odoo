@@ -33,6 +33,18 @@ from gmatch import Analysed, Pattern, examples, resolve, unmarked_examples
         ("Vることだ", "三日で退院できるということだ。", False),  # hearsay
         ("ぶる", "あいつは先生の前だといい子ぶっている。", True),
         ("ぶる", "10年ぶりに優勝した。", False),
+        ("Vると[接続助詞]", "駅に着くと、友達はもう来ていた。", True),
+        ("Vると[接続助詞]", "明日は雨が降ると思う。", False),
+        ("ていく", "渡り鳥は南へ飛んでいった。", False),  # で, not て
+        ("でいく", "渡り鳥は南へ飛んでいった。", True),
+        ("Vますそうもない", "こんなに食べられそうもない。", True),
+        ("Aくなんかない", "友達もいるから寂しくなんかないよ。", True),
+        ("Aくなんかない", "テレビなんかなくても困らない。", False),
+        ("でる", "お酒が原因でまわりに迷惑をかけた。", False),  # the last word must be でる itself
+        ("でる", "今、本を読んでるところ。", True),
+        ("Vますです", "朝コーヒーを飲んだきりで、", False),  # だ of 飲んだ is not です
+        ("させられる", "父にトイレ掃除をさせられた。", True),
+        ("Nらしい", "やっと社会人らしくなってきた。", True),
     ],
 )
 def test_patterns(pattern, text, found):

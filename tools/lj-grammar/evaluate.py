@@ -13,7 +13,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from gmatch import Analysed, compile_all, examples, resolve, unmarked_examples
+from gmatch import Analysed, compile_all, point_examples, resolve
 
 DATA = Path(__file__).parent / "data"
 
@@ -45,8 +45,8 @@ def evaluate(proposals, corpus, show_noise=0):
     rows = []
     for pid, patterns in proposals.items():
         item = items[pid]
-        bold = examples(item["markup"])
-        exs = [(Analysed(text), spans) for text, spans in bold or unmarked_examples(item["markup"])]
+        found_examples, bold = point_examples(item["markup"])
+        exs = [(Analysed(text), spans) for text, spans in found_examples]
         missed, shadowed = [], []
         for sentence, spans in exs:
             found = all_matches(sentence)
