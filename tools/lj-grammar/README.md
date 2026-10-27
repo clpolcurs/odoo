@@ -14,20 +14,22 @@ Mỗi điểm ngữ pháp có một hoặc vài mẫu; mỗi mẫu là phần ti
 | `…` | Khoảng trống tối đa 12 ký tự trong cùng câu; mỗi đoạn hai bên phải là từ trọn vẹn | `さえ…ば` khớp お金さえあれば |
 | `N` ở đầu mẫu (hoặc sau `…`) | Từ đứng ngay trước là danh từ | `N次第で` khớp 天候次第で |
 | `Vる` `Vた` `Vて` `Vます` `Vない` | Động từ thể từ điển, thể ta, thể te, gốc masu, thể nai | `Vるあまり` khớp 気にするあまり, không khớp あまり～ない |
-| `Aい` `Aく` `Aな` | Tính từ -i (cả 出やすい, 分かりにくい), thể く của nó, tính từ -na | `Aなことに、` khớp 残念なことに、 |
+| `Aい` `Aく` `Aな` `A` | Tính từ -i (cả 出やすい, 分かりにくい), thể く của nó, tính từ -na (cả 親切), gốc tính từ -i (辛 của 辛そう) | `Aなことに、` khớp 残念なことに、; `Aすぎる` khớp 狭すぎる |
 | `上[じょう]` | Chữ Hán phải có đúng cách đọc này | `N上[じょう]` khớp 教育上, không khớp 机の上 |
-| `と[接続助詞]` | Trong ngoặc là loại từ (chữ Hán) thì từ đó phải đúng loại | `Vると[接続助詞]` khớp 着くと、, không khớp 行くと思う |
+| `と[接続助詞]` | Trong ngoặc là loại từ (chữ Hán) thì từ đó phải đúng loại | `Vると[接続助詞]` khớp 着くと、, không khớp 行くと思う; `そう[名詞]だ` khớp 寒くなるそうです (nghe nói), không khớp 降りそうです |
 
 Quy tắc khớp (Sudachi, chế độ tách C):
 
 - Chỗ khớp phải bắt đầu ở ranh giới từ (`まい` không khớp しまいました), trừ khi đứng ngay sau động từ thể ý chí
-  (伝えよう + `とする`). Mẫu không kết thúc bằng từ chia đuôi thì cũng phải kết thúc ở ranh giới từ
+  (伝えよう + `とする`; でしょう, ましょう không tính). Mẫu không kết thúc bằng từ chia đuôi thì cũng phải kết thúc ở ranh giới từ
   (`ことか` không khớp ことから).
 - Chỉ từ cuối ở dạng từ điển mới được chia: `ものなら`, `かのように` khớp đúng dạng đó. Từ được chia phải đúng là từ
   đó (`ぶる` không khớp 10年ぶり, `でる` không khớp で của 原因で), và `です` ở cuối mẫu không khớp だ quá khứ (飲んだ).
 - いう của という, そういう không tính là `Vる`: `Vることだ` không khớp ということだ (nghe nói).
 - Chỗ khớp của điểm này nằm trong chỗ khớp dài hơn của điểm khác thì điểm dài hơn thắng (に限って thắng
   に限る, のみならず thắng のみ); dài bằng nhau thì giữ cả hai. Mẫu có `…` không lấn mẫu khác.
+- Khớp trên chữ đã bỏ khoảng trắng giữa hai chữ tiếng Nhật (Minna viết cách từng cụm: コンピューターが あります)
+  và ký tự vô hình (`\u200b`); thẻ `<span>` tô màu nằm trong `<<…>>` cũng bị bỏ khi đọc markup.
 
 ## Quy trình
 
@@ -46,8 +48,10 @@ uv run pytest -q
 - `evaluate.py` chấm mỗi điểm theo hai chiều: mẫu có khớp đúng phần in đậm trong câu ví dụ của chính điểm đó
   không (`4/4`), và khớp bao nhiêu câu trong các bài đọc, bài nghe đã xuất bản (càng cao càng dễ khớp nhầm).
   `MISSED` là câu ví dụ bị trượt, `SHADOWED` là câu ví dụ bị điểm khác có mẫu dài hơn thắng. Sách không in đậm
-  (Try N2, Try N3) thì câu ví dụ là các dòng đánh số và hội thoại A/B, tính cả câu (`no bold`), bỏ bản dịch tiếng
-  Việt nằm cùng dòng; phần bài tập やってみよう bị bỏ qua vì có câu sai cố ý.
+  (Try N2, Try N3, Minna) thì câu ví dụ là các dòng đánh số và hội thoại A/B, tính cả câu (`no bold`), bỏ bản dịch
+  tiếng Việt nằm cùng dòng; phần bài tập やってみよう bị bỏ qua vì có câu sai cố ý. Dòng trả lời mở đầu bằng dấu
+  chấm (……はい、そうです。) được gộp vào câu ngay trước; điểm không có dòng đánh số nào thì lấy các câu tiếng
+  Nhật có bản dịch theo sau trên cùng dòng.
 - Mỗi file trong `proposals/` là một giáo trình, dạng `{"<id điểm ngữ pháp>": ["mẫu", ...]}`. Bảng duyệt nằm trong
   tài liệu "NihonGo — Mẫu khớp ngữ pháp"; sửa mẫu ở đó, rồi cập nhật file và chạy lại `evaluate.py`.
 - `data/` (nội dung tải về) và `*_report.json` không được commit.

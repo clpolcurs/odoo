@@ -10,9 +10,11 @@ Pattern notation (one string per pattern, as stored in Odoo grammar_patterns):
     carry its part of speech the same way: と[接続助詞] is the と of 着くと, not of 行くと思う.
   - A pattern may start with what must come right before it: N (noun), Vる (dictionary form; not いう of
     という, so Vることだ does not match ということだ), Vた (also 泳いだ), Vて, Vます (masu stem), Vない,
-    Aい (also 出やすい), Aく (寂しく), Aな. Example: Vるあまり matches 気にするあまり but not あまり～ない.
-Matching runs on the surface text; a match must start at a Sudachi word boundary (so まい does not match
-しまい), except right after a volitional verb (伝えよう + とする), and a pattern that does not end with a
+    Aい (also 出やすい), Aく (寂しく), A (the stem: 辛 of 辛そう), Aな. Example: Vるあまり matches
+    気にするあまり but not あまり～ない.
+Matching runs on the surface text (zero-width and word-separating spaces dropped); a match must start at a
+Sudachi word boundary (so まい does not match しまい), except right after a volitional verb (伝えよう + とする),
+and a pattern that does not end with a
 conjugating word must also end at one (so ことか does not match ことから).
 Where matches of several points overlap, the longer one that contains the others wins (に限って over
 に限る, のみならず over のみ); matches of the same length are all kept.
@@ -30,6 +32,7 @@ SENTENCE_END = "。！？!?\n"
 # ---------- extraction of Japanese sentences and bold spans from the house markup ----------
 
 RE_MARKER = re.compile(r"<<([^<>]*)>>")
+RE_SPAN = re.compile(r"</?span\b[^>]*>", re.IGNORECASE)
 RE_READING = re.compile(r"^(.+?)\s*-\s*(.+)$", re.DOTALL)
 RE_TRANSLATION = re.compile(r"\{\{.*?\}\}", re.DOTALL)
 RE_BLOCK_END = re.compile(r"</p\s*>|</li\s*>|</div\s*>|<br\s*/?>", re.IGNORECASE)
@@ -37,6 +40,7 @@ RE_JAPANESE = re.compile(r"[぀-ヿ㐀-䶿一-鿿]")
 RE_LATIN = re.compile(r"[A-Za-zÀ-ỹ]")
 RE_KANA = re.compile(r"^[ぁ-ゟ゠-ヿ]+$")
 RE_INVISIBLE = re.compile("[\u200b-\u200d\u2060\ufeff]")  # zero-width spaces split words: お手洗い\u200bは
+RE_SPACED = re.compile(r"(?<=[぀-ヿ㐀-䶿一-鿿])[ \u3000]+(?=[぀-ヿ㐀-䶿一-鿿])")  # 分かち書き: が あります
 
 
 def _base(match):
@@ -68,14 +72,14 @@ class _Bold(HTMLParser):
 
 def blocks(markup):
     """[(text, [(start, end) bold spans])] for every block of the markup that holds Japanese."""
-    source = RE_MARKER.sub(_base, markup or "")
+    source = RE_MARKER.sub(_base, RE_SPAN.sub("", markup or ""))  # <<前<span>\u200b</span>に>>: color spans only
     source = RE_TRANSLATION.sub(" ", source)
     out = []
     for fragment in RE_BLOCK_END.split(source):
         parser = _Bold()
         parser.feed(fragment)
         parser.close()
-        text = RE_INVISIBLE.sub("", parser.text.replace("\xa0", " "))
+        text = RE_SPACED.sub("", RE_INVISIBLE.sub("", parser.text.replace("\xa0", " ")))
         if RE_JAPANESE.search(text):
             out.append((text, parser.spans))
     return out
@@ -103,6 +107,7 @@ RE_NUMBER = re.compile(r"^([0-9０-９]+)(?:\s*[.．]|\s)\s*")
 RE_SPEAKER = re.compile(r"^([A-ZＡ-Ｚ]|[^\s:：]{1,4})\s*[:：]")
 RE_TRANSLATED = re.compile(r"[。？！?!][\s.…]*(?=[A-Za-zÀ-ỹ])(?![A-ZＡ-Ｚ]\s*[:：])")  # です。Tôi là..., not B:
 RE_SAMPLE = re.compile(r"^例\s*[0-9０-９]*\s*[.．:：]?")  # the worked answer of an exercise
+RE_ANSWER = re.compile(r"^[.．…・]{2,}")  # ……はい、そうです。: the answer to the example before it
 EXERCISE = "やってみよう"
 
 
@@ -138,6 +143,15 @@ def unmarked_examples(markup):
         number, speaker = RE_NUMBER.match(line), _speaker(line)
         if RE_SAMPLE.match(line):
             continue
+        if RE_ANSWER.match(line) and japanese and not exercise:
+            if dialogue:
+                dialogue.append(line)
+                continue
+            target = found if found and not loose else (loose or found)
+            if target:
+                text = target[-1][0] + "\n" + line
+                target[-1] = (text, [(0, len(text))])
+                continue
         if EXERCISE in line or heading or not (number or speaker):
             close_dialogue()
             exercise, last = EXERCISE in line, 0
@@ -232,7 +246,13 @@ def _segment_regex(plain):
     return re.escape(head) + "(?P<last>" + stem + ")", False, check
 
 
-LEFT = ("Vます", "Vない", "Vる", "Vた", "Vて", "Aい", "Aく", "Aな", "N")
+LEFT = ("Vます", "Vない", "Vる", "Vた", "Vて", "Aい", "Aく", "Aな", "A", "N")
+
+
+def _verbish(token):
+    """A verb, or an auxiliary that conjugates like one: れる, られる, せる, させる."""
+    pos = token.part_of_speech()
+    return pos[0] == "動詞" or (pos[0] == "助動詞" and token.dictionary_form() in ("れる", "られる", "せる", "させる"))
 
 
 def _left_ok(kind, token):
@@ -243,15 +263,13 @@ def _left_ok(kind, token):
     if kind == "N":
         return pos[0] in ("名詞", "代名詞") or (pos[0] == "接尾辞" and pos[1].startswith("名詞"))
     if kind == "Vる":  # not いう of という, そういう: ということだ is hearsay, not Vることだ
-        verbish = pos[0] == "動詞" or (pos[0] == "助動詞" and lemma in ("れる", "られる", "せる", "させる"))
-        return verbish and form.startswith(("終止形", "連体形")) and token.surface() != "いう"
+        return _verbish(token) and form.startswith(("終止形", "連体形")) and token.surface() != "いう"
     if kind == "Vた":  # た, and だ of 泳いだ (its lemma is だ)
         return pos[0] == "助動詞" and pos[4] == "助動詞-タ"
     if kind == "Vて":
         return pos[0] == "助詞" and token.surface() in ("て", "で")
     if kind == "Vます":  # also られ of 食べられそう
-        verbish = pos[0] == "動詞" or (pos[0] == "助動詞" and lemma in ("れる", "られる", "せる", "させる"))
-        return verbish and form.startswith("連用形")
+        return _verbish(token) and form.startswith("連用形")
     if kind == "Vない":  # ない is an auxiliary after a verb, an adjective in ことがない
         return pos[0] in ("助動詞", "形容詞") and lemma in ("ない", "無い", "ず", "ぬ")
     adjective = pos[0] == "形容詞" or (pos[0] == "接尾辞" and pos[1] == "形容詞的")  # also 出やすい, 分かりにくい
@@ -259,8 +277,12 @@ def _left_ok(kind, token):
         return adjective and form.startswith(("終止形", "連体形"))
     if kind == "Aく":  # 寂しくなんかない, 大きくなる
         return adjective and form.startswith("連用形")
-    if kind == "Aな":  # 残念な + ことに: the word before is な (attributive だ) or the adjective itself
-        return pos[0] == "形状詞" or (token.surface() == "な" and lemma == "だ")
+    if kind == "A":  # the stem: 辛そう, 大き過ぎる, 良さそう
+        return adjective and form.startswith("語幹")
+    if kind == "Aな":  # 残念な + ことに: the word before is な (attributive だ) or the adjective itself (親切 is
+        # a noun that can be a na-adjective for Sudachi)
+        na_adjective = pos[0] == "形状詞" or (pos[0] == "名詞" and pos[2] == "形状詞可能")
+        return na_adjective or (token.surface() == "な" and lemma == "だ")
     return True
 
 
@@ -334,7 +356,11 @@ class Analysed:
         if start not in self.starts:
             inside = self.token_at(start)
             if not (
-                first and seg.volitional and inside is not None and inside.part_of_speech()[5].startswith("意志推量形")
+                first
+                and seg.volitional
+                and inside is not None
+                and _verbish(inside)  # 休もう, 打ち上げられよう, not でしょう or ましょう
+                and inside.part_of_speech()[5].startswith("意志推量形")
             ):
                 return False
         if seg.literal_end and end not in self.ends:

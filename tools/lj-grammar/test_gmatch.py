@@ -1,6 +1,6 @@
 import pytest
 
-from gmatch import Analysed, Pattern, examples, resolve, unmarked_examples
+from gmatch import Analysed, Pattern, blocks, examples, resolve, unmarked_examples
 
 
 @pytest.mark.parametrize(
@@ -45,10 +45,28 @@ from gmatch import Analysed, Pattern, examples, resolve, unmarked_examples
         ("Vますです", "朝コーヒーを飲んだきりで、", False),  # だ of 飲んだ is not です
         ("させられる", "父にトイレ掃除をさせられた。", True),
         ("Nらしい", "やっと社会人らしくなってきた。", True),
+        ("Aそう[形状詞]だ", "この料理は辛そうです。", True),  # the stem of 辛い
+        ("Aすぎる", "この部屋は狭すぎる。", True),
+        ("Aなそう[形状詞]だ", "彼は親切そうです。", True),  # 親切 is a noun that can be a na-adjective
+        ("そう[名詞]だ", "明日は寒くなるそうです。", True),  # hearsay
+        ("そう[名詞]だ", "今にも雨が降りそうです。", False),  # looks like: そう is a 形状詞 there
+        ("う。", "ちょっと休もう。", True),
+        ("う。", "明日は雨でしょう。", False),  # only a volitional verb
     ],
 )
 def test_patterns(pattern, text, found):
     assert bool(Analysed(text).matches(Pattern(pattern))) is found
+
+
+def test_blocks_drop_word_spacing_and_zero_width_spaces():
+    ((text, _),) = blocks("<p>コンピューターが あります。お手洗い\u200bは<<二階 - にかい>>です。</p>")
+    assert text == "コンピューターがあります。お手洗いは二階です。"
+    assert Analysed(text).matches(Pattern("がある"))
+
+
+def test_blocks_drop_color_spans_inside_words():
+    ((text, _),) = blocks('<p>日本へ<<来る>><<前<span class="text-o-color-1">​</span>に>>、勉強しました。</p>')
+    assert text == "日本へ来る前に、勉強しました。"
 
 
 def test_longer_match_of_another_point_wins():
@@ -75,6 +93,23 @@ def test_unmarked_examples_are_numbered_lines_and_dialogues_outside_exercises():
         "A: 明日は？\nB: 休みの際に話そう。",
         "1. 出発に際して挨拶した。",
     ]
+
+
+def test_unmarked_examples_keep_answers_and_fall_back_to_translated_lines():
+    markup = (
+        "<p>1. これは<<誰 - だれ>>の<<本 - ほん>>ですか。</p>"
+        "<p>........<<佐藤 - さとう>>さんのです。</p>"
+        "<p>2. A: あれは<<何 - なん>>ですか。<br>B: <<辞書 - じしょ>>です。</p>"
+    )
+    assert [text for text, _ in unmarked_examples(markup)] == [
+        "1. これは誰の本ですか。\n........佐藤さんのです。",
+        "2. A: あれは何ですか。\nB: 辞書です。",
+    ]
+    markup = (  # no numbered lines: a Japanese line followed by its translation is an example
+        "<p>Trước は là chủ ngữ.</p>"
+        "<p><<寝 - ね>>る<<前 - まえ>>に、<<本 - ほん>>を<<読 - よ>>みます。Trước khi đi ngủ, tôi đọc sách.</p>"
+    )
+    assert [text for text, _ in unmarked_examples(markup)] == ["寝る前に、本を読みます。"]
 
 
 def test_examples_keep_bold_spans_and_drop_readings_and_translations():
