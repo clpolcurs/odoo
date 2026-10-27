@@ -6,6 +6,8 @@ Pattern notation (one string per pattern, as stored in Odoo grammar_patterns):
     (わけではありません), and a verb suffix does not match its noun form (ぶる does not match 10年ぶり).
   - "…" is a gap of up to 12 characters inside the sentence: さえ…ば, やら…やら; each piece around a gap
     must be whole words.
+  - "～" (or "〜") is exactly one word: お～する matches お待ちする and ご～いたす ご連絡いたします, but お～する
+    does not match お年寄りの世話をする. A pattern holds at most one ～, no "…", and words after the ～.
   - A kanji may carry a reading in brackets, checked against Sudachi: 上[じょう] (not 上[うえ]); a word may
     carry its part of speech the same way: と[接続助詞] is the と of 着くと, not of 行くと思う.
   - A pattern may start with what must come right before it: N (noun), Vる (dictionary form; not いう of
@@ -27,6 +29,7 @@ from sudachipy import Dictionary, SplitMode
 
 TOKENIZER = Dictionary(dict="core").tokenizer(mode=SplitMode.C)
 GAP = "…"
+SLOT = "～"  # also written 〜
 SENTENCE_END = "。！？!?\n"
 
 # ---------- extraction of Japanese sentences and bold spans from the house markup ----------
@@ -293,7 +296,7 @@ class Segment:
         self.left = next((kind for kind in LEFT if text.startswith(kind)), None)
         body = text[len(self.left) :] if self.left else text
         self.readings = re.findall(r"(\S)\[([^\]]+)\]", body)
-        plain = re.sub(r"\[[^\]]+\]", "", body)
+        plain = self.plain = re.sub(r"\[[^\]]+\]", "", body)
         if last:
             self.regex, self.literal_end, self.check = _segment_regex(plain)
         else:  # an inner segment ends where the gap starts: exact text
@@ -304,6 +307,14 @@ class Segment:
 class Pattern:
     def __init__(self, text):
         self.text = text.strip()
+        self.slot = SLOT in self.text.replace("〜", SLOT)
+        if self.slot:
+            before, _, after = self.text.replace("〜", SLOT).partition(SLOT)
+            if SLOT in after or GAP in self.text or not after:
+                raise ValueError(f"{self.text}: a pattern holds at most one ～, no …, and words after the ～")
+            self.segments = ([Segment(before, False)] if before else []) + [Segment(after, True)]
+            self.regex = re.compile(self.segments[-1].regex)  # the piece after the ～, matched where the word ends
+            return
         parts = [part for part in self.text.split(GAP) if part]
         self.segments = [Segment(part, index == len(parts) - 1) for index, part in enumerate(parts)]
         gap = "[^" + SENTENCE_END + "]{0,12}?"
@@ -331,6 +342,8 @@ class Analysed:
         return None
 
     def matches(self, pattern):
+        if pattern.slot:
+            return self._slot_matches(pattern)
         found = []
         for m in pattern.regex.finditer(self.text):
             if all(
@@ -338,6 +351,28 @@ class Analysed:
                 for i, seg in enumerate(pattern.segments)
             ) and self._last_word_ok(pattern.segments[-1].check, m):
                 found.append((m.start(), m.end()))
+        return found
+
+    def _slot_matches(self, pattern):
+        """～ is one word, not punctuation: the piece before it ends where the word starts, the piece after it
+        starts where the word ends."""
+        *before, after = pattern.segments
+        found = []
+        for token in self.tokens:
+            if token.part_of_speech()[0] in ("補助記号", "空白"):
+                continue
+            start = token.begin()
+            if before:
+                start -= len(before[0].plain)
+                if (
+                    start < 0
+                    or self.text[start : token.begin()] != before[0].plain
+                    or not self._segment_ok(before[0], start, token.begin(), first=True)
+                ):
+                    continue
+            m = pattern.regex.match(self.text, token.end())
+            if m and self._segment_ok(after, m.start(), m.end(), first=False) and self._last_word_ok(after.check, m):
+                found.append((start, m.end()))
         return found
 
     def _last_word_ok(self, check, m):

@@ -12,6 +12,7 @@ Mỗi điểm ngữ pháp có một hoặc vài mẫu; mỗi mẫu là phần ti
 | --- | --- | --- |
 | `ことにする` | Dạng từ điển; từ cuối khớp mọi dạng chia, `ない` khớp cả ありません | khớp ことにした, ことにします |
 | `…` | Khoảng trống tối đa 12 ký tự trong cùng câu; mỗi đoạn hai bên phải là từ trọn vẹn | `さえ…ば` khớp お金さえあれば |
+| `～` (hoặc `〜`) | Đúng một từ; mỗi mẫu tối đa một `～`, không đi cùng `…`, sau `～` phải còn chữ | `お～する` khớp お待ちします, không khớp お年寄りの世話をする |
 | `N` ở đầu mẫu (hoặc sau `…`) | Từ đứng ngay trước là danh từ | `N次第で` khớp 天候次第で |
 | `Vる` `Vた` `Vて` `Vます` `Vない` | Động từ thể từ điển, thể ta, thể te, gốc masu, thể nai | `Vるあまり` khớp 気にするあまり, không khớp あまり～ない |
 | `Aい` `Aく` `Aな` `A` | Tính từ -i (cả 出やすい, 分かりにくい), thể く của nó, tính từ -na (cả 親切), gốc tính từ -i (辛 của 辛そう) | `Aなことに、` khớp 残念なことに、; `Aすぎる` khớp 狭すぎる |

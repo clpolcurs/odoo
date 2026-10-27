@@ -52,10 +52,30 @@ from gmatch import Analysed, Pattern, blocks, examples, resolve, unmarked_exampl
         ("そう[名詞]だ", "今にも雨が降りそうです。", False),  # looks like: そう is a 形状詞 there
         ("う。", "ちょっと休もう。", True),
         ("う。", "明日は雨でしょう。", False),  # only a volitional verb
+        ("お～する", "また今度お願いします。", True),  # ～ is one word
+        ("お～する", "私の友達はお年寄りの世話をするボランティアをしています。", False),
+        ("お〜する", "お待ちしております。", True),  # the wave dash as well
+        ("ご～いたす", "後ほどご連絡いたします。", True),
+        ("お～ところ", "お忙しいところを申し訳ありません。", True),
+        ("お～ところ", "鍋にお湯を沸かし、沸騰したところへ鶏肉を入れます。", False),
+        ("お～のところ", "お疲れのところ、すみません。", True),
+        ("お～になる", "先生はもうお帰りになりました。", True),
+        ("お～ください", "少々お待ちください。", True),
     ],
 )
 def test_patterns(pattern, text, found):
     assert bool(Analysed(text).matches(Pattern(pattern))) is found
+
+
+def test_a_slot_match_spans_the_pieces_and_the_word():
+    text = "番組へのご意見をお待ちしております。"
+    assert [text[s:e] for s, e in Analysed(text).matches(Pattern("お～する"))] == ["お待ちし"]
+
+
+@pytest.mark.parametrize("pattern", ["お～…する", "お～する～", "お～"])
+def test_a_pattern_holds_one_slot_with_words_after_it(pattern):
+    with pytest.raises(ValueError):
+        Pattern(pattern)
 
 
 def test_blocks_drop_word_spacing_and_zero_width_spaces():
