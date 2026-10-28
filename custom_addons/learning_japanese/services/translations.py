@@ -42,9 +42,15 @@ _RE_EXPLAINING = re.compile(
     re.IGNORECASE,
 )
 JAPANESE_IN_TRANSLATION = 0.35  # Japanese terms outside quotes, per Latin letter
-# What a translation quotes: whole Japanese examples (“留学生として”) do not make it Japanese
-_RE_QUOTED = re.compile(r"“[^“”]*”|\"[^\"]*\"|「[^「」]*」|『[^『』]*』")
+# What a translation quotes: whole Japanese examples (“留学生として”, also “…" and "…”) do not make it Japanese
+_RE_QUOTED = re.compile(r"[“\"][^“”\"]*[”\"]|「[^「」]*」|『[^『』]*』")
+_RE_BRACKETED = re.compile(r"\([^()]*\)|（[^（）]*）")
 _ZERO_WIDTH = str.maketrans("", "", "\u200b\u200c\u200d\u2060\ufeff")  # the editor leaves them between sentences
+_DIALOGUE = " .…\u3000"  # the dots and spaces of a dialogue: «.....あそこです。....Ở đằng kia.»
+_SENTENCE_STOP = "。！？!?"
+_PAIRS = {"「": "」", "『": "』", "“": "”", "(": ")", "（": "）", '"': '"', "【": "】"}
+_RE_WORD = re.compile(r"[A-Za-zÀ-ỹĐđ]{2,}")
+_TERM_BEFORE_WORDS = 40  # how long the term may be that opens the translation of a sentence on the line before
 
 _RE_TOKEN = re.compile(r"\{\{.*?\}\}|<<[^<>]*>>|<[^<>]*>|[^<{]+|[<{]", re.DOTALL)
 _RE_TAG_NAME = re.compile(r"<\s*(/?)\s*([a-zA-Z][a-zA-Z0-9]*)")
@@ -84,16 +90,99 @@ def vietnamese(text):
             and ja <= JAPANESE_IN_TRANSLATION * latin and "。" not in _unquoted(text))
 
 
+def _answer(text):
+    """A short translation on the line of its sentence: dialogue dots, a number or quotes may come before its first
+    Vietnamese word («....Ở đằng kia.», «80% doanh thu…», «871-6813 đúng không ạ.», «Là "9".»), and two letters are
+    enough («Có»)."""
+    rest = text.lstrip(_DIALOGUE)
+    first = _RE_LATIN.search(rest)
+    if not first or _RE_JAPANESE.search(rest[:first.start()]):
+        return False
+    _ja, latin, vietnamese_letters = _counts(rest)
+    return (vietnamese_letters >= 1 and latin >= 2
+            and len(_RE_JAPANESE.findall(_unquoted(rest))) <= JAPANESE_IN_TRANSLATION * latin
+            and "。" not in _unquoted(rest))
+
+
+def _sentence_after(text, start):
+    """Where the translation that starts at `start` ends: before the next Japanese sentence of the line, with the dots,
+    spaces or number that open it («Nhà vệ sinh ở đâu?     .....あそこです。», «… mấy giờ? ......7時10分です。»), or at
+    the end of the line. Japanese in quotes or brackets, or that no 。 closes, belongs to the translation."""
+    depth = []
+    for at in range(start + 1, len(text)):
+        char = text[at]
+        if depth and char == _PAIRS[depth[-1]]:
+            depth.pop()
+        elif char in _PAIRS:
+            depth.append(char)
+        elif not depth and _RE_JAPANESE.match(char):
+            opens = at
+            while opens > start and text[opens - 1].isdigit():
+                opens -= 1
+            stop = opens
+            while stop > start and text[stop - 1] in _DIALOGUE:
+                stop -= 1
+            ends = [found for found in (text.find(mark, at) for mark in _SENTENCE_STOP) if found >= 0]
+            if stop < opens and ends and japanese(text[opens:min(ends) + 1]):
+                return stop
+    return len(text)
+
+
+def _without_note(text):
+    """The translation without the Japanese note in brackets that closes it: «… đấy ạ. (佐藤さんがこのワインを…。)»."""
+    text = text.rstrip()
+    note = re.search(r"[(（][^()（）]*[)）]$", text)
+    if note and japanese(note.group(0)[1:-1]):
+        return text[:note.start()].rstrip()
+    return text
+
+
+def _without_notes(text):
+    """The Japanese sentence without the Vietnamese notes in brackets it may hold: «右に（hoặc へ）曲がります。»."""
+    return _RE_BRACKETED.sub(lambda note: "" if _RE_VIETNAMESE.search(note.group(0)) else note.group(0), text)
+
+
+def pairs(text):
+    """Where each untagged translation of the line starts and ends: after a whole Japanese sentence, which may hold
+    Vietnamese in brackets («右に（hoặc へ）曲がります。»), with the dialogue dots that open it, up to the next Japanese
+    sentence: a line may hold a question and its answer, each with its translation."""
+    found, head, at = [], 0, 0
+    while at < len(text):
+        char = text[at]
+        if _RE_LATIN.match(char) or char.isdigit() or char in OPENERS or char in _DIALOGUE.strip():
+            before = text[head:at].rstrip()
+            sentence = _without_notes(before).rstrip()
+            if sentence and before[-1] in SENTENCE_END and sentence[-1] in SENTENCE_END and japanese(sentence):
+                tail = _without_note(text[at:_sentence_after(text, at)])
+                if tail and (vietnamese(tail) or _answer(tail)) and not explains(before, tail.lstrip(_DIALOGUE)):
+                    found.append((at, at + len(tail)))
+                    head = at = at + len(tail)
+                    continue
+        at += 1
+    return found
+
+
 def split(text):
-    """Where the untagged translation of a Japanese sentence starts on the same line, or None."""
-    for at, char in enumerate(text):
-        if not (_RE_LATIN.match(char) or char.isdigit() or char in OPENERS):
-            continue
-        head = text[:at].rstrip()
-        if (head and head[-1] in SENTENCE_END and japanese(head) and vietnamese(text[at:])
-                and not explains(head, text[at:])):
-            return at
-    return None
+    """Where the first untagged translation of a Japanese sentence starts on the same line, or None."""
+    found = pairs(text)
+    return found[0][0] if found else None
+
+
+def after_term(previous, text):
+    """The translation of the sentence on the line before, from its first Vietnamese word, when it opens with the term
+    that sentence explains: «「～による・～によって」は、…表す。<br>～による/～によって thể hiện…»,
+    «“お/ご~願います” được sử dụng…», «〜と、... sử dụng…»; or None. Every Japanese run of the term is in that
+    sentence, and a term with a colon is a gloss («～ている: …»)."""
+    rest = text[_RE_LEAD.match(text).end():]
+    word = next((w for w in _RE_WORD.finditer(rest) if not w.group(0).isupper()), None)  # V, N, PI are names
+    if word is None:
+        return None
+    term = rest[:word.start()]
+    runs = re.findall(f"[{KANA_KANJI}]+", term)
+    if (len(term) > _TERM_BEFORE_WORDS or not runs or _RE_VIETNAMESE.search(term) or "。" in term
+            or term.rstrip().endswith((":", "：")) or not all(run in previous for run in runs)):
+        return None
+    return rest[word.start():]
 
 
 def explains(previous, text):
@@ -168,14 +257,21 @@ def untagged(markup):
     found, previous = [], None
     for line in lines(markup):
         if not line.translated:
-            at = split(line.text)
-            if at is not None:
-                found.append(line.text[at:])
+            spans = pairs(line.text)
+            if spans:
+                found += [line.text[start:end] for start, end in spans]
                 line.claimed = True
             elif (previous is not None and not previous.translated and not previous.claimed
-                  and japanese(previous.text) and vietnamese(line.text) and not explains(previous.text, line.text)
+                  and japanese(previous.text) and (vietnamese(line.text) or _translates(previous.text, line.text))
+                  and not explains(previous.text, line.text)
                   and (line.after_break or not (line.nested or previous.nested))):
                 found.append(line.text)
                 previous.claimed = True
         previous = line
     return found
+
+
+def _translates(previous, text):
+    """Whether the line translates the whole Japanese sentence before it although it opens with a term (after_term)."""
+    rest = after_term(previous, text)
+    return previous.rstrip().endswith(tuple(_SENTENCE_STOP)) and rest is not None and vietnamese(rest)

@@ -56,8 +56,22 @@ thay vì nằm trong `{{...}}`, nên tab Nội dung của Odoo vẫn hiện nó 
   `A:`, `佐藤:` hay thuật ngữ đang giải thích như `~という`, kể cả khi viết liền `~のみdùng khi…`), không có `。` của
   riêng nó, chữ Nhật ngoài thuật ngữ đầu dòng và ngoài ngoặc kép (`“留学生として”`, `「…」`) ≤ 0,35 lần số chữ Latin.
 - Cùng dòng: câu tiếng Nhật kết thúc bằng `。！？」』）` rồi đến câu tiếng Việt → `日本語の文。{{Câu tiếng Việt.}}`.
+  - Một dòng có thể chứa nhiều cặp, như câu hỏi và câu trả lời của một hội thoại. Bản dịch dừng ở chỗ câu tiếng Nhật
+    kế tiếp bắt đầu, sau dấu chấm hội thoại, khoảng trắng hay con số:
+    `お手洗いはどこですか。{{Nhà vệ sinh ở đâu?}}  .....あそこです。{{....Ở đằng kia.}}`. Chữ Nhật trong ngoặc, hay
+    không có `。` khép lại, vẫn thuộc bản dịch (`Dùng いくつ khi…`).
+  - Dấu chấm hội thoại ngay sau `。` thuộc bản dịch.
+  - Bản dịch ngắn chỉ cần 2 chữ Latin (`Có`, `Là "9".`), và có thể mở đầu bằng số (`80% doanh thu…`).
+  - Câu tiếng Nhật được phép chứa ghi chú tiếng Việt trong ngoặc (`右に（hoặc へ）曲がります。`).
+  - Ghi chú tiếng Nhật trong ngoặc ở cuối dòng nằm ngoài bản dịch:
+    `{{Vâng, chị Sato tặng tôi đấy ạ.}} (佐藤さんが…。)`.
 - Dòng sau: dòng tiếng Việt ngay sau một dòng tiếng Nhật chưa có bản dịch, trong cùng khối (sau `<br>`) hoặc ở đoạn
   kế tiếp (không áp cho hai ô bảng hay hai mục danh sách khác nhau) → `日本語の文。<br>{{Câu tiếng Việt.}}`.
+  - Dưới một câu tiếng Nhật trọn vẹn, dòng dịch có thể mở đầu bằng thuật ngữ bất kỳ của câu đó trước chữ Việt đầu
+    tiên: có `/`, `…`, `、` hay ngoặc kép, như `～による/～によって thể hiện…`, `“お/ご~願います” được sử dụng…`,
+    `〜と、... sử dụng…`. Mỗi cụm chữ Nhật của thuật ngữ phải có trong câu phía trên, thuật ngữ dài tối đa 40 ký tự
+    và không kết thúc bằng `:` (`～ている: …` là chú thích).
+- Ngoặc kép mở bằng `“` mà đóng bằng `"` (hay ngược lại) vẫn được tính là ngoặc kép.
 - Câu giải thích bằng tiếng Việt có xen thuật ngữ Nhật (`できます biểu thị năng lực…`) không phải bản dịch: nó không
   đứng sau một câu tiếng Nhật chưa có bản dịch. Mỗi câu tiếng Nhật nhận nhiều nhất một bản dịch.
 - Câu giải thích một mẫu ngữ pháp cũng không phải bản dịch: viết tiếp bằng chữ thường sau thuật ngữ trong ngoặc
@@ -88,6 +102,12 @@ chỉ khác đoạn cũ ở `{{` `}}`, đoạn cũ phải xuất hiện đúng m
 phải tăng đúng số cặp ngoặc thêm vào, số `untagged_translations` không được tăng, không có lỗi markup mới và bộ lọc
 HTML giữ nguyên markup. Các file `proposals/translations/manual-*.json` và `quoted-*.json` ghi lại những gì đã sửa tay
 ngày 28/10/2026.
+
+Lượt rà ngày 28/10/2026 tìm thêm 53 bản dịch mà luật lúc đó bỏ sót: hội thoại cùng dòng và dòng dịch mở đầu bằng
+thuật ngữ dài. Các bản dịch này đã được bọc (`audit-2026-10-28.json`), cùng 52 nghĩa từ trong bảng chia động từ của
+6 bài Minna 1 (`glosses-2026-10-28.json`). Luật đã được sửa theo hai kiểu bỏ sót đó. Chạy lại trên dữ liệu trước khi
+ghi, luật bắt được 50 chỗ bọc và 3 chỗ phải sửa tay. Chỗ duy nhất còn sót là #693: thuật ngữ trong bản dịch bị gõ sai
+(`〜ほと`), nên không khớp với câu phía trên.
 
 ```bash
 uv run python apply_edits.py proposals/translations/manual-2026-10-28.json            # kiểm tra, không ghi

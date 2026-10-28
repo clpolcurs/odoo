@@ -74,6 +74,53 @@ CASES = [
         "<p>「~のみ」は、「~だけ」と言いたいときに使う。<br>~のみdùng khi muốn nói là “chỉ ~”.</p>",
         "<p>「~のみ」は、「~だけ」と言いたいときに使う。<br>{{~のみdùng khi muốn nói là “chỉ ~”.}}</p>",
     ),
+    # or be any term of the sentence above: slashes, dots, quotes (Try N3 #708, Try N2 #886, Try N3 #692)
+    (
+        "<p>「～による・～によって」は、手段を表す。<br>～による/～によって thể hiện phương pháp, cách thức.</p>",
+        "<p>「～による・～によって」は、手段を表す。<br>{{～による/～によって thể hiện phương pháp, cách thức.}}</p>",
+    ),
+    (
+        "<p>「お/ご~願います」は、丁寧に頼む時に使う。<br>“お/ご~願います” được sử dụng khi nhờ lịch sự.</p>",
+        "<p>「お/ご~願います」は、丁寧に頼む時に使う。<br>{{“お/ご~願います” được sử dụng khi nhờ lịch sự.}}</p>",
+    ),
+    (
+        "<p>「〜と、...」は、気づいた時に使う。<br>〜と、... sử dụng khi nhận ra điều gì đó.</p>",
+        "<p>「〜と、...」は、気づいた時に使う。<br>{{〜と、... sử dụng khi nhận ra điều gì đó.}}</p>",
+    ),
+    # a question and its answer on one line, with the dots of a dialogue (Minna 1 #1196, #1198)
+    (
+        "<p>1. お手洗いはどこですか。Nhà vệ sinh ở đâu?&nbsp; &nbsp; .....あそこです。....Ở đằng kia.</p>",
+        "<p>1. お手洗いはどこですか。{{Nhà vệ sinh ở đâu?}}&nbsp; &nbsp; .....あそこです。{{....Ở đằng kia.}}</p>",
+    ),
+    (
+        "<p>1. 今何時ですか。Bây giờ là mấy giờ?　........7時10分です。....... 7 giờ 10 phút.</p>",
+        "<p>1. 今何時ですか。{{Bây giờ là mấy giờ?}}　........7時10分です。{{....... 7 giờ 10 phút.}}</p>",
+    ),
+    # a short answer, one that opens with a number, a sentence with a Vietnamese note (Minna 1 #1294, #1313)
+    ("<p>.......うん、持って「い」る。Có</p>", "<p>.......うん、持って「い」る。{{Có}}</p>"),
+    (
+        "<p>1. 売り上げが全体の80%を占めている。80% doanh thu là nhờ vào truyền thông.</p>",
+        "<p>1. 売り上げが全体の80%を占めている。{{80% doanh thu là nhờ vào truyền thông.}}</p>",
+    ),
+    (
+        "<p>3. 交差点を右に（hoặc へ）曲がります。Tôi rẽ phải ở ngã tư.</p>",
+        "<p>3. 交差点を右に（hoặc へ）曲がります。{{Tôi rẽ phải ở ngã tư.}}</p>",
+    ),
+    # a Japanese note in brackets after the translation stays outside (Minna 1 #1316)
+    (
+        "<p>ええ、佐藤さんがくれました。Vâng, chị Sato tặng tôi đấy ạ. (佐藤さんがこのワインをくれました。)</p>",
+        "<p>ええ、佐藤さんがくれました。{{Vâng, chị Sato tặng tôi đấy ạ.}} (佐藤さんがこのワインをくれました。)</p>",
+    ),
+    # Japanese that no 。 closes belongs to the translation
+    (
+        "<p>これはいくつですか。Cái này bao nhiêu cái? Dùng いくつ khi hỏi số lượng.</p>",
+        "<p>これはいくつですか。{{Cái này bao nhiêu cái? Dùng いくつ khi hỏi số lượng.}}</p>",
+    ),
+    # a speaker and a Vietnamese stage direction open the translation of the line above
+    (
+        "<p>理容師：（鏡を見せて）よろしいですか？<br>理容師：(Cho xem gương) Như này được không ạ?</p>",
+        "<p>理容師：（鏡を見せて）よろしいですか？<br>{{理容師：(Cho xem gương) Như này được không ạ?}}</p>",
+    ),
 ]
 
 LEFT_ALONE = [
@@ -91,6 +138,9 @@ LEFT_ALONE = [
     "<p>Vます がたい<br>Chủ yếu dùng với động từ chỉ ý chí.</p>",
     # a term under a heading, not under a sentence
     "<p>3. ～んですが、～</p><p>「～んですが」có chức năng mở đầu câu chuyện.</p>",
+    # a term with a colon is a gloss, and a term the sentence above does not hold is not its translation
+    "<p>毎日日本語を勉強している。<br>～ている: diễn tả trạng thái đang tiếp diễn</p>",
+    "<p>毎日日本語を勉強している。<br>～による/～によって thể hiện phương pháp, cách thức.</p>",
 ]
 
 

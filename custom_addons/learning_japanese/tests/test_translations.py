@@ -65,6 +65,42 @@ class TestUntaggedTranslations(BaseCase):
         # under a heading, not a sentence, the term opens a note
         self.assertEqual(untagged("<p>3. ～んですが、～</p><p>「～んですが」có chức năng mở đầu câu chuyện.</p>"), [])
 
+    def test_a_translation_may_open_with_any_term_of_its_sentence(self):
+        for sentence, translation in (
+            ("「～による・～によって」は、手段を表す。", "～による/～によって thể hiện phương pháp, cách thức."),
+            ("「お/ご~願います」は、丁寧に頼む時に使う。", "“お/ご~願います” được sử dụng khi nhờ lịch sự."),
+            ("「〜と、...」は、気づいた時に使う。", "〜と、... sử dụng khi nhận ra điều gì đó."),
+        ):
+            with self.subTest(translation=translation):
+                self.assertEqual(untagged(f"<p>{sentence}<br>{translation}</p>"), [translation])
+        # a term with a colon is a gloss; a term the sentence does not hold is not its translation
+        for line in ("～ている: diễn tả trạng thái đang tiếp diễn", "～による/～によって thể hiện phương pháp."):
+            with self.subTest(line=line):
+                self.assertEqual(untagged(f"<p>毎日日本語を勉強している。<br>{line}</p>"), [])
+
+    def test_dialogues_short_answers_and_notes_on_the_same_line(self):
+        for source, translations in (
+            ("1. お手洗いはどこですか。Nhà vệ sinh ở đâu?&nbsp; &nbsp; .....あそこです。....Ở đằng kia.",
+             ["Nhà vệ sinh ở đâu?", "....Ở đằng kia."]),
+            ("1. 今何時ですか。Bây giờ là mấy giờ?\u3000........7時10分です。....... 7 giờ 10 phút.",
+             ["Bây giờ là mấy giờ?", "....... 7 giờ 10 phút."]),
+            (".......うん、持って「い」る。Có", ["Có"]),
+            ("1. 売り上げが全体の80%を占めている。80% doanh thu là nhờ vào truyền thông.",
+             ["80% doanh thu là nhờ vào truyền thông."]),
+            ("3. 交差点を右に（hoặc へ）曲がります。Tôi rẽ phải ở ngã tư.", ["Tôi rẽ phải ở ngã tư."]),
+            # a Japanese note in brackets after the translation is not part of it
+            ("ええ、佐藤さんがくれました。Vâng, chị Sato tặng tôi đấy ạ. (佐藤さんがこのワインをくれました。)",
+             ["Vâng, chị Sato tặng tôi đấy ạ."]),
+            # Japanese that no 。 closes belongs to the translation
+            ("これはいくつですか。Cái này bao nhiêu cái? Dùng いくつ khi hỏi số lượng.",
+             ["Cái này bao nhiêu cái? Dùng いくつ khi hỏi số lượng."]),
+            # a speaker and a Vietnamese stage direction open the translation of the line above
+            ("理容師：（鏡を見せて）よろしいですか？<br>理容師：(Cho xem gương) Như này được không ạ?",
+             ["理容師：(Cho xem gương) Như này được không ạ?"]),
+        ):
+            with self.subTest(source=source):
+                self.assertEqual(untagged(f"<p>{source}</p>"), translations)
+
     def test_a_sentence_has_one_translation(self):
         self.assertEqual(untagged("<p>雪がたくさん降りました。Tuyết đã rơi nhiều.<br>Trường hợp động từ</p>"),
                          ["Tuyết đã rơi nhiều."])

@@ -1,0 +1,439 @@
+{
+ "692": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>い。<br>〜と、... sử dụng khi nhận ra điều mà trước đó mình không nhận ra. Nó cũng thường được sử dụng để bày tỏ điều bạn không ngờ đến và cuối câu thường là thì quá khứ vì lúc đó bạn đã nhận ra.</p><p>1",
+    ">>い。<br>{{〜と、... sử dụng khi nhận ra điều mà trước đó mình không nhận ra. Nó cũng thường được sử dụng để bày tỏ điều bạn không ngờ đến và cuối câu thường là thì quá khứ vì lúc đó bạn đã nhận ra.}}</p><p>1"
+   ]
+  ]
+ },
+ "693": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>う。<br>〜ほと... sử dụng khi bạn dùng một ví dụ \"~\" để nói lên trạng thái hoặc mức độ của \"...\" không bình thường như là \"<<歩 - ある>>けないほど<<強 - つよ>>い<<風 - かぜ>>\".</p><p>V",
+    ">>う。<br>{{〜ほと... sử dụng khi bạn dùng một ví dụ \"~\" để nói lên trạng thái hoặc mức độ của \"...\" không bình thường như là \"<<歩 - ある>>けないほど<<強 - つよ>>い<<風 - かぜ>>\".}}</p><p>V"
+   ]
+  ]
+ },
+ "708": {
+  "note": "untagged translations the rules miss (next line, same line); audit 28/10",
+  "edits": [
+   [
+    ">>す。<br>～による/～によって thể hiện phương pháp, cách thức, phương tiện khi làm cái gì đó.</p><p>1",
+    ">>す。<br>{{～による/～によって thể hiện phương pháp, cách thức, phương tiện khi làm cái gì đó.}}</p><p>1"
+   ],
+   [
+    "し>>めている。80% doanh thu của chiếc túi này là nhờ vào truyền thông.</p><p>2",
+    "し>>めている。{{80% doanh thu của chiếc túi này là nhờ vào truyền thông.}}</p><p>2"
+   ]
+  ]
+ },
+ "711": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>う。<br>～につき… sử dụng khi cứ nói mỗi “~” là “...”.&nbsp; Ví dụ như “<<使用料 - しようりょう>>は<<1時間 - いちじかん>>につき<<1000円 - せんえん>>” có nghĩa là “ Phí sử dụng thì cứ mỗi 1 tiếng là 1000 yên”.&nbsp;</",
+    ">>う。<br>{{～につき… sử dụng khi cứ nói mỗi “~” là “...”.&nbsp; Ví dụ như “<<使用料 - しようりょう>>は<<1時間 - いちじかん>>につき<<1000円 - せんえん>>” có nghĩa là “ Phí sử dụng thì cứ mỗi 1 tiếng là 1000 yên”.}}&nbsp;</"
+   ]
+  ]
+ },
+ "713": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>す。<br>～を<<通 - とお>>して/～を<<通 - つう>>じて sử dụng khi làm một cái gì đó không trực tiếp mà thông qua người khác, cách thức khác, sự việc khác.</p><p>1",
+    ">>す。<br>{{～を<<通 - とお>>して/～を<<通 - つう>>じて sử dụng khi làm một cái gì đó không trực tiếp mà thông qua người khác, cách thức khác, sự việc khác.}}</p><p>1"
+   ]
+  ]
+ },
+ "714": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>う。<br>～のような/～のように sử dụng khi đưa ra một ví dụ điển hình.</p><p>1",
+    ">>う。<br>{{～のような/～のように sử dụng khi đưa ra một ví dụ điển hình.}}</p><p>1"
+   ]
+  ]
+ },
+ "715": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    "になる。<br>～によれば/～によると sử dụng khi muốn nói bạn đã biết cái thông tin gì đó từ đâu, do đâu. Câu cuối thường là mẫu～そうだ/～ということだ.</p><p>1",
+    "になる。<br>{{～によれば/～によると sử dụng khi muốn nói bạn đã biết cái thông tin gì đó từ đâu, do đâu. Câu cuối thường là mẫu～そうだ/～ということだ.}}</p><p>1"
+   ]
+  ]
+ },
+ "716": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>う。<br>～ということだ/～とのことだ sử dụng khi nói với người khác nội dung thông tin mình đã nghe.</p><p>N",
+    ">>う。<br>{{～ということだ/～とのことだ sử dụng khi nói với người khác nội dung thông tin mình đã nghe.}}</p><p>N"
+   ]
+  ]
+ },
+ "721": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>う。<br>\"〜ほど…（は）ない\" sử dụng\nkhi muốn nhấn mạnh\nrằng \"～\" là \"…\" nhất.&nbsp;</",
+    ">>う。<br>{{\"〜ほど…（は）ない\" sử dụng\nkhi muốn nhấn mạnh\nrằng \"～\" là \"…\" nhất.}}&nbsp;</"
+   ]
+  ]
+ },
+ "740": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>い。<br>\"〜からといって…\" sử dụng khi nói chỉ vì lý\ndo \"~\", làm \"…\" là không tốt, không thể,\nlàm sẽ bị rắc rối. Thường sử dụng\nkhi nói những điều như nhắc nhở, khuyên bảo, chỉ trích.</p><p>\n",
+    ">>い。<br>{{\"〜からといって…\" sử dụng khi nói chỉ vì lý\ndo \"~\", làm \"…\" là không tốt, không thể,\nlàm sẽ bị rắc rối. Thường sử dụng\nkhi nói những điều như nhắc nhở, khuyên bảo, chỉ trích.}}</p><p>\n"
+   ]
+  ]
+ },
+ "753": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    "bsp;<br>～てからでなければ…/～てからでないと… sử dụng khi nói rằng “…” là không thể nếu “~” không được thực hiện. Trong “…” sử dụng mẫu câu mang tính phủ định như là “<<難 - むずか>>しい・できない”.</p><p>1",
+    "bsp;<br>{{～てからでなければ…/～てからでないと… sử dụng khi nói rằng “…” là không thể nếu “~” không được thực hiện. Trong “…” sử dụng mẫu câu mang tính phủ định như là “<<難 - むずか>>しい・できない”.}}</p><p>1"
+   ]
+  ]
+ },
+ "757": {
+  "note": "untagged translations the rules miss (next line, next line (by hand)); audit 28/10",
+  "edits": [
+   [
+    "sp;<br>\nお/ご~です được sử dụng khi nói “〜ている” đối với người mình tôn\ntrọng. Nó được&nbsp;dùng với\nđộng từ \"<<待 - ま>>つ・<<持 - も>>つ\", ngoài ra nó còn dùng với những danh từ như \"<<滞在 - たいざい>>・<<専攻 - せんこう>>・<<研究 - けんきゅう>>・<<担当 - たんとう>>・<<活躍 - かつやく>>\".</p><p>「",
+    "sp;<br>\n{{お/ご~です được sử dụng khi nói “〜ている” đối với người mình tôn\ntrọng. Nó được&nbsp;dùng với\nđộng từ \"<<待 - ま>>つ・<<持 - も>>つ\", ngoài ra nó còn dùng với những danh từ như \"<<滞在 - たいざい>>・<<専攻 - せんこう>>・<<研究 - けんきゅう>>・<<担当 - たんとう>>・<<活躍 - かつやく>>\".}}</p><p>「"
+   ],
+   [
+    "<strong>”おV-</strong><s><strong>ます</strong></s><strong>\" cũng được sử dụng như 1 danh từ.</strong",
+    "<strong>{{”おV-</strong><s><strong>ます</strong></s><strong>\" cũng được sử dụng như 1 danh từ.}}</strong"
+   ]
+  ]
+ },
+ "767": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    "れる。<br>\n～もので/～ものですから được sử\ndụng khi giải thích một cách lịch sự vì có lí do ở phía mình mới ra nông nỗi\nnhư bây giờ. Nếu nói chuyện với bạn bè thì “～もんで/～もんだから” được sử\ndụng.&nbsp;</",
+    "れる。<br>\n{{～もので/～ものですから được sử\ndụng khi giải thích một cách lịch sự vì có lí do ở phía mình mới ra nông nỗi\nnhư bây giờ. Nếu nói chuyện với bạn bè thì “～もんで/～もんだから” được sử\ndụng.}}&nbsp;</"
+   ]
+  ]
+ },
+ "769": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    "bsp;<br>～ようなら/～ようだったら được sử dụng khi quan sát tình hình hoặc trạng thái hiện tại để nói. Không nói \"<<歩 - ある>>けなかったら\" mà hãy nói \"<<歩 - ある>>けるないようだったら\" thì sẽ tạo được ấn tượng rất lịch sự. <strong>Thể lịch sự \"～ようでしたら\" cũng thường được sử dụng.</strong></p><p><",
+    "bsp;<br>{{～ようなら/～ようだったら được sử dụng khi quan sát tình hình hoặc trạng thái hiện tại để nói. Không nói \"<<歩 - ある>>けなかったら\" mà hãy nói \"<<歩 - ある>>けるないようだったら\" thì sẽ tạo được ấn tượng rất lịch sự. <strong>Thể lịch sự \"～ようでしたら\" cũng thường được sử dụng.</strong>}}</p><p><"
+   ]
+  ]
+ },
+ "770": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    "bsp;<br>\"〜ますと/〜ですと\" được sử dụng khi trình bày một cách lịch sự những điều kiện trong cửa tiệm chẳng hạn.</p><p>\n",
+    "bsp;<br>{{\"〜ますと/〜ですと\" được sử dụng khi trình bày một cách lịch sự những điều kiện trong cửa tiệm chẳng hạn.}}</p><p>\n"
+   ]
+  ]
+ },
+ "774": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>う。<br>～による/～によって sử dụng khi nói rằng “~” là nguyên nhân, lí do làm cho cái gì đó xảy ra.</p><p>1",
+    ">>う。<br>{{～による/～によって sử dụng khi nói rằng “~” là nguyên nhân, lí do làm cho cái gì đó xảy ra.}}</p><p>1"
+   ]
+  ]
+ },
+ "776": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>く。<br>～にとって… sử dụng khi nói điều bạn cảm thấy khi đứng trên quan điểm/ ở cương vị của “~” mà xem xét. Phía sau thường là những từ biểu hiện sự đánh giá chẳng hạn như \"<<難 - むずか>>しい・<<大切 - たいせつ>>だ\". Không thể sử dụng những từ ngữ thể hiện thái độ đối với một đối tượng nào đó như là \"<<賛成 - さんせい>>・<<反対 - はんたい>>\" hoặc \"<<好 - す>>き・<<嫌 - きら>>い\".</p><p>1",
+    ">>く。<br>{{～にとって… sử dụng khi nói điều bạn cảm thấy khi đứng trên quan điểm/ ở cương vị của “~” mà xem xét. Phía sau thường là những từ biểu hiện sự đánh giá chẳng hạn như \"<<難 - むずか>>しい・<<大切 - たいせつ>>だ\". Không thể sử dụng những từ ngữ thể hiện thái độ đối với một đối tượng nào đó như là \"<<賛成 - さんせい>>・<<反対 - はんたい>>\" hoặc \"<<好 - す>>き・<<嫌 - きら>>い\".}}</p><p>1"
+   ]
+  ]
+ },
+ "807": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    "われる。<br>~にかかわら ず ... được sử dụng khi muốn nói rằng \" ... \" không liên quan đến những điều kiện như là\n“khí hậu/ sở thích/ địa vị hoặc là có - không/ làm - không làm ... \"</p><p>\n",
+    "われる。<br>{{~にかかわら ず ... được sử dụng khi muốn nói rằng \" ... \" không liên quan đến những điều kiện như là\n“khí hậu/ sở thích/ địa vị hoặc là có - không/ làm - không làm ... \"}}</p><p>\n"
+   ]
+  ]
+ },
+ "828": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>う。<br>~<<限 - かぎ>>り... ví dụ trong câu \"ここにいる<<限 - かぎ>>り、<<安全 - あんぜん>>だ\" dùng khi muốn nói rằng trong lúc còn trạng\nthái trạng thái ~ (ở chỗ này)\nlà không thay đổi (an toàn).</p><p>\n",
+    ">>う。<br>{{~<<限 - かぎ>>り... ví dụ trong câu \"ここにいる<<限 - かぎ>>り、<<安全 - あんぜん>>だ\" dùng khi muốn nói rằng trong lúc còn trạng\nthái trạng thái ~ (ở chỗ này)\nlà không thay đổi (an toàn).}}</p><p>\n"
+   ]
+  ]
+ },
+ "841": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>う。<br>~とともに... dùng khi nói là \"cùng với ~/\nkhông chỉ ~\". Cũng sử dụng khi\nnói là \" ... sinh ra/ xảy ra cùng với\n~\" hoặc biểu thị sự thay đổi.</p><p>1",
+    ">>う。<br>{{~とともに... dùng khi nói là \"cùng với ~/\nkhông chỉ ~\". Cũng sử dụng khi\nnói là \" ... sinh ra/ xảy ra cùng với\n~\" hoặc biểu thị sự thay đổi.}}</p><p>1"
+   ]
+  ]
+ },
+ "850": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>う。<br>~さえ ... dùng khi muốn nói chỉ cần ~ là điều kiện thiết yếu như \"<<給料 - きゅうりょう>>さえよければどんな<<仕事 - しごと>>でもいい”.</p><p>1",
+    ">>う。<br>{{~さえ ... dùng khi muốn nói chỉ cần ~ là điều kiện thiết yếu như \"<<給料 - きゅうりょう>>さえよければどんな<<仕事 - しごと>>でもいい”.}}</p><p>1"
+   ]
+  ]
+ },
+ "886": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    "われる。<br>“お/ご~<<願 - ねが>>います” được sử\ndụng khi nhờ cậy ai đó một cách lịch sự trong các tình huống giao dịch kinh\ndoanh, có nghĩa giống với “お/ご~いただく/ください”.</p><p>お",
+    "われる。<br>{{“お/ご~<<願 - ねが>>います” được sử\ndụng khi nhờ cậy ai đó một cách lịch sự trong các tình huống giao dịch kinh\ndoanh, có nghĩa giống với “お/ご~いただく/ください”.}}</p><p>お"
+   ]
+  ]
+ },
+ "887": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    "herit;\">“お/ご~<<申 - もう>>し<<上 - あ>>げる” có nghĩa là\nlàm ~ không mang nghĩa là “nói”, được sử\ndụng khi mình làm cái gì đó cho đối phương. Là cách nói lịch sự hơn “お/ご~する”.</span><",
+    "herit;\">{{“お/ご~<<申 - もう>>し<<上 - あ>>げる” có nghĩa là\nlàm ~ không mang nghĩa là “nói”, được sử\ndụng khi mình làm cái gì đó cho đối phương. Là cách nói lịch sự hơn “お/ご~する”.}}</span><"
+   ]
+  ]
+ },
+ "889": {
+  "note": "untagged translations the rules miss (next line (by hand)); audit 28/10",
+  "edits": [
+   [
+    ">>う。<br>“~について ・~にとって・~において・~として・~に<<関 - かん>>して khi muốn nói\nlịch sự sử dụng thể “~まして”.</p><p>\n",
+    ">>う。<br>{{“~について ・~にとって・~において・~として・~に<<関 - かん>>して khi muốn nói\nlịch sự sử dụng thể “~まして”.}}</p><p>\n"
+   ]
+  ]
+ },
+ "900": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>う。<br>“に<<限 - かぎ>>って...” dùng khi muốn nói mang tính phê phán rằng người ở vị trí ~\nthường có khuynh hướng ~.</p><p>1",
+    ">>う。<br>{{“に<<限 - かぎ>>って...” dùng khi muốn nói mang tính phê phán rằng người ở vị trí ~\nthường có khuynh hướng ~.}}</p><p>1"
+   ]
+  ]
+ },
+ "909": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>う。<br>“~につけ ...” dùng khi muốn nói rằng “mỗi lần nhìn thấy hay nghe cái gì đó (luôn luôn nghĩ ...”.\n\n\n\n<br>",
+    ">>う。<br>{{“~につけ ...” dùng khi muốn nói rằng “mỗi lần nhìn thấy hay nghe cái gì đó (luôn luôn nghĩ ...”.}}\n\n\n\n<br>"
+   ]
+  ]
+ },
+ "928": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    "われる。<br>“~ないことには…” được sử dụng khi muốn nói rằng “nếu\nkhông ~ thì không thể ~ / không biết ~”.</p><p>*",
+    "われる。<br>{{“~ないことには…” được sử dụng khi muốn nói rằng “nếu\nkhông ~ thì không thể ~ / không biết ~”.}}</p><p>*"
+   ]
+  ]
+ },
+ "932": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>う。<br>“~としたら...” có nghĩa là “nếu nghĩ rằng ~, thì ...”, sử dụng khi\nmuốn nói dự đoán hoặc ý kiến của mình.</p><p>1",
+    ">>う。<br>{{“~としたら...” có nghĩa là “nếu nghĩ rằng ~, thì ...”, sử dụng khi\nmuốn nói dự đoán hoặc ý kiến của mình.}}</p><p>1"
+   ]
+  ]
+ },
+ "944": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>う。<br>“~<<末 - まつ>>…” sử dụng khi muốn nói rằng “sau khi làm~ trong một thời gian dài, (cuối cùng thì kết\nquả là ...)”. Cũng sử dụng cả trong\ntrường hợp dù thực tế không\nmất thời dài đối với người nói cũng\"cảm thấy lâu\".</p><p>1",
+    ">>う。<br>{{“~<<末 - まつ>>…” sử dụng khi muốn nói rằng “sau khi làm~ trong một thời gian dài, (cuối cùng thì kết\nquả là ...)”. Cũng sử dụng cả trong\ntrường hợp dù thực tế không\nmất thời dài đối với người nói cũng\"cảm thấy lâu\".}}</p><p>1"
+   ]
+  ]
+ },
+ "948": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>い。<br>“もかまわず...” sử dụng khi muốn nói “làm mà không\nquan tâm /\nkhông mang đến những bình\nthường phải bận tâm\". Thường\ndùng để phê phán.</p><p>1",
+    ">>い。<br>{{“もかまわず...” sử dụng khi muốn nói “làm mà không\nquan tâm /\nkhông mang đến những bình\nthường phải bận tâm\". Thường\ndùng để phê phán.}}</p><p>1"
+   ]
+  ]
+ },
+ "950": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>う。<br>“にを<<込 - こ>>めて…” sử dụng với ý nghĩa là \"làm ~ với cả tấm lòng\nyêu thương, với cả tâm tưởng\".</p><p>\n",
+    ">>う。<br>{{“にを<<込 - こ>>めて…” sử dụng với ý nghĩa là \"làm ~ với cả tấm lòng\nyêu thương, với cả tâm tưởng\".}}</p><p>\n"
+   ]
+  ]
+ },
+ "961": {
+  "note": "untagged translations the rules miss (next line); audit 28/10",
+  "edits": [
+   [
+    ">>す。<br>“~てこそ…” thể hiện ý\nmuốn nhấn mạnh “không có ~ thì ~ không thành lập, ~ là điều kiện cần thiết tuyệt đối\"</p><p>1",
+    ">>す。<br>{{“~てこそ…” thể hiện ý\nmuốn nhấn mạnh “không có ~ thì ~ không thành lập, ~ là điều kiện cần thiết tuyệt đối\"}}</p><p>1"
+   ]
+  ]
+ },
+ "1187": {
+  "note": "untagged translations the rules miss (same line); audit 28/10",
+  "edits": [
+   [
+    ">>さんのです。...Của chị Sato.<br></p>",
+    ">>さんのです。{{...Của chị Sato.}}<br></p>"
+   ]
+  ]
+ },
+ "1190": {
+  "note": "untagged translations the rules miss (same line); audit 28/10",
+  "edits": [
+   [
+    "はい、そうです。......Vâng,&nbsp;phải.</p><p><",
+    "はい、そうです。{{......Vâng,&nbsp;phải.}}</p><p><"
+   ],
+   [
+    "ちが>>います。......Không, không phải.<br></p>",
+    "ちが>>います。{{......Không, không phải.}}<br></p>"
+   ]
+  ]
+ },
+ "1191": {
+  "note": "untagged translations the rules miss (same line); audit 28/10",
+  "edits": [
+   [
+    "..「9」です。Là \"9\".<br></p>",
+    "..「9」です。{{Là \"9\".}}<br></p>"
+   ]
+  ]
+ },
+ "1193": {
+  "note": "untagged translations the rules miss (same line); audit 28/10",
+  "edits": [
+   [
+    "ットさんのです。....Không, không phải. Của anh Schmidt.</p><p>そ",
+    "ットさんのです。{{....Không, không phải. Của anh Schmidt.}}</p><p>そ"
+   ]
+  ]
+ },
+ "1196": {
+  "note": "untagged translations the rules miss (same line); audit 28/10",
+  "edits": [
+   [
+    ">はどこですか。Nhà vệ sinh ở đâu?&nbsp; &",
+    ">はどこですか。{{Nhà vệ sinh ở đâu?}}&nbsp; &"
+   ],
+   [
+    "..あそこです。....Ở đằng kia.</p><p>2",
+    "..あそこです。{{....Ở đằng kia.}}</p><p>2"
+   ],
+   [
+    "はどちらですか。Thang má ở chỗ nào vậy ạ?&nbsp; &",
+    "はどちらですか。{{Thang má ở chỗ nào vậy ạ?}}&nbsp; &"
+   ],
+   [
+    "..あちらです。Ở đằng kia ạ.</p><ul>",
+    "..あちらです。{{Ở đằng kia ạ.}}</p><ul>"
+   ]
+  ]
+ },
+ "1197": {
+  "note": "untagged translations the rules miss (same line); audit 28/10",
+  "edits": [
+   [
+    "ピューターです。Đây là máy vi tính của Nhật.</p>",
+    "ピューターです。{{Đây là máy vi tính của Nhật.}}</p>"
+   ]
+  ]
+ },
+ "1198": {
+  "note": "untagged translations the rules miss (same line); audit 28/10",
+  "edits": [
+   [
+    "pan>ですか。Bây giờ là mấy giờ?　.......",
+    "pan>ですか。{{Bây giờ là mấy giờ?}}　......."
+   ],
+   [
+    " ぷん>>です。....... 7 giờ 10 phút.</p>",
+    " ぷん>>です。{{....... 7 giờ 10 phút.}}</p>"
+   ]
+  ]
+ },
+ "1203": {
+  "note": "untagged translations the rules miss (same line); audit 28/10",
+  "edits": [
+   [
+    "pan>ですね。....Vất vả quá nhỉ!</p><p>2",
+    "pan>ですね。{{....Vất vả quá nhỉ!}}</p><p>2"
+   ],
+   [
+    "６８１３ですね。....871-6813 đúng không ạ.</p>",
+    "６８１３ですね。{{....871-6813 đúng không ạ.}}</p>"
+   ]
+  ]
+ },
+ "1294": {
+  "note": "untagged translations the rules miss (same line); audit 28/10",
+  "edits": [
+   [
+    ">って「い」る。Có<br>....",
+    ">って「い」る。{{Có}}<br>...."
+   ]
+  ]
+ },
+ "1313": {
+  "note": "untagged translations the rules miss (same line); audit 28/10",
+  "edits": [
+   [
+    "</span>。Tôi rẽ phải ở ngã tư.</p>",
+    "</span>。{{Tôi rẽ phải ở ngã tư.}}</p>"
+   ]
+  ]
+ },
+ "1316": {
+  "note": "untagged translations the rules miss (same line); audit 28/10",
+  "edits": [
+   [
+    "んがくれました。Vâng, (rượu vang này là) chị Sato tặng tôi đấy ạ. (<<佐藤 -",
+    "んがくれました。{{Vâng, (rượu vang này là) chị Sato tặng tôi đấy ạ.}} (<<佐藤 -"
+   ]
+  ]
+ },
+ "1659": {
+  "note": "untagged translations the rules miss (same line); audit 28/10",
+  "edits": [
+   [
+    ".......。....(Vì) ở đây giá cả rẻ, cá lại tươi ...</li></o",
+    ".......。{{....(Vì) ở đây giá cả rẻ, cá lại tươi ...}}</li></o"
+   ]
+  ]
+ },
+ "1660": {
+  "note": "untagged translations the rules miss (same line); audit 28/10",
+  "edits": [
+   [
+    "があるんですね。... Vì thế mà được ưa chuộng nhỉ.</p>",
+    "があるんですね。{{... Vì thế mà được ưa chuộng nhỉ.}}</p>"
+   ]
+  ]
+ }
+}
