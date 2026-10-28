@@ -1,0 +1,312 @@
+{
+ "808": {
+  "note": "the line repeats the term and translates the Japanese sentence above: braces hold it all",
+  "edits": [
+   [
+    "「～において」{{",
+    "{{「～において」"
+   ]
+  ]
+ },
+ "823": {
+  "note": "the line repeats the term and translates the Japanese sentence above: braces hold it all",
+  "edits": [
+   [
+    "「~わけではない」 {{",
+    "{{「~わけではない」 "
+   ]
+  ]
+ },
+ "825": {
+  "note": "the line repeats the term and translates the Japanese sentence above: braces hold it all",
+  "edits": [
+   [
+    "「~にもかかわらず」 {{",
+    "{{「~にもかかわらず」 "
+   ]
+  ]
+ },
+ "846": {
+  "note": "the line repeats the term and translates the Japanese sentence above: braces hold it all",
+  "edits": [
+   [
+    "「<<驚 - おどろ>>いた・<<困 - こま>>った&gt;・うれしい・<<悲 - かな>>しい・<<不思議 - ふしぎ>>な・<<残念 - ざんねん>>な・ありがたい」{{",
+    "{{「<<驚 - おどろ>>いた・<<困 - こま>>った&gt;・うれしい・<<悲 - かな>>しい・<<不思議 - ふしぎ>>な・<<残念 - ざんねん>>な・ありがたい」"
+   ]
+  ]
+ },
+ "875": {
+  "note": "the line repeats the term and translates the Japanese sentence above: braces hold it all",
+  "edits": [
+   [
+    "「~に<<従 - したが>>って」{{",
+    "{{「~に<<従 - したが>>って」"
+   ],
+   [
+    "~につれて/~につれ「V-る +につれて/につれ」 {{",
+    "{{~につれて/~につれ「V-る +につれて/につれ」 "
+   ]
+  ]
+ },
+ "877": {
+  "note": "the line repeats the term and translates the Japanese sentence above: braces hold it all",
+  "edits": [
+   [
+    "「~<<得 - う>>る」{{",
+    "{{「~<<得 - う>>る」"
+   ]
+  ]
+ },
+ "902": {
+  "note": "the line repeats the term and translates the Japanese sentence above: braces hold it all",
+  "edits": [
+   [
+    "「~という~」 {{",
+    "{{「~という~」 "
+   ]
+  ]
+ },
+ "700": {
+  "note": "the line repeats the term and translates the Japanese sentence above: braces hold it all",
+  "edits": [
+   [
+    "「～させられる」{{",
+    "{{「～させられる」"
+   ]
+  ]
+ },
+ "704": {
+  "note": "the line repeats the term and translates the Japanese sentence above: braces hold it all",
+  "edits": [
+   [
+    "「～ようとする」{{",
+    "{{「～ようとする」"
+   ]
+  ]
+ },
+ "705": {
+  "note": "the line repeats the term and translates the Japanese sentence above: braces hold it all",
+  "edits": [
+   [
+    "「～ことがある」{{",
+    "{{「～ことがある」"
+   ]
+  ]
+ },
+ "706": {
+  "note": "the line repeats the term and translates the Japanese sentence above: braces hold it all",
+  "edits": [
+   [
+    "「～させておく」{{",
+    "{{「～させておく」"
+   ]
+  ]
+ },
+ "710": {
+  "note": "the line repeats the term and translates the Japanese sentence above: braces hold it all",
+  "edits": [
+   [
+    "～ため（に）{{",
+    "{{～ため（に）"
+   ]
+  ]
+ },
+ "712": {
+  "note": "the line repeats the term and translates the Japanese sentence above: braces hold it all",
+  "edits": [
+   [
+    "～とおり（に）{{",
+    "{{～とおり（に）"
+   ]
+  ]
+ },
+ "772": {
+  "note": "the line repeats the term and translates the Japanese sentence above: braces hold it all",
+  "edits": [
+   [
+    "～たび（に） {{",
+    "{{～たび（に） "
+   ]
+  ]
+ },
+ "773": {
+  "note": "the line repeats the term and translates the Japanese sentence above: braces hold it all",
+  "edits": [
+   [
+    "A ばかりでなく B（も）{{",
+    "{{A ばかりでなく B（も）"
+   ]
+  ]
+ },
+ "639": {
+  "note": "too short for the rule",
+  "edits": [
+   [
+    "<p>へえ。Hả.</p>",
+    "<p>へえ。{{Hả.}}</p>"
+   ]
+  ]
+ },
+ "654": {
+  "note": "the Japanese word before is too short",
+  "edits": [
+   [
+    "<<1枚 - いちまい>><br>1 miếng",
+    "<<1枚 - いちまい>><br>{{1 miếng}}"
+   ],
+   [
+    "・<<塩 - しお>><br>・Muối",
+    "・<<塩 - しお>><br>{{・Muối}}"
+   ]
+  ]
+ },
+ "677": {
+  "note": "the Japanese word before is too short",
+  "edits": [
+   [
+    "<<何 - なに>>？Chuyện gì thế?",
+    "<<何 - なに>>？{{Chuyện gì thế?}}"
+   ]
+  ]
+ },
+ "682": {
+  "note": "too short for the rule",
+  "edits": [
+   [
+    "ゆき: うん。Ừ.",
+    "ゆき: うん。{{Ừ.}}"
+   ]
+  ]
+ },
+ "855": {
+  "note": "too short for the rule; speaker inside the braces as on the other lines",
+  "edits": [
+   [
+    "そう。<br><<渡辺 - わたなべ>>: Vậy à.",
+    "そう。<br>{{<<渡辺 - わたなべ>>: Vậy à.}}"
+   ]
+  ]
+ },
+ "945": {
+  "note": "too short for the rule",
+  "edits": [
+   [
+    "「カット!」<br>\"Cắt!\"",
+    "「カット!」<br>{{\"Cắt!\"}}"
+   ]
+  ]
+ },
+ "1143": {
+  "note": "too short for the rule",
+  "edits": [
+   [
+    "えっ？ Hử?",
+    "えっ？ {{Hử?}}"
+   ]
+  ]
+ },
+ "1157": {
+  "note": "too short for the rule",
+  "edits": [
+   [
+    "えーと.......。À...",
+    "えーと.......。{{À...}}"
+   ]
+  ]
+ },
+ "1400": {
+  "note": "too short for the rule",
+  "edits": [
+   [
+    "ええ、いいですよ。Ừ, OK.",
+    "ええ、いいですよ。{{Ừ, OK.}}"
+   ]
+  ]
+ },
+ "1402": {
+  "note": "the translation is the next list item; NihonGo joins it to the item before",
+  "edits": [
+   [
+    "<li>Anh Mira đã mua cái nón ở Mexico.</li>",
+    "<li>{{Anh Mira đã mua cái nón ở Mexico.}}</li>"
+   ],
+   [
+    "<li>Người nãy tối nay đi hát karaoke.</li>",
+    "<li>{{Người nãy tối nay đi hát karaoke.}}</li>"
+   ],
+   [
+    "<li>Ngày mai 4 giờ có tiệc.</li>",
+    "<li>{{Ngày mai 4 giờ có tiệc.}}</li>"
+   ],
+   [
+    "<li>Người nữ hôm qua đã không đi ngắm hoa.</li>",
+    "<li>{{Người nữ hôm qua đã không đi ngắm hoa.}}</li>"
+   ]
+  ]
+ },
+ "1421": {
+  "note": "the translation quotes Japanese",
+  "edits": [
+   [
+    "」です。Đọc là \"ちゅうしゃいはん\".</p>",
+    "」です。{{Đọc là \"ちゅうしゃいはん\".}}</p>"
+   ],
+   [
+    "ですか。\"ちゅうしゃいはん\"..., có nghĩa là gì?</p>",
+    "ですか。{{\"ちゅうしゃいはん\"..., có nghĩa là gì?}}</p>"
+   ]
+  ]
+ },
+ "1442": {
+  "note": "too short for the rule",
+  "edits": [
+   [
+    "ええ。Có ạ.",
+    "ええ。{{Có ạ.}}"
+   ]
+  ]
+ },
+ "1468": {
+  "note": "too short for the rule",
+  "edits": [
+   [
+    "あのう。À ...",
+    "あのう。{{À ...}}"
+   ]
+  ]
+ },
+ "736": {
+  "note": "bold and strike cut the translation: the braces hold the whole line, tags and all",
+  "edits": [
+   [
+    "<br><strong>\"V-</strong><s><strong>ます</strong></s><strong>+っぽし\"",
+    "<br>{{<strong>\"V-</strong><s><strong>ます</strong></s><strong>+っぽし\""
+   ],
+   [
+    "<<忘 - わす>>れる\".</strong></p>",
+    "<<忘 - わす>>れる\".</strong>}}</p>"
+   ]
+  ]
+ },
+ "843": {
+  "note": "bold and strike cut the note; the line above repeats the term and translates the sentence before it",
+  "edits": [
+   [
+    "<br>~きりnhư trong",
+    "<br>{{~きりnhư trong"
+   ],
+   [
+    "(không gặp nhau).</p>",
+    "(không gặp nhau).}}</p>"
+   ],
+   [
+    "<br><strong>・Sử dụng thể \"V</strong>",
+    "<br>{{<strong>・Sử dụng thể \"V</strong>"
+   ],
+   [
+    "liên tục kéo dài.</strong></p>",
+    "liên tục kéo dài.</strong>}}</p>"
+   ]
+  ]
+ }
+}

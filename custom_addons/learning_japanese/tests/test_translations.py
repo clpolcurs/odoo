@@ -57,6 +57,14 @@ class TestUntaggedTranslations(BaseCase):
             with self.subTest(source=source):
                 self.assertEqual(untagged(source), [])
 
+    def test_a_translation_may_quote_examples_and_open_with_its_term(self):
+        self.assertEqual(untagged("<p>「留学生として」のように使う。<br>Sử dụng khi nói lên tư cách như là “留学生として”.</p>"),
+                         ["Sử dụng khi nói lên tư cách như là “留学生として”."])
+        self.assertEqual(untagged("<p>「~のみ」は、「~だけ」と言いたいときに使う。<br>~のみdùng khi muốn nói là “chỉ ~”.</p>"),
+                         ["~のみdùng khi muốn nói là “chỉ ~”."])
+        # under a heading, not a sentence, the term opens a note
+        self.assertEqual(untagged("<p>3. ～んですが、～</p><p>「～んですが」có chức năng mở đầu câu chuyện.</p>"), [])
+
     def test_a_sentence_has_one_translation(self):
         self.assertEqual(untagged("<p>雪がたくさん降りました。Tuyết đã rơi nhiều.<br>Trường hợp động từ</p>"),
                          ["Tuyết đã rơi nhiều."])

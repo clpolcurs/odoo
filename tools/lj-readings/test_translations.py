@@ -64,6 +64,16 @@ CASES = [
         "<p>〜はずがない<br>Tuyệt đối không ~ / Làm gì có chuyện ~</p>",
         "<p>〜はずがない<br>{{Tuyệt đối không ~ / Làm gì có chuyện ~}}</p>",
     ),
+    # a translation may quote whole Japanese examples (Try N2 #827)
+    (
+        "<p>「留学生として」のように使う。<br>Sử dụng khi nói lên tư cách như là “留学生として”.</p>",
+        "<p>「留学生として」のように使う。<br>{{Sử dụng khi nói lên tư cách như là “留学生として”.}}</p>",
+    ),
+    # the term it opens with may run into the Vietnamese (Try N2 #867)
+    (
+        "<p>「~のみ」は、「~だけ」と言いたいときに使う。<br>~のみdùng khi muốn nói là “chỉ ~”.</p>",
+        "<p>「~のみ」は、「~だけ」と言いたいときに使う。<br>{{~のみdùng khi muốn nói là “chỉ ~”.}}</p>",
+    ),
 ]
 
 LEFT_ALONE = [
@@ -79,6 +89,8 @@ LEFT_ALONE = [
     "<p>～ため（に）<br>sử dụng khi nói rằng “~” là nguyên nhân.</p>",
     "<p>( 4 ) お／ご～ ください<br>Đây là hình thức tôn kính của câu nhờ vả.</p>",
     "<p>Vます がたい<br>Chủ yếu dùng với động từ chỉ ý chí.</p>",
+    # a term under a heading, not under a sentence
+    "<p>3. ～んですが、～</p><p>「～んですが」có chức năng mở đầu câu chuyện.</p>",
 ]
 
 
@@ -104,6 +116,21 @@ def test_braces_come_off_the_explanations_they_hold():
         == "<p>「しか」 được dùng sau danh từ, lượng từ.</p><p>雨だ。{{Trời mưa rồi đấy.}}</p>"
     )
     assert explanations("<p>〜はずがない<br>{{Tuyệt đối không ~ / Làm gì có chuyện ~}}</p>") == []
+
+
+def test_the_translation_of_a_japanese_explanation_keeps_its_braces():
+    # Try N3 #700: the Vietnamese line repeats the term and translates the Japanese sentence above
+    markup = "<p>「～させられる」は、言われてする時に使う。<br>「～させられる」{{sử dụng khi bị người khác bảo.}}</p>"
+    assert explanations(markup) == []
+    # Minna 2 #1663: the sentence above has its own translation, so the line explains the term
+    markup = (
+        "<li>パソコンが故障してしまいました。{{Máy vi tính bị hỏng mất rồi.}}</li>"
+        "<li>「～て しまいます」{{diễn tả hành động sẽ kết thúc.}}</li>"
+    )
+    assert [u.text for u in explanations(markup)] == ["diễn tả hành động sẽ kết thúc."]
+    # Minna 2 #1648: a heading above, no sentence
+    markup = "<p>3. ～んですが、～</p><p>「～んですが」{{có chức năng mở đầu câu chuyện.}}</p>"
+    assert [u.text for u in explanations(markup)] == ["có chức năng mở đầu câu chuyện."]
 
 
 def test_formatting_that_cuts_a_translation_is_left_to_a_person():

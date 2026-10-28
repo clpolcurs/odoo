@@ -1,0 +1,11 @@
+{
+ "786": {
+  "note": "too short for the rule: the line translates the sentence above",
+  "edits": [
+   [
+    "<br>～ giống ないで</p>",
+    "<br>{{～ giống ないで}}</p>"
+   ]
+  ]
+ }
+}

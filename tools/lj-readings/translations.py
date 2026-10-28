@@ -19,7 +19,7 @@ RE_LEAD = re.compile(
 )
 SENTENCE_END = "。！？!?」』）)"
 OPENERS = "\"'“‘(（~～[［"
-RE_TERM = re.compile(rf"^[\"'“‘(（~～「『]*[{KANA_KANJI}~～・〜]{{1,10}}[\"'”’)）」』]*\s+")
+RE_TERM = re.compile(rf"^[\"'“‘(（~～「『]*[{KANA_KANJI}~～・〜]{{1,16}}[\"'”’)）」』]*(?:\s+|(?=[A-Za-zÀ-ỹĐđ]))")
 RE_TERM_LINE = re.compile(
     rf"^(?:[(（]\s*[0-9０-９]{{1,2}}\s*[)）]|[0-9０-９]{{1,2}}\s*[.)．])?[\s「『\"“{KANA_KANJI}～〜~・／/（）()VN]{{1,24}}"
     rf"[」』\"”]*$"
@@ -31,6 +31,7 @@ RE_EXPLAINING = re.compile(
     re.IGNORECASE,
 )
 JAPANESE_IN_TRANSLATION = 0.35
+RE_QUOTED = re.compile(r"“[^“”]*”|\"[^\"]*\"|「[^「」]*」|『[^『』]*』")
 ZERO_WIDTH = str.maketrans("", "", "​‌‍⁠﻿")
 
 RE_TOKEN = re.compile(r"\{\{.*?\}\}|<<[^<>]*>>|<[^<>]*>|&(?:#\d+|#x[0-9a-fA-F]+|[A-Za-z]+);|[^<{&]+|[<{&]", re.DOTALL)
@@ -56,14 +57,23 @@ def body(text):
     return rest[term.end() :] if term else rest.lstrip(OPENERS)
 
 
+def unquoted(text):
+    """The text without what it quotes: a translation may quote whole Japanese examples (“留学生として”)."""
+    return RE_QUOTED.sub("", text)
+
+
 def vietnamese(text):
-    ja, latin, vietnamese_letters = counts(text)
+    """A Vietnamese sentence: it starts with a Vietnamese word, or with the Japanese term it explains, and holds
+    Japanese only as terms and quoted examples, never a 。 of its own."""
+    rest = body(text)
+    _ja, latin, vietnamese_letters = counts(text)
+    ja = len(RE_JAPANESE.findall(unquoted(rest)))
     return (
-        bool(RE_LATIN.match(body(text)))
+        bool(RE_LATIN.match(rest))
         and vietnamese_letters >= 1
         and latin >= 4
         and ja <= JAPANESE_IN_TRANSLATION * latin
-        and "。" not in text
+        and "。" not in unquoted(text)
     )
 
 
@@ -92,6 +102,8 @@ def explains(previous, text):
     rest = body(text)
     if rest[:1].islower() and previous.endswith(tuple("」』）)")):
         return True
+    if RE_TERM.match(text[RE_LEAD.match(text).end() :]) and not previous.rstrip().endswith(tuple(SENTENCE_END)):
+        return True  # it opens with the term of the heading above it (Minna 2 #1648), not of a sentence
     return bool(RE_TERM_LINE.match(previous) and RE_TERM_MARK.search(previous) and RE_EXPLAINING.match(rest))
 
 
@@ -237,17 +249,33 @@ def find(markup):
 
 def explanations(markup):
     """The {{...}} that hold the Vietnamese explanation of a grammar term instead of a translation (explains()): the
-    braces hide it from the Nội dung tab of Odoo. The rules wrote such braces before they knew explains()."""
+    braces hide it from the Nội dung tab of Odoo. The rules wrote such braces before they knew explains().
+
+    A line that repeats the term before its braces, under a Japanese sentence with no translation of its own, is the
+    translation of that sentence and keeps its braces: «「～させられる」は、…使う。<br>「～させられる」{{sử dụng khi…}}»
+    (Try N2, Try N3)."""
     found, previous = [], None
     for line in lines(markup):
         for start, end, at in line.braces:
             text = " ".join(inner.text for inner in lines(markup[start + 2 : end - 2]) if inner.text)
             before = line.text[:at].strip() if at else (previous.text if previous is not None else "")
+            if at and translates(previous):
+                continue
             if before and japanese(before) and vietnamese(text) and explains(before, text):
                 found.append(Unwrap(start, end, text, before))
         if line.text:
             previous = line
     return found
+
+
+def translates(previous):
+    """Whether the line after this one may be its translation: a whole Japanese sentence without its own."""
+    return (
+        previous is not None
+        and not previous.translated
+        and japanese(previous.text)
+        and previous.text.rstrip().endswith(tuple("。！？!?"))
+    )
 
 
 def apply(markup, wraps, unwraps=()):

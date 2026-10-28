@@ -27,8 +27,9 @@ _RE_LEAD = re.compile(
 )
 SENTENCE_END = "。！？!?」』）)"
 OPENERS = "\"'“‘(（~～[［"
-# A translation may open with the Japanese term it explains: “~てならない” được sử dụng khi…, ~という dùng khi…
-_RE_TERM = re.compile(rf"^[\"'“‘(（~～「『]*[{KANA_KANJI}~～・〜]{{1,10}}[\"'”’)）」』]*\s+")
+# A translation may open with the Japanese term it explains: “~てならない” được sử dụng khi…, ~という dùng khi…,
+# ~のみdùng khi…
+_RE_TERM = re.compile(rf"^[\"'“‘(（~～「『]*[{KANA_KANJI}~～・〜]{{1,16}}[\"'”’)）」』]*(?:\s+|(?=[A-Za-zÀ-ỹĐđ]))")
 # A grammar term alone on its line (〜ために, お〜ください, Vます がたい) and how an explanation of it starts
 _RE_TERM_LINE = re.compile(
     rf"^(?:[(（]\s*[0-9０-９]{{1,2}}\s*[)）]|[0-9０-９]{{1,2}}\s*[.)．])?[\s「『\"“{KANA_KANJI}～〜~・／/（）()VN]{{1,24}}"
@@ -40,7 +41,9 @@ _RE_EXPLAINING = re.compile(
     r"|^đây là\b|^là (?:cách|hình thức|thể)\b",
     re.IGNORECASE,
 )
-JAPANESE_IN_TRANSLATION = 0.35  # quoted Japanese terms, per Latin letter
+JAPANESE_IN_TRANSLATION = 0.35  # Japanese terms outside quotes, per Latin letter
+# What a translation quotes: whole Japanese examples (“留学生として”) do not make it Japanese
+_RE_QUOTED = re.compile(r"“[^“”]*”|\"[^\"]*\"|「[^「」]*」|『[^『』]*』")
 _ZERO_WIDTH = str.maketrans("", "", "\u200b\u200c\u200d\u2060\ufeff")  # the editor leaves them between sentences
 
 _RE_TOKEN = re.compile(r"\{\{.*?\}\}|<<[^<>]*>>|<[^<>]*>|[^<{]+|[<{]", re.DOTALL)
@@ -67,12 +70,18 @@ def _body(text):
     return rest[term.end():] if term else rest.lstrip(OPENERS)
 
 
+def _unquoted(text):
+    return _RE_QUOTED.sub("", text)
+
+
 def vietnamese(text):
     """A Vietnamese sentence: it starts with a Vietnamese word, or with the Japanese term it explains, and holds
-    Japanese only as quoted terms, never a 。."""
-    ja, latin, vietnamese_letters = _counts(text)
-    return (bool(_RE_LATIN.match(_body(text))) and vietnamese_letters >= 1 and latin >= 4
-            and ja <= JAPANESE_IN_TRANSLATION * latin and "。" not in text)
+    Japanese only as terms and quoted examples, never a 。 of its own."""
+    rest = _body(text)
+    _ja, latin, vietnamese_letters = _counts(text)
+    ja = len(_RE_JAPANESE.findall(_unquoted(rest)))
+    return (bool(_RE_LATIN.match(rest)) and vietnamese_letters >= 1 and latin >= 4
+            and ja <= JAPANESE_IN_TRANSLATION * latin and "。" not in _unquoted(text))
 
 
 def split(text):
@@ -95,6 +104,8 @@ def explains(previous, text):
     rest = _body(text)
     if rest[:1].islower() and previous.endswith(tuple("」』）)")):
         return True
+    if _RE_TERM.match(text[_RE_LEAD.match(text).end():]) and not previous.rstrip().endswith(tuple(SENTENCE_END)):
+        return True  # it opens with the term of the heading above it (Minna 2 #1648), not of a sentence
     return bool(_RE_TERM_LINE.match(previous) and _RE_TERM_MARK.search(previous) and _RE_EXPLAINING.match(rest))
 
 

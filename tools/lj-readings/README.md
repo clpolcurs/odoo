@@ -53,8 +53,8 @@ thay vì nằm trong `{{...}}`, nên tab Nội dung của Odoo vẫn hiện nó 
 
 - Một dòng là phần giữa hai thẻ khối (`<p>`, `<li>`, `<td>`…) hoặc hai `<br>`. Dòng tiếng Nhật có ít nhất 2 chữ kana
   hoặc Hán và không có chữ có dấu tiếng Việt; dòng tiếng Việt mở đầu bằng một chữ Việt (sau số thứ tự, người nói
-  `A:`, `佐藤:` hay thuật ngữ đang giải thích như `~という`), không có `。`, chữ Nhật chỉ là trích dẫn (≤ 0,35 lần số
-  chữ Latin).
+  `A:`, `佐藤:` hay thuật ngữ đang giải thích như `~という`, kể cả khi viết liền `~のみdùng khi…`), không có `。` của
+  riêng nó, chữ Nhật ngoài thuật ngữ đầu dòng và ngoài ngoặc kép (`“留学生として”`, `「…」`) ≤ 0,35 lần số chữ Latin.
 - Cùng dòng: câu tiếng Nhật kết thúc bằng `。！？」』）` rồi đến câu tiếng Việt → `日本語の文。{{Câu tiếng Việt.}}`.
 - Dòng sau: dòng tiếng Việt ngay sau một dòng tiếng Nhật chưa có bản dịch, trong cùng khối (sau `<br>`) hoặc ở đoạn
   kế tiếp (không áp cho hai ô bảng hay hai mục danh sách khác nhau) → `日本語の文。<br>{{Câu tiếng Việt.}}`.
@@ -63,6 +63,9 @@ thay vì nằm trong `{{...}}`, nên tab Nội dung của Odoo vẫn hiện nó 
 - Câu giải thích một mẫu ngữ pháp cũng không phải bản dịch: viết tiếp bằng chữ thường sau thuật ngữ trong ngoặc
   (`「しか」 được dùng sau danh từ…`), hoặc đứng sau một mẫu riêng một dòng (`〜ために`, `Vます がたい`) và nói cách
   dùng (`Dùng khi…`, `Đây là…`). Câu nói nghĩa của mẫu vẫn là bản dịch (`〜はずがない` → `Tuyệt đối không ~`).
+  Dòng mở đầu bằng thuật ngữ ngay dưới một tiêu đề (`3. ～んですが、～`) cũng là câu giải thích; dưới một câu tiếng
+  Nhật trọn vẹn chưa có bản dịch thì nó là bản dịch của câu đó và giữ nguyên `{{` `}}`
+  (`「～させられる」は、…使う。<br>{{「～させられる」sử dụng khi…}}`).
 - Ký tự zero-width (U+200B…) mà trình soạn thảo để lại không tính là chữ; dòng tiếng Việt có thể mở đầu bằng dấu
   đầu dòng `・`, `*` hay ngoặc `[` như dòng tiếng Nhật nó dịch.
 - Không đổi chữ nào; bản dịch bị một thẻ định dạng (đậm, màu…) cắt ngang thì để người sửa tay (`doubts` trong báo
@@ -78,6 +81,18 @@ uv run python apply_translations.py proposals/translations/158-minna-1.json --ap
 `propose_translations.py` cũng đề xuất gỡ `{{` `}}` khỏi những câu giải thích đã bị bọc (`unwraps` trong file đề
 xuất): luật đầu tiên (commit `e20a06df`) chưa phân biệt câu giải thích và ngày 27/10/2026 đã bọc 24 câu như vậy, làm
 chúng biến mất khỏi tab Nội dung của Odoo.
+
+Những dòng luật không tự làm (câu quá ngắn, nằm trong ô bảng hay mục danh sách, bị thẻ định dạng cắt ngang, ngoặc cần
+bọc cả dòng) được sửa tay bằng `apply_edits.py`: mỗi bài là một danh sách cặp `[đoạn markup cũ, đoạn mới]`, đoạn mới
+chỉ khác đoạn cũ ở `{{` `}}`, đoạn cũ phải xuất hiện đúng một lần. Trước khi ghi, số bản dịch trong `/markup/preview`
+phải tăng đúng số cặp ngoặc thêm vào, số `untagged_translations` không được tăng, không có lỗi markup mới và bộ lọc
+HTML giữ nguyên markup. Các file `proposals/translations/manual-*.json` và `quoted-*.json` ghi lại những gì đã sửa tay
+ngày 28/10/2026.
+
+```bash
+uv run python apply_edits.py proposals/translations/manual-2026-10-28.json            # kiểm tra, không ghi
+uv run python apply_edits.py proposals/translations/manual-2026-10-28.json --apply    # chỉ sau khi đã duyệt
+```
 
 `apply_translations.py` chỉ ghi một bài khi markup mới chỉ khác markup cũ ở các dấu ngoặc thêm vào hay gỡ ra,
 `/markup/preview` đếm thêm (bớt) đúng số bản dịch (và bớt đúng số `untagged_translations` khi Odoo đã có mục QA này),
