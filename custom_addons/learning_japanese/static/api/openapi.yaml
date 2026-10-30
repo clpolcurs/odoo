@@ -1221,7 +1221,7 @@ components:
             explicit_readings: {type: integer}
             auto_readings: {type: integer}
             translations: {type: integer}
-            untagged_translations: {type: integer, description: Vietnamese translations written outside {{...}}.}
+            untagged_translations: {type: integer, description: 'Vietnamese translations written outside {{...}}.'}
         issues: {type: array, items: {$ref: '#/components/schemas/MarkupIssue'}}
 
     ChangeEvent:
