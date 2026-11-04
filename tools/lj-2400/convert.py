@@ -78,7 +78,7 @@ POS = {
     "接尾": 14,
 }
 # tags with no part of speech in Odoo yet: the word is written without one, and the topic's notices list it
-NO_POS = {"接頭", "連"}
+NO_POS = {"接頭", "連", "句"}
 VERB_TAG = re.compile(r"^動([123])([自他]*)$")
 
 TOKEN = re.compile(r"\{([^{}|]+)\|([^{}|]+)\}|\[\[|\]\]")
