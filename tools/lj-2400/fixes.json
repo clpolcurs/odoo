@@ -624,5 +624,56 @@
  },
  "1141": {
   "vi": "địa phương, quê nhà"
+ },
+ "p238": {
+  "vi": [
+   [
+    "hiện tưởng",
+    "hiện tượng"
+   ]
+  ]
+ },
+ "p249": {
+  "vi": [
+   [
+    "dễ thay đổi nhất trong bốn mùa",
+    "dễ thay đổi nhất trong bốn mùa."
+   ]
+  ]
+ },
+ "p252": {
+  "zh": [
+   [
+    "雨具吧.",
+    "雨具吧。"
+   ]
+  ]
+ },
+ "1297": {
+  "term": "万が一",
+  "ruby": "{万|まん}が{一|いち}",
+  "zh": "万一",
+  "vi": "chẳng may, bất đắc dĩ (còn nói 万一)"
+ },
+ "1197": {
+  "vi": "thiệt hại, tổn thất"
+ },
+ "1217": {
+  "vi": "ngoài trời, bên ngoài"
+ },
+ "1228": {
+  "vi": "ánh nắng, ánh mặt trời"
+ },
+ "1237": {
+  "vi": "hiện tượng (tự nhiên, xã hội)"
+ },
+ "1245": {
+  "vi": "cầu vồng, mống"
+ },
+ "1263": {
+  "vi": "bình thường, không bất thường"
+ },
+ "1292": {
+  "vi": "áo mưa, áo choàng đi mưa"
  }
 }
