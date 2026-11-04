@@ -83,6 +83,8 @@ VERB_TAG = re.compile(r"^動([123])([自他]*)$")
 
 TOKEN = re.compile(r"\{([^{}|]+)\|([^{}|]+)\}|\[\[|\]\]")
 KANJI = re.compile(r"[㐀-䶿一-鿿豈-﫿々〆ヶ]")
+# a part that can be left out, printed in brackets (アマ(チュア), ほっぺ(た)): Odoo writes it 「…」, as in 四角「形」
+OPTIONAL = re.compile(r"[(（]([^()（）]+)[)）]")
 U_TO_I = dict(zip("うくぐすつぬぶむる", "いきぎしちにびみり", strict=True))
 
 
@@ -310,6 +312,7 @@ def word_payload(word, part_markups, topic, hanviet, fixes, problems, notices):
     for tail, suffix in (("(と)", "（と）"), ("（と）", "（と）")):
         if term.endswith(tail) and not after:
             term, ruby, after = term[: -len(tail)], ruby[: -len(tail)], suffix
+    term, ruby = OPTIONAL.sub(r"「\1」", term), OPTIONAL.sub(r"「\1」", ruby)
     if term.endswith("な") and not after and any(t in ("ナ", "ナ形", "な形") for t in tags):
         term, ruby, after = term[:-1], ruby[:-1], "[な]"
     hira = ruby_reading(ruby)
