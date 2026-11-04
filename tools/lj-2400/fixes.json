@@ -675,5 +675,57 @@
  },
  "1292": {
   "vi": "áo mưa, áo choàng đi mưa"
+ },
+ "1319": {
+  "zh": "登机牌"
+ },
+ "1360": {
+  "vi": "sự đi tảo mộ, đi viếng mộ"
+ },
+ "1387": {
+  "term": "原子爆弾",
+  "ruby": "{原子爆弾|げんしばくだん}",
+  "vi": "bom nguyên tử (gọi tắt là 原爆)"
+ },
+ "1396": {
+  "vi": "may mắn, may thay"
+ },
+ "p272": {
+  "vi": [
+   [
+    "tôi biết chỉ chịu khổ thêm một chút là có thể vượt qua đường núi",
+    "tôi biết may là chỉ thêm một chút nữa là có thể vượt qua đường núi"
+   ]
+  ]
+ },
+ "1414": {
+  "vi": "phân, sự đi ngoài"
+ },
+ "p256": {
+  "zh": [
+   [
+    "然后在接受",
+    "然后再接受"
+   ]
+  ]
+ },
+ "p260": {
+  "zh": [
+   [
+    "很忧郁要带多少",
+    "很犹豫要带多少"
+   ]
+  ]
+ },
+ "p278": {
+  "zh": [
+   [
+    "美好。＞",
+    "美好。"
+   ]
+  ]
+ },
+ "1352": {
+  "vi": "hoàng hôn, mặt trời lặn"
  }
 }
