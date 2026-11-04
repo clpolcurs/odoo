@@ -1143,5 +1143,152 @@
  },
  "2195": {
   "vi": "nghị sĩ, đại biểu nghị viện"
+ },
+ "2226": {
+  "tags": [
+   "名",
+   "動3他"
+  ]
+ },
+ "2233": {
+  "zh": "观测[观测]"
+ },
+ "2236": {
+  "vi": "túi sinh thái, túi tái sử dụng"
+ },
+ "2256": {
+  "vi": "sự tỉ lệ, tỉ lệ thuận"
+ },
+ "2267": {
+  "zh": "解释[解释]"
+ },
+ "2279": {
+  "vi": "sự chứng minh, chứng minh"
+ },
+ "2280": {
+  "vi": "giấy chứng nhận, giấy chứng minh"
+ },
+ "2309": {
+  "vi": "tiết kiệm ~"
+ },
+ "2311": {
+  "vi": "phát điện hạt nhân, điện hạt nhân"
+ },
+ "p430": {
+  "en": [
+   [
+    "B: What are microplastics?",
+    "B: What are microplastics? A: They’re extremely small pieces of plastic. Shellfish and sea turtles swallow them by mistake. That’s why we need to reduce plastic waste. B: I see. Maybe I’ll start using a reusable eco-bag too."
+   ]
+  ]
+ },
+ "p431": {
+  "en": [
+   [
+    "One effects",
+    "One effect"
+   ]
+  ],
+  "vi": [
+   [
+    "tang cao",
+    "tăng cao"
+   ]
+  ]
+ },
+ "p432": {
+  "en": [
+   [
+    "A: Oh, really? Okay, I’ll try it again.",
+    "A: Oh, really? Okay, I’ll try it again. B: Good luck. You have to round the result off to one decimal place."
+   ]
+  ]
+ },
+ "p433": {
+  "zh": [
+   [
+    "巴黎和平协约",
+    "巴黎协定"
+   ]
+  ]
+ },
+ "p434": {
+  "en": [
+   [
+    "B: That’s surprising.",
+    "B: That’s surprising. A: Even if it’s below the standard value, what matters is how we interpret this fact. From now on, we need to take measures to dilute the pollutants."
+   ]
+  ],
+  "vi": [
+   [
+    "nhưng mà..",
+    "nhưng mà…"
+   ]
+  ]
+ },
+ "p438": {
+  "vi": [
+   [
+    "kết quả là sinh ra hỗn loạn",
+    "kết quả là sinh ra hỗn loạn."
+   ]
+  ]
+ },
+ "p439": {
+  "vi": [
+   [
+    "tù nhà máy",
+    "từ nhà máy"
+   ]
+  ]
+ },
+ "p444": {
+  "vi": [
+   [
+    "vẫn tiếp tục đó tính chất",
+    "vẫn tiếp tục do tính chất"
+   ]
+  ]
+ },
+ "p445": {
+  "vi": [
+   [
+    "gĩa",
+    "giữa"
+   ]
+  ]
+ },
+ "p450": {
+  "vi": [
+   [
+    "B: Vậy à? Ý chí",
+    "A: Vậy à? Ý chí"
+   ]
+  ]
+ },
+ "2278": {
+  "term": "論じる",
+  "ruby": "{論|ろん}じる",
+  "tags": [
+   "動2他"
+  ],
+  "vi": "lập luận, tranh cãi (còn nói 論ずる)"
+ },
+ "2289": {
+  "term": "生じる",
+  "ruby": "{生|しょう}じる",
+  "tags": [
+   "動2自"
+  ],
+  "vi": "sinh ra, tạo ra (còn nói 生ずる)"
+ },
+ "2223": {
+  "vi": "luận văn, bài nghiên cứu"
+ },
+ "2272": {
+  "vi": "thiết bị, máy móc"
+ },
+ "2328": {
+  "vi": "triết học, triết lý"
  }
 }
