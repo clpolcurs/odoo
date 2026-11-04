@@ -858,5 +858,56 @@
  },
  "1667": {
   "vi": "xác suất, khả năng xảy ra"
+ },
+ "1733": {
+  "vi": "mơ hồ, lơ đễnh"
+ },
+ "1735": {
+  "term": "もしかすると",
+  "ruby": "もしかすると",
+  "vi": "có thể là, không chừng là, có lẽ là (còn nói もしかしたら, もしかして)"
+ },
+ "1741": {
+  "tags": [
+   "名",
+   "動3自"
+  ]
+ },
+ "p340": {
+  "en": [
+   [
+    "that I perhaps I’d never",
+    "that perhaps I’d never"
+   ]
+  ]
+ },
+ "p344": {
+  "vi": [
+   [
+    "Người tay hay nghĩ",
+    "Người ta hay nghĩ"
+   ]
+  ]
+ },
+ "1709": {
+  "vi": "con một, đứa con duy nhất"
+ },
+ "1716": {
+  "vi": "cô dâu, tân nương"
+ },
+ "1732": {
+  "vi": "mục tiêu, mục đích"
+ },
+ "1756": {
+  "vi": "sân khấu, vũ đài"
+ },
+ "1776": {
+  "vi": "lĩnh vực, ngành"
+ },
+ "1794": {
+  "vi": "sinh đôi, cặp song sinh"
+ },
+ "1826": {
+  "vi": "phát huy, tận dụng"
  }
 }
