@@ -798,5 +798,65 @@
  },
  "1523": {
   "vi": "tiền thưởng, giải thưởng bằng tiền"
+ },
+ "1641": {
+  "tags": [
+   "動1他"
+  ]
+ },
+ "1704": {
+  "tags": [
+   "動1他"
+  ],
+  "vi": "kiếm tiền, kiếm được"
+ },
+ "p326": {
+  "vi": [
+   [
+    "trực giác sau?",
+    "trực giác sao?"
+   ]
+  ]
+ },
+ "p331": {
+  "vi": [
+   [
+    "Ừ nhỉ..",
+    "Ừ nhỉ."
+   ]
+  ]
+ },
+ "1655": {
+  "term": "貼る",
+  "ruby": "{貼|は}る",
+  "vi": "dán, căng (còn viết 張る)"
+ },
+ "1702": {
+  "term": "ＳＥ",
+  "ruby": "{ＳＥ|エスイー}",
+  "vi": "kỹ sư hệ thống (viết đầy đủ システムエンジニア)"
+ },
+ "1589": {
+  "term": "存じる",
+  "ruby": "{存|ぞん}じる",
+  "tags": [
+   "動2他"
+  ],
+  "vi": "biết (từ khiêm nhường của \"知る\", còn nói 存ずる)"
+ },
+ "1618": {
+  "vi": "trụ sở chính, tổng hành dinh"
+ },
+ "1620": {
+  "vi": "áp lực, sức ép"
+ },
+ "1644": {
+  "vi": "nhân viên, người lao động"
+ },
+ "1653": {
+  "vi": "nhân viên chính thức, nhân viên chính thức toàn thời gian"
+ },
+ "1667": {
+  "vi": "xác suất, khả năng xảy ra"
  }
 }
