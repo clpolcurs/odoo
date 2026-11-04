@@ -1,0 +1,17 @@
+[project]
+name = "lj-2400"
+version = "0.1.0"
+description = "Import the 2400 N2 words book (book 153) into learning_japanese from photos of its pages."
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]  # Japanese and Vietnamese text is intended

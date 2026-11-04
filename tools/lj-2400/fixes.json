@@ -1,0 +1,72 @@
+{
+ "104": {
+  "vi": "nhựa, chất dẻo"
+ },
+ "211": {
+  "vi": "giá cả, giá tiền"
+ },
+ "213": {
+  "vi": "tiền lẻ, tiền xu"
+ },
+ "214": {
+  "vi": "tiền xu, đồng xu"
+ },
+ "215": {
+  "vi": "tiền giấy, giấy bạc"
+ },
+ "18": {
+  "match": 31
+ },
+ "47": {
+  "vi": "hạn sử dụng tốt nhất"
+ },
+ "78": {
+  "vi": "hơi nước, hơi nóng bốc lên"
+ },
+ "88": {
+  "vi": "năng lượng, sức lực"
+ },
+ "89": {
+  "vi": "lương thực chính, món chính"
+ },
+ "p5": {
+  "vi": [
+   [
+    "Như đâu có mùi khói phải không?",
+    "Hình như có mùi khói phải không?"
+   ]
+  ]
+ },
+ "p8": {
+  "zh": [
+   [
+    "母亲做得料理",
+    "母亲做的料理"
+   ]
+  ]
+ },
+ "p9": {
+  "vi": [
+   [
+    "hết hạn thưởng thức",
+    "quá hạn sử dụng tốt nhất"
+   ]
+  ]
+ },
+ "p13": {
+  "vi": [
+   [
+    "lúc lãy",
+    "lúc nãy"
+   ]
+  ]
+ },
+ "p17": {
+  "vi": [
+   [
+    "thực phẩm thiết yếu thì",
+    "lương thực chính thì"
+   ]
+  ]
+ }
+}
