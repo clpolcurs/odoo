@@ -1,7 +1,7 @@
 # lj-2400
 
 Công cụ nhập sách **JLPT N2 ミニストーリーで覚える日本語能力試験ベスト単語合格2400** (giáo trình 153 trên Odoo, 23 topic,
-452 phần, 2400 từ) từ ảnh chụp trang sách (folder "2400" trên Google Drive) vào Odoo qua API v1. Nghĩa và bản dịch có đủ
+452 phần, 2360 từ: sách đánh số tới 2360 dù tên sách ghi 2400) từ ảnh chụp trang sách (folder "2400" trên Google Drive) vào Odoo qua API v1. Nghĩa và bản dịch có đủ
 tiếng Việt, tiếng Anh, tiếng Trung (ADR-052 của NihonGo).
 
 ## Dữ liệu
