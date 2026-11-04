@@ -31,6 +31,8 @@ Thư mục `data/` (hoặc biến `LJ_2400_DATA`) không đưa vào git, vì là
    (`/markup/preview`, bộ lọc HTML của Odoo, so từ cũ), thêm `--apply` để ghi, rồi đọc lại từng trường.
 5. **Sau khi addon có `meaning_en`, `meaning_zh`** (commit 166bcc1a được deploy):
    `env -u LJ_API_KEY uv run --project ../lj-readings python move_meanings.py`, rồi thêm `--apply`.
+6. **Duyệt:** `python3 -I report_fixes.py OUT.md` liệt kê mọi chỗ sửa của `fixes.json` cạnh chữ của sách (lỗi của sách,
+   bản dịch, nghĩa tiếng Việt đổi cho khỏi trùng) để tác giả duyệt lại.
 
 ## Quy ước
 
