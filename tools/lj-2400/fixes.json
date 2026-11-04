@@ -116,5 +116,108 @@
     "A: Chà"
    ]
   ]
+ },
+ "94": {
+  "zh": "一一，逐一"
+ },
+ "107": {
+  "en": "complaint"
+ },
+ "108": {
+  "zh": "勤快地，不停地"
+ },
+ "127": {
+  "en": "make stronger, increase",
+  "zh": "开强",
+  "vi": "vặn lớn, làm cho mạnh hơn"
+ },
+ "142": {
+  "en": "control, to control"
+ },
+ "162": {
+  "term": "収める",
+  "ruby": "{収|おさ}める",
+  "vi": "cất, cất vào (còn viết 納める)"
+ },
+ "189": {
+  "term": "逆さまな",
+  "ruby": "{逆|さか}さまな",
+  "vi": "ngược, lộn ngược (còn nói 逆さな)"
+ },
+ "p27": {
+  "en": [
+   [
+    "I w[ake up",
+    "I wake up"
+   ]
+  ]
+ },
+ "p28": {
+  "vi": [
+   [
+    "B: Tháng này anh bận quá",
+    "B: Tuần này anh bận quá"
+   ]
+  ]
+ },
+ "p29": {
+  "vi": [
+   [
+    "hạt điều",
+    "hạnh nhân"
+   ]
+  ]
+ },
+ "p32": {
+  "vi": [
+   [
+    "để tài",
+    "đề tài"
+   ]
+  ]
+ },
+ "386": {
+  "zh": "暂且，一度"
+ },
+ "387": {
+  "en": "disassembly, disassemble",
+  "zh": "分解[分解]",
+  "vi": "sự tháo rời, sự phân giải, tháo rời, phân giải"
+ },
+ "409": {
+  "vi": "dung lượng, sức chứa"
+ },
+ "427": {
+  "zh": "上传[上传]"
+ },
+ "434": {
+  "tags": [
+   "動1自"
+  ]
+ },
+ "438": {
+  "tags": [
+   "動1自"
+  ]
+ },
+ "444": {
+  "en": "processing, process",
+  "zh": "加工，处理[加工，处理]",
+  "vi": "sự gia công, sự chế biến, gia công, chế biến"
+ },
+ "459": {
+  "vi": "khách hàng, người mua hàng"
+ },
+ "p91": {
+  "vi": [
+   [
+    "doanh thu từng trước",
+    "doanh thu tuần trước"
+   ],
+   [
+    "để xuất",
+    "đề xuất"
+   ]
+  ]
  }
 }

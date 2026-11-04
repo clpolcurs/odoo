@@ -297,12 +297,15 @@ def to_masu(term, hira, group, problems, where):
 def word_payload(word, part_markups, topic, hanviet, fixes, problems, notices):
     no = word["no"]
     where = f"word {no} {word['term']}"
-    tags = word.get("tags") or []
+    tags = fixes.get(str(no), {}).get("tags") or word.get("tags") or []
     after = (word.get("after") or "").strip()
-    ruby = word.get("ruby") or word["term"]
-    if plain(ruby) != word["term"]:
+    if after == "な":
+        after = "[な]"
+    fix = fixes.get(str(no), {})
+    term = fix.get("term", word["term"])
+    ruby = fix.get("ruby", word.get("ruby") or term)
+    if plain(ruby) != term:
         problems.append(f"{where}: ruby {ruby!r} does not spell the term")
-    term = word["term"]
     # ～(と) and ～な printed full size as part of the term: the same as a small (と) or [な]
     for tail, suffix in (("(と)", "（と）"), ("（と）", "（と）")):
         if term.endswith(tail) and not after:
@@ -352,7 +355,6 @@ def word_payload(word, part_markups, topic, hanviet, fixes, problems, notices):
     elif after and not suru and after not in ("[な]", "［な］"):
         problems.append(f"{where}: unknown suffix {after!r}")
 
-    fix = fixes.get(str(no), {})
     payload = {
         "term": term,
         "hiragana": hira,
