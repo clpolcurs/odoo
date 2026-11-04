@@ -131,6 +131,8 @@ Hiragana = Annotated[str | None, Field(description="Reading in hiragana, e.g. �
 Katakana = Annotated[str | None, Field(description="Spelling in katakana (loanwords).")]
 Romaji = Annotated[str | None, Field(description="Reading in romaji.")]
 MeaningVi = Annotated[str | None, Field(description="Vietnamese meaning.")]
+MeaningEn = Annotated[str | None, Field(description="English meaning.")]
+MeaningZh = Annotated[str | None, Field(description="Chinese meaning (simplified characters).")]
 HanViet = Annotated[str | None, Field(description="Sino-Vietnamese reading, e.g. LÝ GIẢI.")]
 VocabularyLevel = Annotated[LevelChange | None, Field(description="JLPT level N5 (easiest) to N1; 'none' removes it.")]
 IsIntransitive = Annotated[bool | None, Field(description="true for an intransitive verb (自動詞).")]
@@ -192,6 +194,8 @@ class VocabularyEntry(BaseModel):
     katakana: Katakana = None
     romaji: Romaji = None
     meaning_vi: MeaningVi = None
+    meaning_en: MeaningEn = None
+    meaning_zh: MeaningZh = None
     han_viet: HanViet = None
     level: VocabularyLevel = None
     is_intransitive: IsIntransitive = None
@@ -418,8 +422,8 @@ def _add_read_tools(mcp: FastMCP, api: LJClient) -> None:
         """Search vocabulary entries.
 
         Returns {"items": [...], "next_cursor": ...}; each item is a full entry (term, hiragana, katakana, romaji,
-        meaning_vi, han_viet, level, verb data and forms, part_of_speech_ids, context_tag_ids, lesson_ids,
-        examples_markup, version...). Pass next_cursor as cursor for the next page.
+        meaning_vi, meaning_en, meaning_zh, han_viet, level, verb data and forms, part_of_speech_ids, context_tag_ids,
+        lesson_ids, examples_markup, version...). Pass next_cursor as cursor for the next page.
         """
         return await api.get(
             "/vocabularies",
@@ -602,6 +606,8 @@ def _add_write_tools(mcp: FastMCP, api: LJClient, download: Callable[[str], Awai
         katakana: Katakana = None,
         romaji: Romaji = None,
         meaning_vi: MeaningVi = None,
+        meaning_en: MeaningEn = None,
+        meaning_zh: MeaningZh = None,
         han_viet: HanViet = None,
         level: VocabularyLevel = None,
         is_intransitive: IsIntransitive = None,
@@ -623,6 +629,8 @@ def _add_write_tools(mcp: FastMCP, api: LJClient, download: Callable[[str], Awai
             katakana=katakana,
             romaji=romaji,
             meaning_vi=meaning_vi,
+            meaning_en=meaning_en,
+            meaning_zh=meaning_zh,
             han_viet=han_viet,
             level=level,
             is_intransitive=is_intransitive,
@@ -645,6 +653,8 @@ def _add_write_tools(mcp: FastMCP, api: LJClient, download: Callable[[str], Awai
         katakana: Katakana = None,
         romaji: Romaji = None,
         meaning_vi: MeaningVi = None,
+        meaning_en: MeaningEn = None,
+        meaning_zh: MeaningZh = None,
         han_viet: HanViet = None,
         level: VocabularyLevel = None,
         is_intransitive: IsIntransitive = None,
@@ -667,6 +677,8 @@ def _add_write_tools(mcp: FastMCP, api: LJClient, download: Callable[[str], Awai
             katakana=katakana,
             romaji=romaji,
             meaning_vi=meaning_vi,
+            meaning_en=meaning_en,
+            meaning_zh=meaning_zh,
             han_viet=han_viet,
             level=level,
             is_intransitive=is_intransitive,

@@ -442,7 +442,8 @@ async def test_bulk_update_vocabulary_sends_only_the_given_fields(fake: FakeApi)
     fake.on("POST", f"{API}/vocabularies/bulk", {"items": []})
     entries = [
         {"id": 120, "version": "a1", "meaning_vi": "hiểu", "level": "none"},
-        {"term": "元々", "hiragana": "もともと", "forms": {"te": None}},
+        {"term": "元々", "hiragana": "もともと", "meaning_en": "originally", "meaning_zh": "本来",
+         "forms": {"te": None}},
         {"id": 121, "katakana": None},
     ]
     async with mcp_session(fake) as session:
@@ -450,7 +451,8 @@ async def test_bulk_update_vocabulary_sends_only_the_given_fields(fake: FakeApi)
     assert body(fake.requests[0]) == {
         "items": [
             {"id": 120, "version": "a1", "meaning_vi": "hiểu", "level": None},
-            {"term": "元々", "hiragana": "もともと", "forms": {"te": None}},
+            {"term": "元々", "hiragana": "もともと", "meaning_en": "originally", "meaning_zh": "本来",
+             "forms": {"te": None}},
             {"id": 121, "katakana": None},
         ]
     }

@@ -16,6 +16,7 @@ Hợp đồng đầy đủ nằm ở [`static/api/openapi.yaml`](static/api/open
 | Tab **Ghi đè ngữ pháp** trên bài đọc/nghe | Ghim hoặc ẩn một điểm ngữ pháp cho riêng bài đó. |
 | Bảng `lj_change_log` | Outbox của change feed, ghi cùng transaction với thay đổi; cron xóa sự kiện quá 90 ngày. |
 | **Nhật ký ghi qua API** | Trước/sau của mọi thao tác ghi qua API (Settings → Nhật ký ghi qua API). |
+| **Nghĩa tiếng Anh**, **Nghĩa tiếng Trung** trên Từ vựng | Trường `english`, `chinese`; API `meaning_en`, `meaning_zh`. |
 | Quyền | Hai nhóm sẵn có được ghi vào CSV: *Learning Japanese Read Only* (đọc), *Learning Japanese Admin* (đọc + ghi). |
 
 ## Cài lên server
@@ -50,7 +51,10 @@ Hợp đồng đầy đủ nằm ở [`static/api/openapi.yaml`](static/api/open
 - JSON `snake_case`, thời gian ISO-8601 UTC, lỗi dạng `application/problem+json` có trường `code`.
 - Mỗi bản ghi có `version` (hash nội dung). `PATCH`/`DELETE` phải gửi `If-Match: "<version>"`;
   sai version trả `412` kèm `current_version`, thiếu header trả `428`.
-- Markup giữ đúng quy ước cũ: `<<漢字 - よみ>>` cho cách đọc, `{{...}}` cho bản dịch.
+- Markup giữ đúng quy ước cũ: `<<漢字 - よみ>>` cho cách đọc, `{{...}}` cho bản dịch tiếng Việt.
+  Bản dịch tiếng Anh và tiếng Trung đứng cạnh nó, có tiền tố ngôn ngữ: `{{en: ...}}`, `{{zh: ...}}`
+  (ví dụ `日本語の文。<br>{{Câu tiếng Việt.}}<br>{{en: The English sentence.}}<br>{{zh: 中文句子。}}`).
+  Odoo đối xử với cả ba như nhau: tab Nội dung bỏ đi, tab Chú thích kanji giữ lại.
   API trả và nhận marker ở dạng chưa escape; sửa markup qua API được chuyển đổi lại y như khi gõ trong Odoo.
 - Server không bao giờ tự tải file từ URL; muốn gắn audio từ URL thì client (lj-mcp) tải về rồi `PUT` file.
 - Change feed: `GET /changes?after=<cursor>`; con trỏ có dạng `<txid>-<seq>` và chỉ trả sự kiện của

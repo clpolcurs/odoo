@@ -1,5 +1,8 @@
 """Markup helpers shared by the API: `<<漢字 - よみ>>` readings and `{{...}}` translations.
 
+`{{...}}` is the Vietnamese translation; `{{en: ...}}` and `{{zh: ...}}` are the English and Chinese ones and are
+treated the same way (left out of the Nội dung tab and of the plain text, counted as translations).
+
 Odoo stores the markup inside Html fields with the markers escaped
 (`&lt;&lt;人 - ひと&gt;&gt;`). The API shows and accepts them unescaped.
 """

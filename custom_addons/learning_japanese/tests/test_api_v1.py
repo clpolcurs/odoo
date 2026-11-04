@@ -283,6 +283,29 @@ class TestApiV1(HttpCase, LearningJapaneseDataCase):
         found = self.ok("GET", "/vocabularies", params={"q": "しわし"})["items"]
         self.assertEqual([v["id"] for v in found], [created["id"]])
 
+    def test_vocabulary_meanings_in_english_and_chinese(self):
+        created = self.ok("POST", "/vocabularies", 201, json={
+            "term": "試冷めます", "meaning_vi": "nguội", "meaning_en": "cool down", "meaning_zh": "凉",
+            "lesson_ids": [self.lesson.id],
+        })
+        self.assertEqual((created["meaning_en"], created["meaning_zh"]), ("cool down", "凉"))
+        record = self.env["learning_japanese.vocabulary"].browse(created["id"])
+        self.assertEqual((record.english, record.chinese), ("cool down", "凉"))
+
+        path = f"/vocabularies/{created['id']}"
+        updated = self.ok("PATCH", path, json={"meaning_en": "  get cold ", "meaning_zh": None},
+                          headers={"If-Match": created["version"]})
+        self.assertEqual((updated["meaning_en"], updated["meaning_zh"]), ("get cold", None))
+        self.assertNotEqual(updated["version"], created["version"])
+        body = self.problem("PATCH", path, 422, "validation-error", json={"meaning_zh": 3},
+                            headers={"If-Match": updated["version"]})
+        self.assertEqual(body["errors"][0]["field"], "meaning_zh")
+
+        saved = self.ok("POST", "/vocabularies/bulk", json={"items": [
+            {"id": created["id"], "meaning_zh": "变凉"},
+        ]})["items"]
+        self.assertEqual(saved[0]["meaning_zh"], "变凉")
+
     def test_vocabulary_bulk_is_all_or_nothing(self):
         Vocabulary = self.env["learning_japanese.vocabulary"]
         before = Vocabulary.search_count([])

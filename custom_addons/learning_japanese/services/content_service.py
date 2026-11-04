@@ -512,6 +512,8 @@ _VOCABULARY_TEXT = {
     "katakana": "katakana",
     "romaji": "romanji",
     "meaning_vi": "vietnamese",
+    "meaning_en": "english",
+    "meaning_zh": "chinese",
     "han_viet": "han_viet",
 }
 _VOCABULARY_RELATIONS = {

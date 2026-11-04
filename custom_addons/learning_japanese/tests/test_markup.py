@@ -24,6 +24,17 @@ class TestMarkup(BaseCase):
         self.assertEqual(issue["text"], "人")
         self.assertTrue(issue["reading"])
 
+    def test_english_and_chinese_translations_sit_next_to_the_vietnamese(self):
+        source = ("<p>A: <<店 - みせ>>が<<閉 - し>>まる。<br>{{A: Quán sắp đóng cửa.}}<br>"
+                  "{{en: A: The shop is closing.}}<br>{{zh: A: 那家店要关门了。}}</p>")
+        result = markup.analyze(source)
+        self.assertEqual(result["issues"], [])
+        self.assertEqual(result["stats"]["translations"], 3)
+        self.assertEqual(markup.plain_text(source), "A: 店が閉まる。")
+        hover, ruby = markup.render(source)
+        self.assertNotIn("关门", hover)
+        self.assertIn("zh: A: 那家店要关门了。", ruby)
+
     def test_kanji_outside_markers(self):
         issues = markup.analyze("<p>機械の<<説明 - せつめい>>を受ける。</p>")["issues"]
         self.assertEqual([i["text"] for i in issues if i["code"] == "kanji_without_reading"], ["機械", "受"])

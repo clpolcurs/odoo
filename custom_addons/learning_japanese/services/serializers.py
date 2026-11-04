@@ -155,6 +155,8 @@ def vocabulary(record):
         "katakana": record.katakana or None,
         "romaji": record.romanji or None,
         "meaning_vi": record.vietnamese or None,
+        "meaning_en": record.english or None,
+        "meaning_zh": record.chinese or None,
         "han_viet": record.han_viet or None,
         "level": record.level or None,
         "is_intransitive": record.is_intransitive,

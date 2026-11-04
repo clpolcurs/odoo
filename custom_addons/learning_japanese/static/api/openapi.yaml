@@ -654,7 +654,8 @@ paths:
       description: |
         Convert markup the way Odoo does on save and report problems; nothing is stored.
         Markup is HTML where `<<漢字 - よみ>>` gives a reading (`<<漢字>>` lets the server guess it)
-        and `{{...}}` holds the Vietnamese translation of the paragraph.
+        and `{{...}}` holds the Vietnamese translation of the paragraph; `{{en: ...}}` and `{{zh: ...}}` hold
+        the English and Chinese ones, next to it.
       requestBody:
         required: true
         content:
@@ -1094,6 +1095,8 @@ components:
         katakana: {type: [string, 'null']}
         romaji: {type: [string, 'null']}
         meaning_vi: {type: [string, 'null']}
+        meaning_en: {type: [string, 'null'], description: English meaning.}
+        meaning_zh: {type: [string, 'null'], description: Chinese meaning (simplified).}
         han_viet: {type: [string, 'null']}
         level: {$ref: '#/components/schemas/Level'}
         is_intransitive: {type: boolean}
@@ -1120,6 +1123,8 @@ components:
         katakana: {type: [string, 'null']}
         romaji: {type: [string, 'null']}
         meaning_vi: {type: [string, 'null']}
+        meaning_en: {type: [string, 'null'], maxLength: 500}
+        meaning_zh: {type: [string, 'null'], maxLength: 500}
         han_viet: {type: [string, 'null']}
         level: {$ref: '#/components/schemas/Level'}
         is_intransitive: {type: boolean}

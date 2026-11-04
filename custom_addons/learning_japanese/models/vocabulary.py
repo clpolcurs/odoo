@@ -592,6 +592,8 @@ class Vocabulary(models.Model):
     katakana = fields.Char(string="Katakana")
     romanji = fields.Char(string="Romanji")
     vietnamese = fields.Char(string="Nghĩa", copy=False, index=True)
+    english = fields.Char(string="Nghĩa tiếng Anh", copy=False)
+    chinese = fields.Char(string="Nghĩa tiếng Trung", copy=False)
     han_viet = fields.Char(string="Âm Hán Việt", copy=False)
     is_intransitive = fields.Boolean(string="Tự động từ", copy=False)
     nhom_ngu = fields.Selection(
