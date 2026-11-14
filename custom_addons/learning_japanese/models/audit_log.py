@@ -21,6 +21,7 @@ class AuditLog(models.Model):
             ("delete", "Delete"),
             ("audio", "Audio"),
             ("grammar_overrides", "Grammar overrides"),
+            ("audio_cues", "Audio cues"),
         ],
         readonly=True,
     )

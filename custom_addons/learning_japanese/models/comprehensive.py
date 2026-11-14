@@ -69,6 +69,13 @@ class Comprehensive(models.Model):
     )
     title = fields.Text(string="Title", copy=False)
     audio_file = fields.Binary(string="Audio", copy=False)
+    audio_cues = fields.Json(
+        string="Mốc thời gian của audio",
+        copy=False,
+        help="Câu thoại nào của bài được đọc từ mili giây nào tới mili giây nào của file audio, do "
+             "tools/lj-audio-cues tính và ghi qua API v1 (PUT /comprehensives/<id>/audio-cues). NihonGo dùng "
+             "để tô câu đang đọc, và chỉ khi audio_sha1 trùng với file audio hiện có của bài.",
+    )
     description = fields.Text(string="Description", copy=False)
     deadline = fields.Date(string="Deadline", copy=False)
     category_ids = fields.Many2many(

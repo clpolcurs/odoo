@@ -40,8 +40,12 @@ def version_of(data):
     return hashlib.sha256(payload.encode()).hexdigest()[:16]
 
 
-def with_version(data, volatile=("created_at", "updated_at")):
-    data["version"] = version_of({k: v for k, v in data.items() if k not in volatile})
+def with_version(data, volatile=("created_at", "updated_at"), unset=()):
+    """Add the version of the data. The keys in `unset` count only while they hold a value: a key the API gained
+    later then changes the version of no record that leaves it empty, so clients see no change where none was made."""
+    data["version"] = version_of({
+        k: v for k, v in data.items() if k not in volatile and not (k in unset and v is None)
+    })
     return data
 
 
@@ -121,13 +125,14 @@ def comprehensive(item, view="full", audio=None):
         "description": item.description or None,
         "grammar_patterns": patterns_of(item.grammar_patterns),
         "grammar_overrides": grammar_overrides(item),
+        "audio_cues": item.audio_cues or None,
         "created_at": iso(item.create_date),
         "updated_at": iso(item.write_date),
     }
-    with_version(data)
+    with_version(data, unset=("audio_cues",))
     if view == "summary":
         for key in ("markup", "html_hover", "html_ruby", "is_finalized", "description",
-                    "grammar_patterns", "grammar_overrides", "created_at"):
+                    "grammar_patterns", "grammar_overrides", "audio_cues", "created_at"):
             data.pop(key)
     return data
 

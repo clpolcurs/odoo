@@ -33,6 +33,7 @@ WRITE_TOOLS = {
     "lj_link_lesson",
     "lj_set_grammar_patterns",
     "lj_set_grammar_overrides",
+    "lj_set_audio_cues",
 }
 DELETE_TOOLS = {"lj_delete_comprehensive", "lj_delete_vocabulary"}
 
@@ -291,6 +292,20 @@ async def test_api_errors_become_tool_errors(fake: FakeApi) -> None:
             {},
             {"items": [{"grammar_id": 7, "action": "pin", "note": None}]},
             None,
+        ),
+        (
+            "lj_set_audio_cues",
+            {
+                "comprehensive_id": 58,
+                "audio_sha1": "a" * 40,
+                "cues": [{"text": "F: はい。", "start_ms": 1200, "end_ms": 2900}],
+                "version": "v1",
+            },
+            "PUT",
+            "/comprehensives/58/audio-cues",
+            {},
+            {"audio_sha1": "a" * 40, "cues": [{"text": "F: はい。", "start_ms": 1200, "end_ms": 2900}]},
+            '"v1"',
         ),
     ],
 )

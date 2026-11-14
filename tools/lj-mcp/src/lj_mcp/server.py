@@ -224,6 +224,23 @@ class GrammarOverride(BaseModel):
     note: Annotated[str | None, Field(max_length=500, description="Optional note.")] = None
 
 
+class AudioCue(BaseModel):
+    """When the audio of a listening item reads one block of its text."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    text: Annotated[
+        str,
+        Field(
+            min_length=1,
+            max_length=2000,
+            description="The text of the block as the markup shows it, speaker label included, e.g. 'F: すみません。'.",
+        ),
+    ]
+    start_ms: Annotated[int, Field(ge=0, le=21_600_000, description="Where the block starts in the audio, in ms.")]
+    end_ms: Annotated[int, Field(ge=1, le=21_600_000, description="Where it ends, in ms; after start_ms.")]
+
+
 def _json_value(key: str, value: Any) -> Any:
     if isinstance(value, BaseModel):
         return value.model_dump(exclude_unset=True)
@@ -780,6 +797,31 @@ def _add_write_tools(mcp: FastMCP, api: LJClient, download: Callable[[str], Awai
         return await api.request(
             "PUT", f"/comprehensives/{comprehensive_id}/grammar-overrides", json=body, version=version
         )
+
+    @tool(WRITE)
+    async def lj_set_audio_cues(
+        comprehensive_id: ComprehensiveId,
+        audio_sha1: Annotated[
+            str,
+            Field(
+                min_length=40, max_length=40, description="audio.sha1 of the item, as lj_get_comprehensive gives it."
+            ),
+        ],
+        cues: Annotated[
+            list[AudioCue],
+            Field(max_length=500, description="The complete new list, in the order of the audio; [] removes the cues."),
+        ],
+        version: OptionalVersion = None,
+    ) -> Json:
+        """Replace the audio cues of a listening item: which block its audio reads from which ms to which.
+
+        NihonGo marks the block being read with them. tools/lj-audio-cues proposes them for a whole book; use this to
+        correct one item by hand. The list replaces the current one (audio_cues in lj_get_comprehensive), so repeat
+        the cues to keep. audio_sha1 must be the sha1 of the item's audio now (HTTP 409 otherwise). Returns
+        {"audio_cues": ..., "version": <new version of the item>}.
+        """
+        body = {"audio_sha1": audio_sha1, "cues": [cue.model_dump() for cue in cues]}
+        return await api.request("PUT", f"/comprehensives/{comprehensive_id}/audio-cues", json=body, version=version)
 
 
 def _add_delete_tools(mcp: FastMCP, api: LJClient) -> None:

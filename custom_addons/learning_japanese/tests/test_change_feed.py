@@ -58,6 +58,11 @@ class TestChangeFeed(LearningJapaneseDataCase):
         })
         self.assertIn(("comprehensive", self.reading.id, "update"), self.events())
 
+    def test_audio_cues_log_the_item(self):
+        self.listening.write({"audio_cues": {"audio_sha1": "a" * 40,
+                                             "cues": [{"text": "F: はい。", "start_ms": 0, "end_ms": 900}]}})
+        self.assertIn(("comprehensive", self.listening.id, "update"), self.events())
+
     def test_deleting_a_grammar_point_logs_items_that_pinned_it(self):
         self.env["learning_japanese.grammar_override"].create({
             "comprehensive_id": self.reading.id, "grammar_id": self.grammar.id, "action": "pin",

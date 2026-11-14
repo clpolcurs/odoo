@@ -376,6 +376,58 @@ paths:
         '404': {$ref: '#/components/responses/NotFound'}
         '412': {$ref: '#/components/responses/PreconditionFailed'}
         '422': {$ref: '#/components/responses/Unprocessable'}
+  /comprehensives/{id}/audio-cues:
+    get:
+      tags: [comprehensives]
+      operationId: getAudioCues
+      description: >-
+        Which block of a listening item the audio reads from which millisecond to which, and the sha1 of the audio
+        file the cues were made for. `audio_cues` is null while the item has none.
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AudioCuesResult'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+    put:
+      tags: [comprehensives]
+      operationId: putAudioCues
+      description: >-
+        Replace the cues of the audio of an item; `{"cues": []}` removes them. `audio_sha1` must be the sha1 of the
+        audio the item has now (409 otherwise, and when the item has no audio): cues of another file would point at
+        the wrong words. A cue names its block by the text the markup shows, the speaker label included
+        (`F: すみません。`); NihonGo leaves out a cue that finds no such block, so editing a block later drops only its
+        own cue. Cues go in the order of the audio. Sending the cues the item already has changes nothing.
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - name: If-Match
+          in: header
+          required: false
+          description: Optional; when given it must match the item's current version.
+          schema: {type: string}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/AudioCuesInput'}
+      responses:
+        '200':
+          description: Saved
+          headers: {ETag: {$ref: '#/components/headers/ETag'}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AudioCuesResult'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
   /attachments/{id}:
     get:
       tags: [comprehensives]
@@ -1004,6 +1056,45 @@ components:
         items: {type: array, items: {$ref: '#/components/schemas/GrammarOverride'}}
         version: {type: string, description: Version of the parent item after the call.}
 
+    AudioCue:
+      type: object
+      required: [text, start_ms, end_ms]
+      additionalProperties: false
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 2000
+          description: 'The text of the block as the markup shows it, speaker label included, e.g. `F: すみません。`.'
+        start_ms: {type: integer, minimum: 0, maximum: 21600000}
+        end_ms: {type: integer, minimum: 1, maximum: 21600000, description: After start_ms.}
+
+    AudioCues:
+      type: [object, 'null']
+      required: [audio_sha1, cues]
+      properties:
+        audio_sha1: {type: string, description: Sha1 of the audio file the cues were made for.}
+        cues:
+          type: array
+          maxItems: 500
+          description: In the order of the audio; no cue starts before the one before it.
+          items: {$ref: '#/components/schemas/AudioCue'}
+
+    AudioCuesInput:
+      type: object
+      required: [cues]
+      additionalProperties: false
+      properties:
+        audio_sha1: {type: string, description: Required with cues; the sha1 of the audio the item has now.}
+        cues: {type: array, maxItems: 500, items: {$ref: '#/components/schemas/AudioCue'}}
+
+    AudioCuesResult:
+      type: object
+      required: [audio_cues, version]
+      properties:
+        audio_cues: {$ref: '#/components/schemas/AudioCues'}
+        version: {type: string, description: Version of the parent item after the call.}
+
     ComprehensiveSummary:
       type: object
       required: [id, xid, title, title_display, level, tags, lesson_ids, book_ids, published, has_markup, audio, updated_at, version]
@@ -1026,7 +1117,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ComprehensiveSummary'
         - type: object
-          required: [markup, html_hover, html_ruby, is_finalized, description, grammar_patterns, grammar_overrides, created_at]
+          required: [markup, html_hover, html_ruby, is_finalized, description, grammar_patterns, grammar_overrides,
+                     audio_cues, created_at]
           properties:
             markup:
               type: [string, 'null']
@@ -1040,6 +1132,11 @@ components:
               items: {type: string}
               description: Dictionary-form match patterns of a grammar point, e.g. `とする`.
             grammar_overrides: {type: array, items: {$ref: '#/components/schemas/GrammarOverride'}}
+            audio_cues:
+              $ref: '#/components/schemas/AudioCues'
+              description: >-
+                Set with PUT /comprehensives/{id}/audio-cues. Left out of `version` while null, so the field changed
+                the version of no item that has none.
             created_at: {type: string, format: date-time}
 
     ComprehensiveCreate:

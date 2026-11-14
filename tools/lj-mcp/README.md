@@ -119,6 +119,7 @@ Tool ghi:
 | `lj_link_lesson` | Gắn hoặc gỡ một bài học (lesson) khỏi một bài | `GET` rồi `PATCH /comprehensives/{id}` |
 | `lj_set_grammar_patterns` | Thay các mẫu khớp của một điểm ngữ pháp; cần `version` | `PATCH /comprehensives/{id}` |
 | `lj_set_grammar_overrides` | Thay danh sách điểm ngữ pháp được ghim/ẩn trên một bài đọc/nghe | `PUT /comprehensives/{id}/grammar-overrides` |
+| `lj_set_audio_cues` | Thay mốc thời gian của audio một bài nghe (câu nào được đọc từ ms nào tới ms nào), để sửa tay sau `tools/lj-audio-cues` | `PUT /comprehensives/{id}/audio-cues` |
 
 Tool xóa, chỉ có khi `LJ_ALLOW_DELETE` bật: `lj_delete_comprehensive` (`DELETE /comprehensives/{id}`) và
 `lj_delete_vocabulary` (`DELETE /vocabularies/{id}`), đều cần `version`.

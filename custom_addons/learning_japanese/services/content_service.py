@@ -23,6 +23,9 @@ PAGE_DEFAULT, PAGE_MAX = 50, 200
 IDS_MAX = 200
 BULK_MAX = 100
 OVERRIDES_MAX = 200
+CUES_MAX = 500
+CUE_TEXT_MAX = 2000
+CUE_MS_MAX = 6 * 3600 * 1000  # six hours: no audio of an item is longer
 MARKUP_MAX = 200_000
 AUDIO_MAX_BYTES = 30 * 1024 * 1024
 
@@ -503,6 +506,77 @@ def put_overrides(env, item_id, body, if_match):
     audit(env, "comprehensive", item.id, "grammar_overrides",
           {"grammar_overrides": before["grammar_overrides"]}, {"grammar_overrides": after["grammar_overrides"]})
     return {"items": after["grammar_overrides"], "version": after["version"]}
+
+
+
+def get_audio_cues(env, item_id):
+    item = get_comprehensive(env, item_id)
+    return {"audio_cues": item["audio_cues"], "version": item["version"]}
+
+
+def put_audio_cues(env, item_id, body, if_match):
+    """Replace the cues of the audio of an item: which block is read from which millisecond to which. {"cues": []}
+    removes them.
+
+    A cue names its block by the text the markup shows, so a cue whose block is edited later finds no block and
+    NihonGo leaves it out. The body names the sha1 of the audio file the cues were made for: cues of another file than
+    the item has now would point at the wrong words, so they are refused (409).
+    """
+    item = _get(env, COMPREHENSIVE, item_id, "Comprehensive")
+    before = get_comprehensive(env, item_id)
+    check_version(before["version"], if_match, required=False)
+    shape = 'The body must be {"audio_sha1": "...", "cues": [{"text": "...", "start_ms": 0, "end_ms": 1}]}.'
+    if not isinstance(body, dict) or not isinstance(body.get("cues"), list):
+        raise bad_request(shape)
+    entries = body["cues"]
+    errors = [{"field": key, "message": "Unknown field."} for key in sorted(set(body) - {"audio_sha1", "cues"})]
+    if len(entries) > CUES_MAX:
+        raise invalid([{"field": "cues", "message": f"At most {CUES_MAX} cues."}])
+
+    cues, previous = [], 0
+    for index, entry in enumerate(entries):
+        if not isinstance(entry, dict):
+            errors.append({"index": index, "message": "Each cue is an object."})
+            continue
+        errors.extend({"index": index, "field": key, "message": "Unknown field."}
+                      for key in sorted(set(entry) - {"text", "start_ms", "end_ms"}))
+        text, start, end = entry.get("text"), entry.get("start_ms"), entry.get("end_ms")
+        if not isinstance(text, str) or not text.strip() or len(text) > CUE_TEXT_MAX:
+            errors.append({"index": index, "field": "text",
+                           "message": f"The text of the block, at most {CUE_TEXT_MAX} characters."})
+        if not _millisecond(start):
+            errors.append({"index": index, "field": "start_ms", "message": f"Milliseconds from 0 to {CUE_MS_MAX}."})
+        elif start < previous:
+            errors.append({"index": index, "field": "start_ms",
+                           "message": "Cues go in the order of the audio: no cue starts before the one before it."})
+        if not _millisecond(end) or (_millisecond(start) and end <= start):
+            errors.append({"index": index, "field": "end_ms", "message": "Milliseconds after start_ms."})
+        if _millisecond(start):
+            previous = max(previous, start)
+        cues.append({"text": text, "start_ms": start, "end_ms": end})
+    if errors:
+        raise invalid(errors)
+
+    value = None
+    if cues:
+        audio = before["audio"]
+        if not audio:
+            raise ApiError(409, "conflict", f"Comprehensive {item_id} has no audio to time.")
+        if body.get("audio_sha1") != audio["sha1"]:
+            raise ApiError(409, "conflict", "audio_sha1 is not the sha1 of the audio the item has now: "
+                                            "make the cues again from that file.")
+        value = {"audio_sha1": audio["sha1"], "cues": cues}
+    if value != before["audio_cues"]:
+        item.write({"audio_cues": value or False})
+    after = get_comprehensive(env, item_id)
+    if after["version"] != before["version"]:
+        audit(env, "comprehensive", item.id, "audio_cues",
+              {"audio_cues": before["audio_cues"]}, {"audio_cues": after["audio_cues"]})
+    return {"audio_cues": after["audio_cues"], "version": after["version"]}
+
+
+def _millisecond(value):
+    return isinstance(value, int) and not isinstance(value, bool) and 0 <= value <= CUE_MS_MAX
 
 
 # ── Vocabularies ───────────────────────────────────────────────────────────────

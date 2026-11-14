@@ -102,6 +102,17 @@ class LearningJapaneseApiV1(http.Controller):
         result = content.put_overrides(request.env, item_id, json_body(), if_match())
         return json_response(result, version=result["version"])
 
+    @http.route(f"{PREFIX}/comprehensives/<int:item_id>/audio-cues", methods=["GET"], **READ)
+    @endpoint()
+    def get_audio_cues(self, item_id):
+        return json_response(content.get_audio_cues(request.env, item_id))
+
+    @http.route(f"{PREFIX}/comprehensives/<int:item_id>/audio-cues", methods=["PUT"], **WRITE)
+    @endpoint(write=True)
+    def put_audio_cues(self, item_id):
+        result = content.put_audio_cues(request.env, item_id, json_body(), if_match())
+        return json_response(result, version=result["version"])
+
     # ── vocabularies ───────────────────────────────────────────────────────────
 
     @http.route(f"{PREFIX}/vocabularies", methods=["GET"], **READ)

@@ -261,6 +261,52 @@ class TestApiV1(HttpCase, LearningJapaneseDataCase):
         cleared = self.ok("PUT", path, json={"items": []})
         self.assertEqual(cleared["items"], [])
 
+    def test_audio_cues(self):
+        item_path = f"/comprehensives/{self.listening.id}"
+        path = f"{item_path}/audio-cues"
+        cues = [{"text": "F: すみません。", "start_ms": 1200, "end_ms": 2900},
+                {"text": "M: はい、何でしょう。", "start_ms": 2900, "end_ms": 4400}]
+        self.assertIsNone(self.ok("GET", path, key=self.reader_key)["audio_cues"])
+        self.problem("PUT", path, 409, "conflict", json={"audio_sha1": "0" * 40, "cues": cues})
+
+        sound = b"ID3" + bytes(range(256)) * 8
+        item = self.ok("PUT", f"{item_path}/audio", data=sound, headers={"Content-Type": "audio/mpeg"})
+        sha1 = item["audio"]["sha1"]
+        self.problem("PUT", path, 409, "conflict", json={"audio_sha1": "0" * 40, "cues": cues})
+        self.problem("PUT", path, 400, "bad-request", json={"audio_sha1": sha1})
+        body = self.problem("PUT", path, 422, "validation-error", json={"audio_sha1": sha1, "cues": [
+            {"text": " ", "start_ms": 100, "end_ms": 50},
+            {"text": "M: はい。", "start_ms": 10, "end_ms": 20, "speaker": "M"},
+            {"text": "F: ええ。", "start_ms": True, "end_ms": 30},
+        ]})
+        self.assertEqual({(e["index"], e.get("field")) for e in body["errors"]},
+                         {(0, "text"), (0, "end_ms"), (1, "start_ms"), (1, "speaker"), (2, "start_ms")})
+        self.problem("PUT", path, 403, "forbidden", key=self.reader_key, json={"audio_sha1": sha1, "cues": cues})
+        self.problem("PUT", path, 412, "version-mismatch", json={"audio_sha1": sha1, "cues": cues},
+                     headers={"If-Match": '"stale"'})
+
+        saved = self.ok("PUT", path, json={"audio_sha1": sha1, "cues": cues},
+                        headers={"If-Match": f'"{item["version"]}"'})
+        self.assertEqual(saved["audio_cues"], {"audio_sha1": sha1, "cues": cues})
+        self.assertNotEqual(saved["version"], item["version"])
+        self.assertEqual(self.ok("GET", path, key=self.reader_key), saved)
+        full = self.ok("GET", item_path)
+        self.assertEqual((full["audio_cues"], full["version"]), (saved["audio_cues"], saved["version"]))
+        summary = self.ok("GET", "/comprehensives", params={"ids": str(self.listening.id), "view": "summary"})
+        self.assertNotIn("audio_cues", summary["items"][0])
+        self.assertEqual(summary["items"][0]["version"], saved["version"])
+
+        audit_log = self.env["learning_japanese.audit_log"]
+        logged = [("entity", "=", "comprehensive"), ("res_id", "=", self.listening.id), ("op", "=", "audio_cues")]
+        self.assertEqual(audit_log.search_count(logged), 1)
+        self.assertEqual(self.ok("PUT", path, json={"audio_sha1": sha1, "cues": cues}), saved)
+        self.assertEqual(audit_log.search_count(logged), 1)  # the same cues again: no change, no audit
+
+        cleared = self.ok("PUT", path, json={"cues": []})
+        self.assertIsNone(cleared["audio_cues"])
+        # An item without cues keeps the version it had before the API gained them.
+        self.assertEqual(cleared["version"], item["version"])
+
     # ── vocabularies ───────────────────────────────────────────────────────────
 
     def test_vocabulary(self):

@@ -17,6 +17,7 @@ Hợp đồng đầy đủ nằm ở [`static/api/openapi.yaml`](static/api/open
 | Bảng `lj_change_log` | Outbox của change feed, ghi cùng transaction với thay đổi; cron xóa sự kiện quá 90 ngày. |
 | **Nhật ký ghi qua API** | Trước/sau của mọi thao tác ghi qua API (Settings → Nhật ký ghi qua API). |
 | **Nghĩa tiếng Anh**, **Nghĩa tiếng Trung** trên Từ vựng | Trường `english`, `chinese`; API `meaning_en`, `meaning_zh`. |
+| **Mốc thời gian của audio** trên bài nghe | Trường JSON `audio_cues`: câu nào của bài được audio đọc từ ms nào tới ms nào, kèm sha1 của file audio. Ghi bằng `PUT /comprehensives/{id}/audio-cues` (`tools/lj-audio-cues` đề xuất); NihonGo dùng để tô câu đang đọc. Không hiện trên form. |
 | Quyền | Hai nhóm sẵn có được ghi vào CSV: *Learning Japanese Read Only* (đọc), *Learning Japanese Admin* (đọc + ghi). |
 
 ## Cài lên server
@@ -57,6 +58,9 @@ Hợp đồng đầy đủ nằm ở [`static/api/openapi.yaml`](static/api/open
   Odoo đối xử với cả ba như nhau: tab Nội dung bỏ đi, tab Chú thích kanji giữ lại.
   API trả và nhận marker ở dạng chưa escape; sửa markup qua API được chuyển đổi lại y như khi gõ trong Odoo.
 - Server không bao giờ tự tải file từ URL; muốn gắn audio từ URL thì client (lj-mcp) tải về rồi `PUT` file.
+- Mốc thời gian của audio gắn với file audio qua `audio_sha1`: `PUT .../audio-cues` từ chối (`409`) mốc làm cho file
+  khác file bài đang có. Thay file audio thì mốc cũ vẫn nằm đó nhưng NihonGo bỏ qua; chạy lại `tools/lj-audio-cues`.
+  `audio_cues` rỗng không tính vào `version`, nên thêm trường này không đổi version của bài nào.
 - Change feed: `GET /changes?after=<cursor>`; con trỏ có dạng `<txid>-<seq>` và chỉ trả sự kiện của
   transaction đã kết thúc, nên không bỏ sót khi nhiều transaction commit lệch thứ tự.
 
