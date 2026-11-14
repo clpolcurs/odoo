@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.py[co]
+.pytest_cache/
+# downloaded audio, what the recogniser heard, models and reports
+data/
+proposals/*_report.json
