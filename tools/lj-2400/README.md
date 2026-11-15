@@ -46,8 +46,8 @@ Thư mục `data/` (hoặc biến `LJ_2400_DATA`) không đưa vào git, vì là
 - **Từ vựng:**
   - động từ ở thể ます; `[する]` thành `～します`, loại từ Danh từ + Động từ nhóm 3; tính từ な thành `～「な」`;
     giữ `（と）` và `～`;
-  - loại từ theo nhãn của sách (名, 動1/2/3 + 自/他, イ, ナ, 副, 接, 接尾); `接頭` chưa có loại từ trên Odoo nên để
-    trống;
+  - loại từ theo nhãn của sách (名, 動1/2/3 + 自/他, イ, ナ, 副, 接, 接尾, 接頭, 連 là 連体詞, 句). Ba loại 接頭,
+    連体詞 và 句 có trên Odoo từ 15/11/2026; cùng ngày, 30 từ mang ba nhãn này được gán loại từ;
   - các thể chia tính bằng chính các hàm của form Odoo (`models/vocabulary.py`); Hán Việt theo bảng Hán Việt của Odoo;
   - ví dụ là đoạn truyện của phần có từ đó.
 - **Từ trùng:** Odoo không cho hai từ trùng cả chữ lẫn nghĩa tiếng Việt (`UNIQUE(vocabulary, vietnamese)`). Từ của

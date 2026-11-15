@@ -76,9 +76,10 @@ POS = {
     "代": 11,
     "感": 12,
     "接尾": 14,
+    "接頭": 15,
+    "連": 16,
+    "句": 17,
 }
-# tags with no part of speech in Odoo yet: the word is written without one, and the topic's notices list it
-NO_POS = {"接頭", "連", "句"}
 VERB_TAG = re.compile(r"^動([123])([自他]*)$")
 
 TOKEN = re.compile(r"\{([^{}|]+)\|([^{}|]+)\}|\[\[|\]\]")
@@ -329,8 +330,6 @@ def word_payload(word, part_markups, topic, hanviet, fixes, problems, notices):
                 intransitive = False
         elif tag in POS:
             pos.append(POS[tag])
-        elif tag in NO_POS:
-            notices.append(f"{where}: tag {tag} has no part of speech in Odoo; written without one")
         else:
             problems.append(f"{where}: no part of speech for tag {tag!r}")
     pos = list(dict.fromkeys(pos))
