@@ -30,7 +30,8 @@ Thư mục `data/` (hoặc biến `LJ_2400_DATA`) không đưa vào git, vì là
 4. **Ghi:** `env -u LJ_API_KEY uv run --project ../lj-readings python apply_topic.py data/out/topicNN.json` để chạy khô
    (`/markup/preview`, bộ lọc HTML của Odoo, so từ cũ), thêm `--apply` để ghi, rồi đọc lại từng trường.
 5. **Sau khi addon có `meaning_en`, `meaning_zh`** (commit 166bcc1a được deploy):
-   `env -u LJ_API_KEY uv run --project ../lj-readings python move_meanings.py`, rồi thêm `--apply`.
+   `env -u LJ_API_KEY uv run --project ../lj-readings python move_meanings.py`, rồi thêm `--apply`. Đã chạy ngày
+   15/11/2026: nghĩa của cả 2360 từ đã nằm trong hai trường, chạy lại thì không còn từ nào để chuyển.
 6. **Duyệt:** `python3 -I report_fixes.py OUT.md` liệt kê mọi chỗ sửa của `fixes.json` cạnh chữ của sách (lỗi của sách,
    bản dịch, nghĩa tiếng Việt đổi cho khỏi trùng) để tác giả duyệt lại.
 
@@ -52,4 +53,5 @@ Thư mục `data/` (hoặc biến `LJ_2400_DATA`) không đưa vào git, vì là
 - **Từ trùng:** Odoo không cho hai từ trùng cả chữ lẫn nghĩa tiếng Việt (`UNIQUE(vocabulary, vietnamese)`). Từ của
   sách trùng với giáo trình khác (thường là N3) có bản ghi N2 riêng, với nghĩa đầy đủ hơn trong `fixes.json`.
 - **Nghĩa tiếng Anh, tiếng Trung của từ:** khi addon chưa có hai trường mới, chúng nằm tạm ở đầu tab Ví dụ:
-  `<p>{{en: …}}<br>{{zh: …}}</p>`. NihonGo bỏ cả hai (ADR-052); `move_meanings.py` chuyển chúng vào trường.
+  `<p>{{en: …}}<br>{{zh: …}}</p>`. NihonGo bỏ cả hai (ADR-052); `move_meanings.py` đã chuyển chúng vào trường ngày
+  15/11/2026.

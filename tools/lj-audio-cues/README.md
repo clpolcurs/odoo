@@ -52,8 +52,12 @@ uv run pytest -q
 ## Kết quả với giáo trình 168 (ドリル&ドリル日本語能力試験N2聴解読解, 14/11/2026)
 
 - 29 trên 30 bài có audio được đề xuất, 408 mốc. Mọi câu thoại của 29 bài đều có mốc, cùng câu dẫn và câu hỏi.
-- Bài 67 (`10番`) không có đề xuất: file audio của nó là file của bài 65 (`8番`), cùng sha1.
+- Bài 67 (`10番`) không có đề xuất: file audio của nó là file của bài 65 (`8番`), cùng sha1. Tùng tải audio đúng lên
+  ngày 15/11/2026; đề xuất riêng của bài là `proposals/168-n2-67.json` (15 mốc, mọi câu thoại, nghe lại đủ 15 mốc
+  mở đầu đúng câu).
 - Kiểm tra độc lập: nghe lại 1,5 giây đầu của mỗi mốc bằng Whisper, 389 trên 408 mốc mở đầu đúng câu của nó. Phần lớn
   số còn lại là câu mở đầu bằng tiếng ngập ngừng, mà Whisper không chép khi nghe một đoạn ngắn, hay chữ đầu câu bị nghe
   nhầm. Trước khi có luật cho tiếng ngập ngừng (mục Cách tính, bước 5) con số này là 382.
 - Cả 408 mốc khớp block khi chạy qua `MarkupConverter` và `AudioCues` của NihonGo với markup thật.
+- Tùng duyệt, và ngày 15/11/2026 cả 423 mốc của 30 bài được ghi lên Odoo và đọc lại khớp. Trên nihon-go.co, cả 30 bài
+  có đúng số câu mang mốc như đã ghi.
