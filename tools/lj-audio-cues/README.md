@@ -63,3 +63,21 @@ uv run pytest -q
 - Cả 408 mốc khớp block khi chạy qua `MarkupConverter` và `AudioCues` của NihonGo với markup thật.
 - Tùng duyệt, và ngày 15/11/2026 cả 423 mốc của 30 bài được ghi lên Odoo và đọc lại khớp. Trên nihon-go.co, cả 30 bài
   có đúng số câu mang mốc như đã ghi.
+- Chạy lại với luật bỏ kana lẻ và bù cuối câu (16/11/2026): vẫn 423 mốc, cùng điểm đầu; 27 điểm cuối muộn hơn tối đa
+  0,55 giây, một điểm cuối của bài 85 sớm hơn 3,75 giây. Mốc trên Odoo giữ nguyên. Audio của bài 85 đọc câu
+  `モノレールで行くより安いし、結構早く行けそうだね。` (57,0 tới 60,3 giây) mà markup không có.
+
+## Kết quả với giáo trình 153 (JLPT N2 ミニストーリーで覚える…2400, 16/11/2026)
+
+- Audio mới của 23 bài, Tùng tải lên ngày 16/11/2026: 4,8 giờ, Whisper nghe trong khoảng một giờ.
+- Mỗi bài là các truyện ngắn, đoạn văn hay hội thoại, có dòng số `🔊155` trước mỗi truyện; sau mỗi truyện audio đọc
+  danh sách từ của truyện, không có trong markup. Dòng số và danh sách từ không có mốc.
+- 23 trên 23 bài có đề xuất, 812 mốc, trên 812 của 816 đoạn văn và câu thoại (526 trên 529 câu thoại). Bốn block
+  không có mốc: ba câu thoại ngắn (`ねえ、「ルッキズム」ってどういう意味？`, `はい、分かりました。`, `えー…。`) và đoạn
+  `2050年には…` của bài 2557, mà Whisper bỏ sót phần đầu.
+- Luật bỏ kana lẻ (mục Cách tính, bước 4) thêm 18 mốc, sửa 6 mốc mở đầu sớm 6 tới 22 giây, và cho 88 đoạn văn kết thúc
+  khi đọc xong thay vì kéo qua danh sách từ.
+- Kiểm tra độc lập: nghe lại 1,5 giây đầu của mỗi mốc, 787 trên 812 mốc mở đầu đúng câu. Xem tay 25 mốc còn lại: 23
+  mốc đúng (Whisper nghe khác chữ: こないだ và この間, WEB và ウェブ, 今日 đọc こんにち; hay không chép được đoạn quá
+  ngắn), 2 mốc chưa chắc, ở bài 2552, nơi Whisper không chép được audio; hai mốc đó nằm ở khoảng lặng ngay trước đoạn.
+- Cả 812 mốc khớp block khi chạy qua `MarkupConverter` (bản có `en`, `zh`) và `AudioCues` của NihonGo với markup thật.
