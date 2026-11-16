@@ -20,6 +20,7 @@ CHAR_SECONDS = 0.11  # one kana of speech, roughly
 TAIL_SECONDS = 0.6  # the last kana of a block is followed by about this much of its sound
 SNAP_BEFORE, SNAP_AFTER = 0.7, 0.4  # how far an onset of speech may be from the estimated start to be taken
 SMEAR = 0.15  # the recogniser often stretches the last word of a line a little into the silence after it
+STRAY_SECONDS = 3.0  # a kana of a block heard this long before or after the next one may belong to something else
 KANJI_OR_DIGIT = re.compile(r"[々㐀-䶿一-鿿豈-﫿0-9０-９]")
 SKIPPED = ("補助記号", "空白")
 
@@ -124,6 +125,28 @@ def needed_ratio(size):
     return 0.8 - (size - 4) * 0.05
 
 
+def without_strays(hits, sounds):
+    """The hits of a block without the few kana matched far before or after the others.
+
+    Some books read a list of words around each story (日の出, 避難する). The longest common subsequence pairs the last
+    kana of a paragraph with the last such kana heard, so a word read after the story can take its end; and when the
+    recogniser misses the first words of the paragraph, a word read before takes its first kana. Either way the
+    paragraph seems to start or end seconds away from the rest of it. Hits are cut where STRAY_SECONDS pass without
+    one; small runs at either end are dropped.
+    """
+    runs = [[hits[0]]]
+    for previous, hit in zip(hits, hits[1:]):
+        if sounds[hit[1]][1] - sounds[previous[1]][1] > STRAY_SECONDS:
+            runs.append([])
+        runs[-1].append(hit)
+    small = max(3, 0.1 * len(hits))
+    while len(runs) > 1 and len(runs[0]) < small:
+        runs.pop(0)
+    while len(runs) > 1 and len(runs[-1]) < small:
+        runs.pop()
+    return [hit for run in runs for hit in run]
+
+
 def cues_of(blocks: list[Block], words, onsets, duration):
     """The cues of the blocks the audio reads, in order. onsets: ends of silences, in seconds."""
     said, owner, offsets = [], [], []
@@ -143,12 +166,15 @@ def cues_of(blocks: list[Block], words, onsets, duration):
         hits = matched.get(index, [])
         if not size or len(hits) / size < needed_ratio(size):
             continue
+        hits = without_strays(hits, sounds)
+        # Its kana must be heard close together: in no more than twice the time they take, and two seconds.
+        limit = 2 * size * CHAR_SECONDS * 1.5 + 2
+        if len(hits) / size < needed_ratio(size) or sounds[hits[-1][1]][1] - sounds[hits[0][1]][1] > limit:
+            continue
         first_i, first_j = hits[0]
         last_j = hits[-1][1]
-        # Its kana must be heard close together: in no more than twice the time they take, and two seconds.
-        if sounds[last_j][1] - sounds[first_j][1] > 2 * size * CHAR_SECONDS * 1.5 + 2:
-            continue
         lead = first_i - owner.index(index)  # kana at the start of the block the recogniser did not hear
+        trail = owner.index(index) + size - 1 - hits[-1][0]  # and at its end
         estimate = sounds[first_j][1] - lead * CHAR_SECONDS
         # a filler left out (うーん, ええ) is said slowly: look further back for the silence before it
         earliest = estimate - SNAP_BEFORE - lead * CHAR_SECONDS * 2
@@ -161,15 +187,15 @@ def cues_of(blocks: list[Block], words, onsets, duration):
             start = min(near)
         else:
             start = min(near, key=lambda o: abs(o - estimate))
-        found.append((index, block, max(0.0, start), sounds[last_j][1], len(hits) / size, bool(near)))
+        found.append((index, block, max(0.0, start), sounds[last_j][1], trail, len(hits) / size, bool(near)))
         previous_last = sounds[last_j][1]
 
     cues = []
-    for k, (index, block, start, last, ratio, snapped) in enumerate(found):
+    for k, (index, block, start, last, trail, ratio, snapped) in enumerate(found):
         if cues and start < cues[-1].start:
             start = cues[-1].start
         following = found[k + 1][2] if k + 1 < len(found) else None
-        end = last + TAIL_SECONDS
+        end = last + TAIL_SECONDS + trail * CHAR_SECONDS  # words at the end the recogniser missed are still said
         if following is not None:
             end = min(end, max(following, start + 0.05))
         end = min(end, duration)

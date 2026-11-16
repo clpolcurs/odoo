@@ -15,11 +15,13 @@ cho người học nghe lại từ một câu (ADR-055 của NihonGo).
    không đọc (các lựa chọn in trong sách) và những gì văn bản không có (第1回, 1番) tự rơi ra.
 4. Một block được gắn mốc khi audio đọc đủ phần kana của nó, và các kana đó nằm gần nhau. Block ngắn phải khớp nhiều
    hơn (80% với block từ 4 kana trở xuống, 50% với block từ 10 kana), để lựa chọn như `1. ア ウ` không bị ghép nhầm
-   vào chữ ア, ウ của câu khác.
+   vào chữ ア, ウ của câu khác. Trước khi xét, vài kana lẻ ở đầu hay cuối block, cách phần còn lại hơn 3 giây, bị bỏ:
+   giáo trình 153 đọc một danh sách từ sau mỗi truyện, và LCS hay ghép kana cuối của đoạn văn vào một từ đọc sau đó,
+   hay kana đầu vào một từ đọc trước khi Whisper bỏ sót chữ đầu đoạn.
 5. Câu bắt đầu ở kana đầu tiên nghe được, kéo về điểm hết khoảng lặng ngay trước đó (`ffmpeg silencedetect`, -35 dB,
    0,25 giây) nếu có trong khoảng 0,7 giây trước tới 0,4 giây sau. Câu mở đầu bằng tiếng ngập ngừng mà Whisper bỏ qua
    (うーん, ええ, あ) được tìm khoảng lặng xa hơn, nhưng không trước âm cuối của câu trước. Câu kết thúc khi câu sau bắt
-   đầu, hoặc 0,6 giây sau kana cuối.
+   đầu, hoặc 0,6 giây sau kana cuối nghe được, cộng 0,11 giây cho mỗi kana cuối câu mà Whisper không chép.
 6. Từ mà Whisper cho thời lượng 0 bị bỏ: Whisper hay tự thêm `ご視聴ありがとうございました` ở cuối file.
 
 Chữ của mỗi mốc là chữ của block như NihonGo hiện, có cả người nói (`F: すみません。`). NihonGo so mốc với block bỏ khoảng

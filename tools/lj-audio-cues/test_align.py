@@ -77,3 +77,33 @@ def test_a_start_is_never_well_before_the_last_kana_of_the_line_before():
     cues = align.cues_of(blocks, words, onsets=[0.9, 1.85], duration=6.0)
     assert cues[1].start > 2.08 - align.SMEAR
     assert not cues[1].snapped
+
+
+def test_a_word_read_after_a_story_does_not_take_the_end_of_its_paragraph():
+    # a word read seconds later ends with the last kana of the paragraph (渡す: た); the longest common subsequence
+    # pairs the two, so the paragraph seems to last until the word, too long to be read there
+    blocks = blocks_of("<p>寒くて凍えそうだった。夜明けに家に帰った。</p>")
+    words = spoken("寒くて凍えそうだった夜明けに家に帰った", 1.0) + spoken("渡す", 12.0)
+    cues = align.cues_of(blocks, words, onsets=[0.95, 11.9], duration=14.0)
+    assert [c.block for c in cues] == [0]
+    assert cues[0].start == 0.95
+    assert cues[0].end < 4.0
+
+
+def test_a_word_read_before_a_story_does_not_take_the_start_of_its_paragraph():
+    # the recogniser missed the first word of the paragraph (寒くて); the word read before the story (寒い) would
+    # take its first kana, and the paragraph would seem to start five seconds early
+    blocks = blocks_of("<p>寒くて凍えそうだった。夜明けに家に帰った。</p>")
+    words = spoken("寒い", 1.0) + spoken("凍えそうだった夜明けに家に帰った", 6.0)
+    cues = align.cues_of(blocks, words, onsets=[0.95, 5.6], duration=9.0)
+    assert [c.block for c in cues] == [0]
+    assert cues[0].start == 5.6
+
+
+def test_an_end_the_recogniser_missed_is_still_part_of_the_cue():
+    # the recogniser missed the last words (家へ帰った); the cue lasts for about the time they take
+    blocks = blocks_of("<p>寒くて凍えそうだった。夜明けに家へ帰った。</p>")
+    words = spoken("寒くて凍えそうだった夜明けに", 1.0)
+    cues = align.cues_of(blocks, words, onsets=[0.95], duration=9.0)
+    heard_end = 1.0 + len("寒くて凍えそうだった夜明けに") * 0.12
+    assert cues[0].end > heard_end + align.TAIL_SECONDS + 0.5
