@@ -81,3 +81,6 @@ uv run pytest -q
   mốc đúng (Whisper nghe khác chữ: こないだ và この間, WEB và ウェブ, 今日 đọc こんにち; hay không chép được đoạn quá
   ngắn), 2 mốc chưa chắc, ở bài 2552, nơi Whisper không chép được audio; hai mốc đó nằm ở khoảng lặng ngay trước đoạn.
 - Cả 812 mốc khớp block khi chạy qua `MarkupConverter` (bản có `en`, `zh`) và `AudioCues` của NihonGo với markup thật.
+- Tùng duyệt, và ngày 16/11/2026 lúc 11:24 cả 812 mốc của 23 bài được ghi lên Odoo và đọc lại khớp. Trên nihon-go.co,
+  cả 23 bài có đúng số câu mang mốc; phát thử bài `155–161`, câu đang đọc được tô đúng, và không câu nào được tô khi
+  audio đọc danh sách từ.
