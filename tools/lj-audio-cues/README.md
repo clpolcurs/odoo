@@ -66,6 +66,10 @@ uv run pytest -q
 - Chạy lại với luật bỏ kana lẻ và bù cuối câu (16/11/2026): vẫn 423 mốc, cùng điểm đầu; 27 điểm cuối muộn hơn tối đa
   0,55 giây, một điểm cuối của bài 85 sớm hơn 3,75 giây. Mốc trên Odoo giữ nguyên. Audio của bài 85 đọc câu
   `モノレールで行くより安いし、結構早く行けそうだね。` (57,0 tới 60,3 giây) mà markup không có.
+- Tùng thêm câu đó vào cuối câu của M ở bài 85 và đặt 「」 quanh tên ga, nên hai mốc không còn khớp block. Đề xuất lại
+  từ kết quả nghe đã lưu (`proposals/168-n2-85.json`): vẫn 15 mốc, giữ mọi điểm đầu, mốc của M kéo tới 61,07 giây. Tùng
+  duyệt, và ngày 16/11/2026 lúc 12:39 cả 15 mốc được ghi lên Odoo và đọc lại khớp. Trên nihon-go.co, bài có 15 câu
+  mang mốc; ở giây 58,5 (câu vừa thêm) câu của M được tô, ở giây 63 là câu sau của F.
 
 ## Kết quả với giáo trình 153 (JLPT N2 ミニストーリーで覚える…2400, 16/11/2026)
 
