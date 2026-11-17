@@ -9,7 +9,11 @@ NihonGo shows it, and this module follows its rules:
 - <rt>, <rp>, <script>, <style> show nothing;
 - a table whose rows all read speaker, colon, text is dialogue: one block a row; any other table is no text block,
   so no cue can land on it;
-- a block opening with a speaker (F:, M:, 木山：) is a line of dialogue: NihonGo shows it as "F: text".
+- a block opening with a speaker (F:, M:, 木山：, 中川（主任）：) is a line of dialogue: NihonGo shows it as "F: text".
+  A name may carry a role in brackets, as NihonGo reads them since its ADR-059. NihonGo makes such a label a line
+  only where the name speaks twice or next to another line, so the label of a notice read in an item (利用料金：)
+  stays a paragraph there; here it is a line either way, which changes no cue: both show label, colon and text, the
+  same once compared.
 """
 
 import html
@@ -25,7 +29,8 @@ OTHER_TRANSLATION = re.compile(r"(?:<br\s*/?>\s*)?\{\{\s*(?:en|zh)\s*:.*?\}\}", 
 TRANSLATION = re.compile(r"\{\{.*?\}\}", re.S)
 STRAY_LT = re.compile(r"<(?![A-Za-z/!?])")
 JAPANESE = "々぀-ヿ㐀-䶿一-鿿豈-﫿"
-SPEAKER = re.compile(rf"^([A-Z][0-9]?|Nam|Nữ|[{JAPANESE}]{{1,6}})\s*[:：]\s*")
+ROLE = rf"[（(][{JAPANESE}]{{1,8}}[）)]"
+SPEAKER = re.compile(rf"^([A-Z][0-9]?|Nam|Nữ|[{JAPANESE}]{{1,6}}(?:{ROLE})?)\s*[:：]\s*")
 NOT_SPEAKERS = {
     "例", "例文", "問", "問題", "質問", "答", "答え", "正解", "正答", "解答", "回答", "解説",
     "注", "注意", "ヒント", "メモ", "選択肢", "意味", "読み方",
@@ -64,7 +69,8 @@ def prepare(markup):
 def speaker_of(text):
     """(speaker, body) of a block's text, speaker None when the text does not open with a speaker label."""
     match = SPEAKER.match(text)
-    if not match or match.group(1) in NOT_SPEAKERS or not text[match.end():].strip():
+    name = re.sub(ROLE + "$", "", match.group(1)) if match else None
+    if not match or name in NOT_SPEAKERS or not text[match.end():].strip():
         return None, text
     return match.group(1), text[match.end():]
 

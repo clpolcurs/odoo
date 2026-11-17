@@ -107,3 +107,33 @@ def test_an_end_the_recogniser_missed_is_still_part_of_the_cue():
     cues = align.cues_of(blocks, words, onsets=[0.95], duration=9.0)
     heard_end = 1.0 + len("寒くて凍えそうだった夜明けに") * 0.12
     assert cues[0].end > heard_end + align.TAIL_SECONDS + 0.5
+
+
+def test_a_word_of_one_time_step_is_heard():
+    # the recogniser's times come in steps of 0.02 s; a quick ありがとうございます may get one step and no more
+    words = [*spoken("はい", 31.8), {"start": 33.14, "end": 33.16, "word": "ありがとう"}]
+    assert "".join(c for c, _ in align.heard(words)) == "はいありがとう"
+
+
+def test_a_stage_direction_in_square_brackets_is_not_looked_for():
+    blocks = blocks_of("<p>F: これです。</p><p>M: はい。［書類を確認して］では、どうぞ。</p>")
+    words = spoken("これです", 1.0) + spoken("はいではどうぞ", 3.0)
+    cues = align.cues_of(blocks, words, onsets=[0.9, 2.9], duration=6.0)
+    assert [c.text for c in cues] == ["F: これです。", "M: はい。［書類を確認して］では、どうぞ。"]
+    assert cues[1].start == 2.9
+
+
+def test_a_short_line_whose_small_tsu_the_recogniser_does_not_write_is_timed():
+    blocks = blocks_of("<p>F: 実は、転勤することになったんだ。</p><p>M: えっ…。</p><p>F: うん。</p>")
+    words = (spoken("実は転勤することになったんだ", 1.0) + [{"start": 4.5, "end": 4.7, "word": "え?"}]
+             + spoken("うん", 6.0))
+    cues = align.cues_of(blocks, words, onsets=[0.9, 4.5, 5.9], duration=8.0)
+    assert [c.block for c in cues] == [0, 1, 2]
+    assert (cues[1].start, cues[1].ratio) == (4.5, 1.0)
+
+
+def test_a_line_whose_speaker_has_a_role_is_timed_on_what_is_said():
+    blocks = blocks_of("<p>中川（主任）：お疲れさま。</p><p>佐藤：あ、主任、お疲れさまです。</p>")
+    words = spoken("お疲れさま", 0.0) + spoken("あ主任お疲れさまです", 1.5)
+    cues = align.cues_of(blocks, words, onsets=[1.5], duration=4.0)
+    assert [c.text for c in cues] == ["中川（主任）: お疲れさま。", "佐藤: あ、主任、お疲れさまです。"]

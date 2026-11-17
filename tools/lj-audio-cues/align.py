@@ -7,6 +7,10 @@ together; it starts where its first kana is heard, moved to the end of the silen
 and ends where the next block starts, or a little after its last kana. A block whose first kana were not heard (an
 うーん or ええ the recogniser leaves out) may start that much earlier: its start is then the first end of a silence
 in that longer stretch, but never before the last kana of the block before it.
+
+A stage direction in square brackets (［書類を確認して］) is shown but not read, so it is not looked for. A っ or ー
+the recogniser does not write (え? for えっ…, ただいま for ただいまー) still counts as heard, so that a short line
+is not lost for it.
 """
 
 import re
@@ -21,6 +25,8 @@ TAIL_SECONDS = 0.6  # the last kana of a block is followed by about this much of
 SNAP_BEFORE, SNAP_AFTER = 0.7, 0.4  # how far an onset of speech may be from the estimated start to be taken
 SMEAR = 0.15  # the recogniser often stretches the last word of a line a little into the silence after it
 STRAY_SECONDS = 3.0  # a kana of a block heard this long before or after the next one may belong to something else
+SILENT = "っー"  # kana with no sound of their own, which the recogniser often leaves out
+STAGE_DIRECTION = re.compile(r"［[^］]*］|\[[^\]]*\]")  # ［書類を確認して］: shown, not read
 KANJI_OR_DIGIT = re.compile(r"[々㐀-䶿一-鿿豈-﫿0-9０-９]")
 SKIPPED = ("補助記号", "空白")
 
@@ -67,11 +73,12 @@ def heard(words):
     """[(kana, seconds)]: the reading of what the recogniser heard, each kana with when it was said.
 
     words: [{"start", "end", "word"}] with times in seconds. A word with no length is left out: the recogniser makes
-    up text like ご視聴ありがとうございました at the end of a file and gives it no time.
+    up text like ご視聴ありがとうございました at the end of a file and gives it no time. Its times come in steps of
+    0.02 s, and a word of one step is a word: ありがとうございます said quickly may get no more.
     """
     text, spans = "", []
     for word in words:
-        if word["end"] - word["start"] < 0.02:
+        if word["end"] - word["start"] < 0.01:
             continue
         start = len(text)
         text += word["word"]
@@ -151,7 +158,7 @@ def cues_of(blocks: list[Block], words, onsets, duration):
     """The cues of the blocks the audio reads, in order. onsets: ends of silences, in seconds."""
     said, owner, offsets = [], [], []
     for index, block in enumerate(blocks):
-        for c, offset in reading(block.body):
+        for c, offset in reading(STAGE_DIRECTION.sub("", block.body)):
             said.append(c)
             owner.append(index)
             offsets.append(offset)
@@ -160,16 +167,23 @@ def cues_of(blocks: list[Block], words, onsets, duration):
     for i, j in lcs(said, [c for c, _ in sounds]):
         matched.setdefault(owner[i], []).append((i, j))
 
+    def share(index, size, hits):
+        """The share of the block's kana heard, a silent kana the recogniser left out counted as heard."""
+        first, taken = owner.index(index), {i for i, _ in hits}
+        silent = sum(1 for i in range(first, first + size) if said[i] in SILENT and i not in taken)
+        return (len(hits) + silent) / size
+
     found, previous_last = [], None
     for index, block in enumerate(blocks):
         size = owner.count(index)
         hits = matched.get(index, [])
-        if not size or len(hits) / size < needed_ratio(size):
+        if not size or not hits or share(index, size, hits) < needed_ratio(size):
             continue
         hits = without_strays(hits, sounds)
         # Its kana must be heard close together: in no more than twice the time they take, and two seconds.
         limit = 2 * size * CHAR_SECONDS * 1.5 + 2
-        if len(hits) / size < needed_ratio(size) or sounds[hits[-1][1]][1] - sounds[hits[0][1]][1] > limit:
+        ratio = share(index, size, hits)
+        if ratio < needed_ratio(size) or sounds[hits[-1][1]][1] - sounds[hits[0][1]][1] > limit:
             continue
         first_i, first_j = hits[0]
         last_j = hits[-1][1]
@@ -187,7 +201,7 @@ def cues_of(blocks: list[Block], words, onsets, duration):
             start = min(near)
         else:
             start = min(near, key=lambda o: abs(o - estimate))
-        found.append((index, block, max(0.0, start), sounds[last_j][1], trail, len(hits) / size, bool(near)))
+        found.append((index, block, max(0.0, start), sounds[last_j][1], trail, ratio, bool(near)))
         previous_last = sounds[last_j][1]
 
     cues = []

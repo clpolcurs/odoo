@@ -45,3 +45,13 @@ def test_a_label_without_text_after_it_is_no_speaker():
 def test_key_compares_as_nihongo_does():
     assert key("F：店は　どこ\nですか。") == key("F: 店はどこですか。") == "F:店はどこですか。"
     assert key("Ａ：​はい") == key("A: はい")
+
+
+def test_a_speaker_may_carry_a_role_in_brackets():
+    assert speaker_of("中川（主任）：お疲れさま。") == ("中川（主任）", "お疲れさま。")
+    assert speaker_of("中村(学生)：はい") == ("中村(学生)", "はい")
+    assert speaker_of("問題（一）：どれですか") == (None, "問題（一）：どれですか")
+    markup = "<p><<正太 - しょうた>>（<<息子 - むすこ>>）：ただいまー。<br>{{Shota (con trai): Con về rồi.}}</p>"
+    assert blocks_of(markup) == [Block("正太（息子）: ただいまー。", "正太（息子）", "ただいまー。")]
+    # NihonGo shows the line as 正太（息子）: ただいまー。, or as the paragraph 正太（息子）：ただいまー。; the same once compared
+    assert key(blocks_of(markup)[0].text) == key("正太（息子）：ただいまー。")

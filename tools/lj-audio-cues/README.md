@@ -11,18 +11,25 @@ cho người học nghe lại từ một câu (ADR-055 của NihonGo).
    trên 4 CPU (bài 1 phút rưỡi mất khoảng 20 giây).
 2. Markup của bài được cắt thành block giống hệt cách NihonGo cắt (`blocks.py`, theo `MarkupConverter` của NihonGo):
    mỗi đoạn, mục danh sách hay câu thoại là một block; `<br>` không cắt; `<<漢字 - よみ>>` hiện 漢字; `{{...}}` bị bỏ.
+   Người nói có thể kèm vai trò trong ngoặc (`中川（主任）：`), như NihonGo đọc từ ADR-059. NihonGo chỉ coi nhãn có
+   cách đọc hay vai trò là người nói khi tên đó nói từ hai lần, hay khi đứng cạnh một lời thoại; ở đây nhãn nào cũng là
+   người nói. Mốc không vì thế mà lệch: hai bên so chữ như nhau, `中川（主任）：…` và `中川（主任）: …` là một.
 3. Sudachi đọc cả hai phía ra hiragana, rồi so từng chữ kana bằng dãy con chung dài nhất (LCS). Nhờ vậy những gì audio
    không đọc (các lựa chọn in trong sách) và những gì văn bản không có (第1回, 1番) tự rơi ra.
 4. Một block được gắn mốc khi audio đọc đủ phần kana của nó, và các kana đó nằm gần nhau. Block ngắn phải khớp nhiều
    hơn (80% với block từ 4 kana trở xuống, 50% với block từ 10 kana), để lựa chọn như `1. ア ウ` không bị ghép nhầm
-   vào chữ ア, ウ của câu khác. Trước khi xét, vài kana lẻ ở đầu hay cuối block, cách phần còn lại hơn 3 giây, bị bỏ:
+   vào chữ ア, ウ của câu khác. Chữ っ, ー mà Whisper không chép (`え?` cho `えっ…`, `ただいま` cho `ただいまー`) vẫn được
+   tính là đã nghe. Chỉ dẫn trong ngoặc vuông (`［書類を確認して］`) hiện trong bài nhưng audio không đọc, nên không được
+   tìm. Trước khi xét, vài kana lẻ ở đầu hay cuối block, cách phần còn lại hơn 3 giây, bị bỏ:
    giáo trình 153 đọc một danh sách từ sau mỗi truyện, và LCS hay ghép kana cuối của đoạn văn vào một từ đọc sau đó,
    hay kana đầu vào một từ đọc trước khi Whisper bỏ sót chữ đầu đoạn.
 5. Câu bắt đầu ở kana đầu tiên nghe được, kéo về điểm hết khoảng lặng ngay trước đó (`ffmpeg silencedetect`, -35 dB,
    0,25 giây) nếu có trong khoảng 0,7 giây trước tới 0,4 giây sau. Câu mở đầu bằng tiếng ngập ngừng mà Whisper bỏ qua
    (うーん, ええ, あ) được tìm khoảng lặng xa hơn, nhưng không trước âm cuối của câu trước. Câu kết thúc khi câu sau bắt
    đầu, hoặc 0,6 giây sau kana cuối nghe được, cộng 0,11 giây cho mỗi kana cuối câu mà Whisper không chép.
-6. Từ mà Whisper cho thời lượng 0 bị bỏ: Whisper hay tự thêm `ご視聴ありがとうございました` ở cuối file.
+6. Từ mà Whisper cho thời lượng 0 bị bỏ: Whisper hay tự thêm `ご視聴ありがとうございました` ở cuối file. Thời điểm của
+   Whisper đi theo bước 0,02 giây; từ dài một bước vẫn được giữ, vì một câu `ありがとうございます` đọc nhanh có khi chỉ
+   được chừng đó.
 
 Chữ của mỗi mốc là chữ của block như NihonGo hiện, có cả người nói (`F: すみません。`). NihonGo so mốc với block bỏ khoảng
 trắng và gộp dạng chữ toàn/nửa độ rộng (NFKC), theo thứ tự trong bài. Sửa chữ một câu trên Odoo thì chỉ mốc của câu đó
@@ -88,3 +95,24 @@ uv run pytest -q
 - Tùng duyệt, và ngày 16/11/2026 lúc 11:24 cả 812 mốc của 23 bài được ghi lên Odoo và đọc lại khớp. Trên nihon-go.co,
   cả 23 bài có đúng số câu mang mốc; phát thử bài `155–161`, câu đang đọc được tô đúng, và không câu nào được tô khi
   audio đọc danh sách từ.
+
+## Kết quả với giáo trình 177 (Road to Listening N2, 16 và 17/11/2026)
+
+- 40 trên 40 bài có đề xuất, 690 mốc, trên 599 của 601 câu thoại mà công cụ nhận ra; mốc được ghi lên Odoo ngày
+  16/11/2026. Các bài hội thoại ghi tên người nói bằng chữ Hán có furigana; 14 nhãn kèm vai trò (`中川（主任）：`), và 5
+  câu có chỉ dẫn trong ngoặc vuông.
+- Ngày 17/11/2026, sau khi NihonGo vẽ cả nhãn có vai trò thành lời thoại (ADR-059), trên nihon-go.co còn 5 câu ngắn
+  không được tô: `えっ…。` (bài 7-9), câu của 事務員 có `［書類を確認して］` (bài 34-36), `ただいまー。`,
+  `あ、はい、どうぞ。` và `お疲れさま。`. Ba câu sau có nhãn kèm vai trò mà công cụ chưa nhận ra là người nói, nên kana
+  của nhãn, không được đọc, kéo tỉ lệ khớp của câu xuống dưới ngưỡng. `えっ` khớp 1 trên 2 kana vì Whisper chép `え?`.
+  Câu của 事務員 thì có 11 kana của chỉ dẫn không đọc, và `ありがとうございます` mà Whisper cho dài 0,02 giây bị bỏ.
+- Sửa bốn chỗ ở mục Cách tính (nhãn kèm vai trò, っ và ー, chỉ dẫn trong ngoặc vuông, từ dài 0,02 giây), rồi đề xuất lại
+  từ kết quả nghe đã lưu: 695 mốc, mọi câu trong 615 câu thoại đều có mốc. 9 điểm đầu muộn hơn 0,26 tới 2,28 giây: 8 câu
+  có nhãn kèm vai trò, mà trước đây kana của nhãn được tính như tiếng chưa nghe thấy ở đầu câu, và câu mở bằng
+  `[メモ帳を準備して]`. Câu đứng trước các câu đó kết thúc muộn hơn tương ứng.
+- Kiểm tra độc lập: nghe lại 2 giây đầu của 5 mốc mới và 9 mốc dời, cả 14 mốc mở đầu đúng câu. Đoạn giữa điểm đầu cũ và
+  mới chỉ có đuôi câu trước (`ですが`, `はい`, `ね`) hay khoảng lặng.
+- Chạy lại giáo trình 168 với cùng bản sửa: không mốc nào đổi. Giáo trình 153: một điểm đầu ở bài 1919 sớm hơn 0,42
+  giây. Mốc trên Odoo của hai giáo trình giữ nguyên.
+- Đề xuất cho 10 bài có mốc đổi: `proposals/177-road-to-listening-n2-2559-2568-2569-2579-2585-2587-2589-2591-2593-2595.json`
+  (262 mốc), chờ Tùng duyệt. Hai bài 2583 và 2597 chỉ đổi cách viết nhãn trong chữ của mốc, nên không ghi lại.
