@@ -115,4 +115,6 @@ uv run pytest -q
 - Chạy lại giáo trình 168 với cùng bản sửa: không mốc nào đổi. Giáo trình 153: một điểm đầu ở bài 1919 sớm hơn 0,42
   giây. Mốc trên Odoo của hai giáo trình giữ nguyên.
 - Đề xuất cho 10 bài có mốc đổi: `proposals/177-road-to-listening-n2-2559-2568-2569-2579-2585-2587-2589-2591-2593-2595.json`
-  (262 mốc), chờ Tùng duyệt. Hai bài 2583 và 2597 chỉ đổi cách viết nhãn trong chữ của mốc, nên không ghi lại.
+  (262 mốc). Hai bài 2583 và 2597 chỉ đổi cách viết nhãn trong chữ của mốc, nên không ghi lại. Tùng duyệt, và ngày
+  17/11/2026 lúc 10:19 cả 262 mốc của 10 bài được ghi lên Odoo và đọc lại khớp. Trên nihon-go.co, cả 615 lời thoại
+  của giáo trình có mốc (695 block); tua tới giữa `えっ…。`, `ただいまー。` và câu của 事務員, đúng câu đó được tô.
