@@ -42,9 +42,12 @@ def test_the_blocks_the_audio_reads_get_cues_in_order():
     assert all(c.snapped for c in cues)
     assert cues[0].end <= cues[1].start and cues[1].end <= cues[2].start
     assert cues[2].end <= 11.0
-    assert align.milliseconds(cues)[2] == {
+    third = align.milliseconds(cues)[2]
+    assert {key: value for key, value in third.items() if key != "marks"} == {
         "text": "M: はい、十時からです。", "start_ms": 8450, "end_ms": round(cues[2].end * 1000),
     }
+    # the words after はい、: 十 時 から です
+    assert [third["text"][at] for at, _ in third["marks"]] == ["十", "時", "か", "で"]
 
 
 def test_a_start_with_no_silence_before_it_is_estimated_from_the_words():
@@ -137,3 +140,34 @@ def test_a_line_whose_speaker_has_a_role_is_timed_on_what_is_said():
     words = spoken("お疲れさま", 0.0) + spoken("あ主任お疲れさまです", 1.5)
     cues = align.cues_of(blocks, words, onsets=[1.5], duration=4.0)
     assert [c.text for c in cues] == ["中川（主任）: お疲れさま。", "佐藤: あ、主任、お疲れさまです。"]
+
+
+def test_the_words_inside_a_block_get_marks():
+    blocks = blocks_of("<p>F: 明日、会議があります。今日は休みです。</p>")
+    words = spoken("明日会議があります", 1.0) + spoken("今日は休みです", 3.0)
+    [cue] = align.cues_of(blocks, words, onsets=[0.9, 2.95], duration=6.0)
+
+    # the first word has the start of the cue; 会議 comes after 明日、, as the cue's text writes it
+    assert cue.text == "F: 明日、会議があります。今日は休みです。"
+    assert cue.text[cue.marks[0][0]] == "会"
+    starts = {cue.text[at]: seconds for at, seconds in cue.marks}
+    # a sentence start moves to the end of the silence before it, as a block start does
+    assert starts["今"] == 2.95
+    times = [seconds for _, seconds in cue.marks]
+    assert times == sorted(times) and all(cue.start < t < cue.end for t in times)
+    assert align.milliseconds([cue])[0]["marks"][0] == [cue.marks[0][0], round(cue.marks[0][1] * 1000)]
+
+
+def test_marks_count_the_characters_of_the_text_a_stage_direction_and_all():
+    spoken_text, where = align.spoken_map("［書類を確認して］ありがとうございます。")
+    assert spoken_text == "ありがとうございます。"
+    assert where[0] == 9
+    blocks = blocks_of("<p>事務員：［書類を確認して］ありがとうございます。それでは、こちらへ。</p>")
+    words = spoken("ありがとうございますそれではこちらへ", 1.0)
+    [cue] = align.cues_of(blocks, words, onsets=[0.95], duration=5.0)
+    assert {cue.text[at] for at, _ in cue.marks} >= {"そ", "こ"}
+
+
+def test_a_mark_rounded_onto_the_end_of_its_cue_is_left_out():
+    cue = align.Cue(0, "F: はい、そうです。", 1.0, 2.0, 1.0, True, ((6, 1.5), (8, 1.9996)))
+    assert align.milliseconds([cue])[0]["marks"] == [[6, 1500]]

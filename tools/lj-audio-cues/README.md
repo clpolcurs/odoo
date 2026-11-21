@@ -35,6 +35,20 @@ Chữ của mỗi mốc là chữ của block như NihonGo hiện, có cả ngư
 trắng và gộp dạng chữ toàn/nửa độ rộng (NFKC), theo thứ tự trong bài. Sửa chữ một câu trên Odoo thì chỉ mốc của câu đó
 không còn khớp và bị bỏ qua; các câu khác vẫn giữ mốc.
 
+## Mốc trong khối (ADR-089 của NihonGo)
+
+Từ ngày 22/11/2026, mỗi mốc khối có thêm `marks`: các cặp `[vị trí, ms]` cho đầu mỗi từ Sudachi tách trong khối, trừ từ
+đầu khối (đã là `start_ms`) và dấu câu. Vị trí là chỉ số ký tự trong `text` của mốc, đếm theo code point, có cả nhãn
+người nói (`F: `). Thời điểm là lúc nghe được kana đầu tiên của từ, trừ 0,11 giây cho mỗi kana đầu từ mà Whisper không
+chép; đầu câu (sau 。！？) được kéo về điểm hết khoảng lặng ngay trước, như đầu khối. Từ không có kana nào được nghe thì
+không có mốc. NihonGo dùng `marks` cho nút ▶ trong bong bóng của một chữ: người học nghe từ chữ đó, rồi khối tự lặp lại.
+
+Đo thử ngày 21/11/2026 trên 6 bài của giáo trình 153, 177, 168 (37 phút audio): nghe lại 2 giây sau mỗi mốc, 139 trên
+144 mốc đầu câu và 61 trên 70 mốc đầu từ chọn ngẫu nhiên mở đúng chỗ.
+
+API v1 nhận `marks` từ addon có cùng thay đổi; addon cũ trả `422` (`Unknown field`) cho mốc có `marks`, nên chỉ chạy
+`apply.py --apply` cho đề xuất có `marks` sau khi addon mới đã chạy (đã restart `odoo19`).
+
 ## Quy trình
 
 ```bash

@@ -11,6 +11,10 @@ in that longer stretch, but never before the last kana of the block before it.
 A stage direction in square brackets (［書類を確認して］) is shown but not read, so it is not looked for. A っ or ー
 the recogniser does not write (え? for えっ…, ただいま for ただいまー) still counts as heard, so that a short line
 is not lost for it.
+
+Inside a timed block, every word Sudachi cuts out gets a mark (NihonGo ADR-089): when its first kana is heard, less
+CHAR_SECONDS for each kana before it the recogniser left out; a sentence start is moved to the end of the silence
+before it, as a block start is. A learner starts the audio from a word with it.
 """
 
 import re
@@ -29,6 +33,7 @@ SILENT = "っー"  # kana with no sound of their own, which the recogniser often
 STAGE_DIRECTION = re.compile(r"［[^］]*］|\[[^\]]*\]")  # ［書類を確認して］: shown, not read
 KANJI_OR_DIGIT = re.compile(r"[々㐀-䶿一-鿿豈-﫿0-9０-９]")
 SKIPPED = ("補助記号", "空白")
+SENTENCE_END = re.compile(r"[。！？!?][」』）)\]]*\s*")
 
 
 @dataclass(frozen=True)
@@ -39,6 +44,7 @@ class Cue:
     end: float
     ratio: float  # share of the block's kana heard
     snapped: bool  # whether the start is the end of a silence
+    marks: tuple = ()  # (character of text, in code points; seconds): where the audio reaches the words inside
 
 
 @cache
@@ -201,11 +207,11 @@ def cues_of(blocks: list[Block], words, onsets, duration):
             start = min(near)
         else:
             start = min(near, key=lambda o: abs(o - estimate))
-        found.append((index, block, max(0.0, start), sounds[last_j][1], trail, ratio, bool(near)))
+        found.append((index, block, max(0.0, start), sounds[last_j][1], trail, ratio, bool(near), hits))
         previous_last = sounds[last_j][1]
 
     cues = []
-    for k, (index, block, start, last, trail, ratio, snapped) in enumerate(found):
+    for k, (index, block, start, last, trail, ratio, snapped, hits) in enumerate(found):
         if cues and start < cues[-1].start:
             start = cues[-1].start
         following = found[k + 1][2] if k + 1 < len(found) else None
@@ -215,10 +221,77 @@ def cues_of(blocks: list[Block], words, onsets, duration):
         end = min(end, duration)
         if end <= start:
             continue
-        cues.append(Cue(index, block.text, round(start, 2), round(end, 2), round(ratio, 2), snapped))
+        first = owner.index(index)
+        marks = marks_of(block, offsets[first:first + owner.count(index)], {i - first: j for i, j in hits}, sounds,
+                         onsets, start, end)
+        cues.append(Cue(index, block.text, round(start, 2), round(end, 2), round(ratio, 2), snapped, marks))
     return cues
 
 
+def spoken_map(body):
+    """The text reading() reads for a body (stage directions out, NFKC), and for each of its characters the index of the
+    character of body it comes from; (None, None) when NFKC joins characters, which one at a time would not show."""
+    removed = set()
+    for match in STAGE_DIRECTION.finditer(body):
+        removed.update(range(match.start(), match.end()))
+    out, where = [], []
+    for i, c in enumerate(body):
+        if i in removed:
+            continue
+        normal = unicodedata.normalize("NFKC", c)
+        out.append(normal)
+        where.extend([i] * len(normal))
+    text = "".join(out)
+    if text != unicodedata.normalize("NFKC", STAGE_DIRECTION.sub("", body)):
+        return None, None
+    return text, where
+
+
+def marks_of(block, offsets, hit_of, sounds, onsets, start, end):
+    """The marks of a timed block (NihonGo ADR-089): for each word after the first, the character of block.text it
+    starts at and when it is heard. offsets: where each kana of the block is in its spoken text; hit_of: kana of the
+    block (counted from its first) to the sound heard for it. A word none of whose kana were heard has no mark, nor a
+    mark that would go back in time or out of the cue."""
+    spoken, where = spoken_map(block.body)
+    if spoken is None:
+        return ()
+    prefix = len(block.text) - len(block.body)  # "F: " before what a line says
+    sentence_starts = {m.end() for m in SENTENCE_END.finditer(spoken) if m.end() < len(spoken)}
+    marks, previous = [], start
+    for morpheme in _tokenizer().tokenize(spoken):
+        begin = morpheme.begin()
+        if not begin or not morpheme.surface().strip() or morpheme.part_of_speech()[0] in SKIPPED:
+            continue
+        after = [k for k, offset in enumerate(offsets) if offset >= begin]
+        heard_k = next((k for k in after if k in hit_of), None)
+        if heard_k is None:
+            continue
+        lead = sum(1 for k in after if k < heard_k)
+        at = sounds[hit_of[heard_k]][1] - lead * CHAR_SECONDS
+        if begin in sentence_starts:
+            before = [sounds[hit_of[k]][1] for k in range(len(offsets)) if offsets[k] < begin and k in hit_of]
+            earliest = at - SNAP_BEFORE - lead * CHAR_SECONDS * 2
+            if before:
+                earliest = max(earliest, before[-1] - SMEAR)
+            near = [o for o in onsets if earliest <= o <= at + SNAP_AFTER]
+            if near:
+                at = min(near) if lead else min(near, key=lambda o: abs(o - at))
+        if at < previous or at >= end:
+            continue
+        marks.append((prefix + where[begin], round(at, 2)))
+        previous = at
+    return tuple(marks)
+
+
 def milliseconds(cues):
-    """The cues as the API takes them."""
-    return [{"text": c.text, "start_ms": round(c.start * 1000), "end_ms": round(c.end * 1000)} for c in cues]
+    """The cues as the API takes them, with their marks when they have some."""
+    out = []
+    for c in cues:
+        cue = {"text": c.text, "start_ms": round(c.start * 1000), "end_ms": round(c.end * 1000)}
+        # rounding may bring a mark onto the end of its cue, which the API refuses
+        marks = [[at, round(seconds * 1000)] for at, seconds in c.marks]
+        marks = [m for m in marks if cue["start_ms"] <= m[1] < cue["end_ms"]]
+        if marks:
+            cue["marks"] = marks
+        out.append(cue)
+    return out

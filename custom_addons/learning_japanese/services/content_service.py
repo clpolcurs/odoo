@@ -26,6 +26,7 @@ OVERRIDES_MAX = 200
 CUES_MAX = 500
 CUE_TEXT_MAX = 2000
 CUE_MS_MAX = 6 * 3600 * 1000  # six hours: no audio of an item is longer
+MARKS_MAX = 2000  # the words of one block: a long paragraph has a few hundred
 MARKUP_MAX = 200_000
 AUDIO_MAX_BYTES = 30 * 1024 * 1024
 
@@ -520,7 +521,8 @@ def put_audio_cues(env, item_id, body, if_match):
 
     A cue names its block by the text the markup shows, so a cue whose block is edited later finds no block and
     NihonGo leaves it out. The body names the sha1 of the audio file the cues were made for: cues of another file than
-    the item has now would point at the wrong words, so they are refused (409).
+    the item has now would point at the wrong words, so they are refused (409). A cue may carry marks, where the audio
+    reaches the words inside its block (NihonGo ADR-089): [character of its text, counted in code points, ms] pairs.
     """
     item = _get(env, COMPREHENSIVE, item_id, "Comprehensive")
     before = get_comprehensive(env, item_id)
@@ -539,7 +541,7 @@ def put_audio_cues(env, item_id, body, if_match):
             errors.append({"index": index, "message": "Each cue is an object."})
             continue
         errors.extend({"index": index, "field": key, "message": "Unknown field."}
-                      for key in sorted(set(entry) - {"text", "start_ms", "end_ms"}))
+                      for key in sorted(set(entry) - {"text", "start_ms", "end_ms", "marks"}))
         text, start, end = entry.get("text"), entry.get("start_ms"), entry.get("end_ms")
         if not isinstance(text, str) or not text.strip() or len(text) > CUE_TEXT_MAX:
             errors.append({"index": index, "field": "text",
@@ -553,7 +555,14 @@ def put_audio_cues(env, item_id, body, if_match):
             errors.append({"index": index, "field": "end_ms", "message": "Milliseconds after start_ms."})
         if _millisecond(start):
             previous = max(previous, start)
-        cues.append({"text": text, "start_ms": start, "end_ms": end})
+        cue = {"text": text, "start_ms": start, "end_ms": end}
+        if "marks" in entry:
+            problem = _marks_problem(entry["marks"], text, start, end)
+            if problem:
+                errors.append({"index": index, "field": "marks", "message": problem})
+            elif entry["marks"]:
+                cue["marks"] = [list(mark) for mark in entry["marks"]]
+        cues.append(cue)
     if errors:
         raise invalid(errors)
 
@@ -577,6 +586,26 @@ def put_audio_cues(env, item_id, body, if_match):
 
 def _millisecond(value):
     return isinstance(value, int) and not isinstance(value, bool) and 0 <= value <= CUE_MS_MAX
+
+
+def _marks_problem(marks, text, start, end):
+    """Why the marks of a cue are not [character of its text, ms] pairs in order inside it, or None: characters after the
+    first, each after the one before; times from start_ms, none before the one before, all before end_ms."""
+    shape = f"[character of text, milliseconds] pairs in order, at most {MARKS_MAX}."
+    if not isinstance(marks, list) or len(marks) > MARKS_MAX:
+        return shape
+    length = len(text) if isinstance(text, str) else 0
+    last_at, last_ms = 0, start if _millisecond(start) else 0
+    for mark in marks:
+        if not isinstance(mark, list) or len(mark) != 2 or not all(_millisecond(value) for value in mark):
+            return shape
+        at, ms = mark
+        if not last_at < at < length:
+            return "Each mark is at a character of the text after the one of the mark before, and after the first."
+        if not (_millisecond(end) and last_ms <= ms < end):
+            return "Each mark is from start_ms on, not before the mark before, and before end_ms."
+        last_at, last_ms = at, ms
+    return None
 
 
 # ── Vocabularies ───────────────────────────────────────────────────────────────

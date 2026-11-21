@@ -264,8 +264,9 @@ class TestApiV1(HttpCase, LearningJapaneseDataCase):
     def test_audio_cues(self):
         item_path = f"/comprehensives/{self.listening.id}"
         path = f"{item_path}/audio-cues"
+        # 何 is the 7th character of the second cue: the audio reaches it at 3.3 s (NihonGo ADR-089)
         cues = [{"text": "F: すみません。", "start_ms": 1200, "end_ms": 2900},
-                {"text": "M: はい、何でしょう。", "start_ms": 2900, "end_ms": 4400}]
+                {"text": "M: はい、何でしょう。", "start_ms": 2900, "end_ms": 4400, "marks": [[6, 3300]]}]
         self.assertIsNone(self.ok("GET", path, key=self.reader_key)["audio_cues"])
         self.problem("PUT", path, 409, "conflict", json={"audio_sha1": "0" * 40, "cues": cues})
 
@@ -281,6 +282,14 @@ class TestApiV1(HttpCase, LearningJapaneseDataCase):
         ]})
         self.assertEqual({(e["index"], e.get("field")) for e in body["errors"]},
                          {(0, "text"), (0, "end_ms"), (1, "start_ms"), (1, "speaker"), (2, "start_ms")})
+        body = self.problem("PUT", path, 422, "validation-error", json={"audio_sha1": sha1, "cues": [
+            {"text": "F: すみません。", "start_ms": 1200, "end_ms": 2900, "marks": [[0, 1300]]},
+            {"text": "M: はい、何でしょう。", "start_ms": 2900, "end_ms": 4400, "marks": [[7, 3300], [6, 3400]]},
+            {"text": "F: ええ。", "start_ms": 4400, "end_ms": 5000, "marks": [[3, 5000]]},
+            {"text": "M: そう。", "start_ms": 5000, "end_ms": 5600, "marks": [["3", 5100]]},
+        ]})
+        self.assertEqual({(e["index"], e.get("field")) for e in body["errors"]},
+                         {(0, "marks"), (1, "marks"), (2, "marks"), (3, "marks")})
         self.problem("PUT", path, 403, "forbidden", key=self.reader_key, json={"audio_sha1": sha1, "cues": cues})
         self.problem("PUT", path, 412, "version-mismatch", json={"audio_sha1": sha1, "cues": cues},
                      headers={"If-Match": '"stale"'})
