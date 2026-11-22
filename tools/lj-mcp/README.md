@@ -113,6 +113,7 @@ Tool ghi:
 | `lj_update_comprehensive` | Sửa các trường được truyền; cần `version` | `PATCH /comprehensives/{id}` |
 | `lj_set_audio_from_url` | lj-mcp tải audio (http/https, theo redirect, ≤ 30 MiB, phải là audio) rồi upload | `PUT /comprehensives/{id}/audio` |
 | `lj_set_audio_from_file` | Upload file audio trên máy (đường dẫn tuyệt đối) | `PUT /comprehensives/{id}/audio` |
+| `lj_add_image_from_file` | Upload ảnh PNG, JPEG, WebP hay GIF trên máy (đường dẫn tuyệt đối, tối đa 5 MiB) vào một bài; có `placeholder` thì thay đoạn chỉ chứa chữ đó trong markup bằng ảnh (tuỳ chọn `width` như `50%`) | `POST /comprehensives/{id}/images`, rồi `PATCH /comprehensives/{id}` |
 | `lj_create_vocabulary` | Tạo từ vựng | `POST /vocabularies` |
 | `lj_update_vocabulary` | Sửa từ vựng; cần `version` | `PATCH /vocabularies/{id}` |
 | `lj_bulk_update_vocabulary` | Tạo/sửa tối đa 100 từ trong một transaction; lỗi ghi rõ `index` của từng mục | `POST /vocabularies/bulk` |

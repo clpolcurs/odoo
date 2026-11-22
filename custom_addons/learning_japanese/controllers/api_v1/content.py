@@ -86,6 +86,17 @@ class LearningJapaneseApiV1(http.Controller):
         )
         return json_response(item, version=item["version"])
 
+    @http.route(f"{PREFIX}/comprehensives/<int:item_id>/images", methods=["POST"], **WRITE)
+    @endpoint(write=True)
+    def add_image(self, item_id):
+        httprequest = request.httprequest
+        if (httprequest.content_length or 0) > content.IMAGE_MAX_BYTES:
+            raise content.ApiError(413, "too-large", f"Images are limited to {content.IMAGE_MAX_BYTES} bytes.")
+        image = content.add_image(
+            request.env, item_id, httprequest.get_data(), httprequest.mimetype, httprequest.headers.get("X-Filename"),
+        )
+        return json_response(image, status=201)
+
     @http.route(f"{PREFIX}/attachments/<int:attachment_id>", methods=["GET"], **READ)
     @endpoint()
     def get_attachment(self, attachment_id):

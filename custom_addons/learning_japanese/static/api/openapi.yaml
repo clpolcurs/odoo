@@ -325,6 +325,41 @@ paths:
         '412': {$ref: '#/components/responses/PreconditionFailed'}
         '413': {$ref: '#/components/responses/TooLarge'}
         '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+  /comprehensives/{id}/images:
+    post:
+      tags: [comprehensives]
+      operationId: addComprehensiveImage
+      description: |
+        Attach an image to an item, the way the Odoo editor does, and get the `<img>` tag that shows it. The body is
+        the raw PNG, JPEG, WebP or GIF file (at most `limits.image_max_bytes`); SVG is refused. The image shows nowhere
+        until the item's markup carries the tag: put `html` in the markup with `PATCH /comprehensives/{id}`.
+        `GET /attachments/{id}` serves it from then on.
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - name: X-Filename
+          in: header
+          required: false
+          description: >-
+            File name kept on the attachment, percent-encoded as UTF-8, e.g. `l3-scene.png`. Only the base name is
+            kept; without it the image is called `image.png` (or `.jpg`, `.webp`, `.gif`).
+          schema: {type: string}
+      requestBody:
+        required: true
+        content:
+          image/*:
+            schema: {type: string, contentMediaType: application/octet-stream}
+      responses:
+        '201':
+          description: Image attached
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ImageAdded'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '413': {$ref: '#/components/responses/TooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
   /comprehensives/{id}/grammar-overrides:
     get:
       tags: [comprehensives]
@@ -984,6 +1019,7 @@ components:
             snapshot_max: {type: integer, examples: [1000]}
             bulk_max: {type: integer, examples: [100]}
             audio_max_bytes: {type: integer, examples: [31457280]}
+            image_max_bytes: {type: integer, examples: [5242880]}
             change_log_retention_days: {type: integer, examples: [90]}
 
     LessonRef:
@@ -1079,6 +1115,20 @@ components:
             minItems: 2
             maxItems: 2
             items: {type: integer, minimum: 0}
+
+    ImageAdded:
+      type: object
+      required: [attachment_id, name, mimetype, size, sha1, src, html]
+      properties:
+        attachment_id: {type: integer, examples: [548]}
+        name: {type: string, examples: [l3-scene.png]}
+        mimetype: {type: string, enum: [image/png, image/jpeg, image/webp, image/gif]}
+        size: {type: integer}
+        sha1: {type: string}
+        src: {type: string, description: 'Same form as the editor: `/web/image/<id>-<sha1[:8]>/<name>?access_token=…`.'}
+        html:
+          type: string
+          description: The `<img>` tag to put in the markup; NihonGo finds the image by `data-attachment-id`.
 
     AudioCues:
       type: [object, 'null']

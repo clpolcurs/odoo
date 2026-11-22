@@ -18,6 +18,7 @@ from . import prompts
 from .audio import AudioFile, download_audio, header_filename, read_audio_file
 from .client import LJClient
 from .config import ConfigError, Settings
+from .images import check_width, placeholder_paragraph, read_image_file, with_width
 
 Json = dict[str, Any]
 ToolFn = TypeVar("ToolFn", bound=Callable[..., Any])
@@ -615,6 +616,55 @@ def _add_write_tools(mcp: FastMCP, api: LJClient, download: Callable[[str], Awai
         """
         audio = await anyio.to_thread.run_sync(read_audio_file, path)
         return await _put_audio(api, comprehensive_id, audio, filename, version)
+
+    @tool(WRITE)
+    async def lj_add_image_from_file(
+        comprehensive_id: ComprehensiveId,
+        path: Annotated[
+            str, Field(description="Absolute path of a local PNG, JPEG, WebP or GIF file (~ is expanded).")
+        ],
+        placeholder: Annotated[
+            str | None,
+            Field(
+                description="Text of the one paragraph of the markup that the image replaces, "
+                "e.g. ［え：l3-scene.png］. Without it the image is only uploaded and its <img> tag returned."
+            ),
+        ] = None,
+        width: Annotated[str | None, Field(description="Width as a CSS length in % or px, e.g. 50%.")] = None,
+        version: OptionalVersion = None,
+        filename: Annotated[str | None, Field(description="File name to keep; default: the file's name.")] = None,
+    ) -> Json:
+        """Upload a local image to a comprehensive item and, with `placeholder`, put it in the markup.
+
+        The file must be a PNG, JPEG, WebP or GIF of at most 5 MiB (no SVG). With `placeholder`, the item is read
+        first and the one paragraph holding only that text becomes the image; `version`, or the version just read,
+        guards the edit. Returns the image (attachment_id, html, ...) and, when the markup changed, the new version.
+        """
+        image = await anyio.to_thread.run_sync(read_image_file, path)
+        check_width(width)
+        item = None
+        if placeholder is not None:
+            item = await api.get(f"/comprehensives/{comprehensive_id}")
+            placeholder_paragraph(item.get("markup") or "", placeholder)  # fails before anything is uploaded
+        headers = {"Content-Type": image.content_type}
+        if name := header_filename(filename or image.filename):
+            headers["X-Filename"] = name
+        added = await api.request(
+            "POST", f"/comprehensives/{comprehensive_id}/images", content=image.content, headers=headers
+        )
+        tag = with_width(added["html"], width)
+        result: Json = {"image": added | {"html": tag}}
+        if item is None:
+            return result
+        markup = item.get("markup") or ""
+        found = placeholder_paragraph(markup, placeholder)
+        updated = await api.request(
+            "PATCH",
+            f"/comprehensives/{comprehensive_id}",
+            json={"markup": markup[: found.start()] + f"<p>{tag}</p>" + markup[found.end() :]},
+            version=version or item["version"],
+        )
+        return result | {"version": updated["version"]}
 
     @tool(WRITE)
     async def lj_create_vocabulary(

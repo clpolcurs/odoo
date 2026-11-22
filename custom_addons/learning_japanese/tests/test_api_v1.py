@@ -1,11 +1,16 @@
+import base64
 import hashlib
+from unittest.mock import patch
 
 from odoo.tests import HttpCase, new_test_user, tagged
 
+from ..services import content_service
 from .common import LearningJapaneseDataCase
 
 READ_GROUPS = "base.group_user,learning_japanese.learning_japanese_view_only_group"
 WRITE_GROUPS = "base.group_user,learning_japanese.learning_japanese_admin"
+# A 1x1 PNG: guess_mimetype must recognise it, so a few header bytes are not enough.
+PNG = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=")
 
 
 @tagged("post_install", "-at_install")
@@ -248,6 +253,39 @@ class TestApiV1(HttpCase, LearningJapaneseDataCase):
         for attachment_id in (hidden.id, pdf.id, 10**9):
             self.problem("GET", f"/attachments/{attachment_id}", 404, "not-found", key=self.reader_key)
         self.problem("GET", f"/attachments/{shown.id}", 403, "forbidden", key=self.outsider_key)
+
+    def test_upload_images(self):
+        path = f"/comprehensives/{self.listening.id}/images"
+        png = {"Content-Type": "image/png"}
+        self.problem("POST", path, 415, "unsupported-media-type", data=b"<svg/>", headers={"Content-Type": "image/svg+xml"})
+        self.problem("POST", path, 415, "unsupported-media-type", data=b"GIF89a" + bytes(64), headers=png)
+        self.problem("POST", path, 422, "validation-error", data=b"", headers=png)
+        self.problem("POST", path, 403, "forbidden", key=self.reader_key, data=PNG, headers=png)
+        self.problem("POST", "/comprehensives/999999999/images", 404, "not-found", data=PNG, headers=png)
+        with patch.object(content_service, "IMAGE_MAX_BYTES", 10):
+            self.problem("POST", path, 413, "too-large", data=PNG, headers=png)
+        self.assertEqual(self.ok("GET", "/meta")["limits"]["image_max_bytes"], content_service.IMAGE_MAX_BYTES)
+
+        image = self.ok("POST", path, status=201, data=PNG, headers={**png, "X-Filename": "%E3%81%88/%E7%B5%B5.png"})
+        self.assertEqual(image["name"], "絵.png")
+        self.assertEqual(image["sha1"], hashlib.sha1(PNG).hexdigest())
+        self.assertEqual(image["size"], len(PNG))
+        self.assertEqual(image["mimetype"], "image/png")
+        prefix = f"/web/image/{image['attachment_id']}-{image['sha1'][:8]}/%E7%B5%B5.png?access_token="
+        self.assertTrue(image["src"].startswith(prefix), image["src"])
+        self.assertIn(f'data-attachment-id="{image["attachment_id"]}"', image["html"])
+        self.assertEqual(self.ok("POST", path, status=201, data=PNG, headers=png)["name"], "image.png")
+
+        # the image shows only once the markup of an item carries its tag
+        attachment = f"/attachments/{image['attachment_id']}"
+        self.problem("GET", attachment, 404, "not-found", key=self.reader_key)
+        item = self.ok("GET", f"/comprehensives/{self.listening.id}")
+        markup = f"<p>{image['html']}</p>" + (item["markup"] or "")
+        self.ok("PATCH", f"/comprehensives/{self.listening.id}", json={"markup": markup},
+                headers={"If-Match": f'"{item["version"]}"'})
+        served = self.call("GET", attachment, key=self.reader_key)
+        self.assertEqual(served.status_code, 200, served.text)
+        self.assertEqual(served.content, PNG)
 
     def test_grammar_overrides(self):
         path = f"/comprehensives/{self.reading.id}/grammar-overrides"

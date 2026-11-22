@@ -5,11 +5,12 @@ import binascii
 import os
 import re
 from datetime import datetime, timezone
-from urllib.parse import unquote
+from urllib.parse import quote, unquote
 
 import psycopg2
 
 from odoo.fields import Command, Domain
+from odoo.tools.mimetypes import guess_mimetype
 
 from . import markup as markup_lib
 from . import serializers
@@ -29,6 +30,9 @@ CUE_MS_MAX = 6 * 3600 * 1000  # six hours: no audio of an item is longer
 MARKS_MAX = 2000  # the words of one block: a long paragraph has a few hundred
 MARKUP_MAX = 200_000
 AUDIO_MAX_BYTES = 30 * 1024 * 1024
+IMAGE_MAX_BYTES = 5 * 1024 * 1024
+# SVG is left out: it can carry scripts, and the API serves the images it stores.
+IMAGE_TYPES = {"image/png": ".png", "image/jpeg": ".jpg", "image/webp": ".webp", "image/gif": ".gif"}
 
 COMPREHENSIVE = "learning_japanese.comprehensive"
 VOCABULARY = "learning_japanese.vocabulary"
@@ -187,6 +191,7 @@ def meta(env):
             "snapshot_max": 1000,
             "bulk_max": BULK_MAX,
             "audio_max_bytes": AUDIO_MAX_BYTES,
+            "image_max_bytes": IMAGE_MAX_BYTES,
             "change_log_retention_days": 90,
         },
     }
@@ -429,13 +434,50 @@ def put_audio(env, item_id, data, content_type, filename, if_match):
     attachment = env["ir.attachment"].sudo().search(
         [("res_model", "=", COMPREHENSIVE), ("res_field", "=", "audio_file"), ("res_id", "=", item.id)], limit=1,
     )
-    # X-Filename is percent-encoded UTF-8: header values cannot carry non-ASCII names as is.
-    name = os.path.basename(unquote(filename or "").replace("\\", "/"))
-    name = "".join(char for char in name if char.isprintable()).strip()[:200]
-    attachment.write({"name": name or "audio_file", "mimetype": mimetype})
+    attachment.write({"name": _file_name(filename) or "audio_file", "mimetype": mimetype})
     after = get_comprehensive(env, item_id)
     audit(env, "comprehensive", item.id, "audio", {"audio": before["audio"]}, {"audio": after["audio"]})
     return after
+
+
+def _file_name(header):
+    """The base name sent in X-Filename, which is percent-encoded UTF-8: header values cannot carry non-ASCII."""
+    name = os.path.basename(unquote(header or "").replace("\\", "/"))
+    return "".join(char for char in name if char.isprintable()).strip()[:200]
+
+
+def add_image(env, item_id, data, content_type, filename):
+    """Attach an image to an item the way the editor does, and return the tag that shows it.
+
+    The image shows nowhere until the markup carries the tag: GET /attachments serves only the images an item shows.
+    """
+    item = _get(env, COMPREHENSIVE, item_id, "Comprehensive")
+    mimetype = (content_type or "").split(";")[0].strip().lower()
+    if mimetype not in IMAGE_TYPES:
+        raise ApiError(415, "unsupported-media-type", "Send a PNG, JPEG, WebP or GIF image with its image/* Content-Type.")
+    if not data:
+        raise invalid([{"field": "body", "message": "The file is empty."}])
+    if len(data) > IMAGE_MAX_BYTES:
+        raise ApiError(413, "too-large", f"Images are limited to {IMAGE_MAX_BYTES} bytes.")
+    if guess_mimetype(data) != mimetype:
+        raise ApiError(415, "unsupported-media-type", f"The file is not a {mimetype} image.")
+    name = _file_name(filename) or "image" + IMAGE_TYPES[mimetype]
+    attachment = env["ir.attachment"].sudo().create({
+        "name": name, "raw": data, "mimetype": mimetype, "res_model": COMPREHENSIVE, "res_id": item.id,
+    })
+    token = attachment.generate_access_token()[0]
+    src = f"/web/image/{attachment.id}-{attachment.checksum[:8]}/{quote(name)}?access_token={token}"
+    image = {
+        "attachment_id": attachment.id,
+        "name": name,
+        "mimetype": mimetype,
+        "size": len(data),
+        "sha1": attachment.checksum,
+        "src": src,
+        "html": f'<img src="{src}" alt="" data-attachment-id="{attachment.id}" class="img img-fluid o_we_custom_image">',
+    }
+    audit(env, "comprehensive", item.id, "update", None, {"image": {key: image[key] for key in ("attachment_id", "name")}})
+    return image
 
 
 def image_stream(env, attachment_id):

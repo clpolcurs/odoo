@@ -58,6 +58,10 @@ Hợp đồng đầy đủ nằm ở [`static/api/openapi.yaml`](static/api/open
   Odoo đối xử với cả ba như nhau: tab Nội dung bỏ đi, tab Chú thích kanji giữ lại.
   API trả và nhận marker ở dạng chưa escape; sửa markup qua API được chuyển đổi lại y như khi gõ trong Odoo.
 - Server không bao giờ tự tải file từ URL; muốn gắn audio từ URL thì client (lj-mcp) tải về rồi `PUT` file.
+- Ảnh trong bài: `POST /comprehensives/{id}/images` nhận file PNG, JPEG, WebP hay GIF (tối đa 5 MiB, không nhận SVG),
+  gắn vào bài như trình soạn thảo của Odoo, rồi trả thẻ `<img … data-attachment-id="…">`. Ảnh chỉ hiện khi markup có
+  thẻ đó: client đặt `html` vào markup bằng `PATCH`. `GET /attachments/{id}` chỉ phục vụ ảnh mà markup của một bài trỏ
+  tới.
 - Mốc thời gian của audio gắn với file audio qua `audio_sha1`: `PUT .../audio-cues` từ chối (`409`) mốc làm cho file
   khác file bài đang có. Thay file audio thì mốc cũ vẫn nằm đó nhưng NihonGo bỏ qua; chạy lại `tools/lj-audio-cues`.
   `audio_cues` rỗng không tính vào `version`, nên thêm trường này không đổi version của bài nào.

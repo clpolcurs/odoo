@@ -27,6 +27,7 @@ WRITE_TOOLS = {
     "lj_update_comprehensive",
     "lj_set_audio_from_url",
     "lj_set_audio_from_file",
+    "lj_add_image_from_file",
     "lj_create_vocabulary",
     "lj_update_vocabulary",
     "lj_bulk_update_vocabulary",
@@ -451,6 +452,67 @@ async def test_set_audio_from_file_uploads_the_file(fake: FakeApi, tmp_path: Pat
     assert upload.headers["Content-Type"] == "audio/wav"
     assert upload.headers["X-Filename"] == "%E8%81%B4%E8%A7%A3.wav"
     assert "If-Match" not in upload.headers
+
+
+TAG = '<img src="/web/image/7-abcdef12/l3-scene.png?access_token=t" alt="" data-attachment-id="7" class="img">'
+
+
+def _image_file(tmp_path: Path, name: str = "l3-scene.png") -> Path:
+    file = tmp_path / name
+    file.write_bytes(b"\x89PNG\r\n\x1a\n data")
+    return file
+
+
+async def test_add_image_from_file_replaces_the_placeholder(fake: FakeApi, tmp_path: Path) -> None:
+    file = _image_file(tmp_path)
+    markup = "<p>前</p><p>［え：l3-scene.png］</p><p>後</p>"
+    fake.on("GET", f"{API}/comprehensives/58", ITEM | {"markup": markup, "version": "v1"})
+    fake.on("POST", f"{API}/comprehensives/58/images",
+            lambda request: httpx.Response(201, json={"attachment_id": 7, "name": "l3-scene.png",
+                                                      "html": TAG}))
+    fake.on("PATCH", f"{API}/comprehensives/58", ITEM | {"version": "v2"})
+    async with mcp_session(fake) as session:
+        result = await call(session, "lj_add_image_from_file", comprehensive_id=58, path=str(file),
+                            placeholder="［え：l3-scene.png］", width="50%")
+    _, upload, edit = fake.requests
+    assert upload.content == file.read_bytes()
+    assert upload.headers["Content-Type"] == "image/png"
+    assert upload.headers["X-Filename"] == "l3-scene.png"
+    assert edit.headers["If-Match"] == '"v1"'
+    shown = TAG.replace("<img ", '<img style="width: 50%;" ', 1)
+    assert body(edit) == {"markup": f"<p>前</p><p>{shown}</p><p>後</p>"}
+    assert result == {"image": {"attachment_id": 7, "name": "l3-scene.png", "html": shown}, "version": "v2"}
+
+
+async def test_add_image_from_file_without_a_placeholder_only_uploads(fake: FakeApi, tmp_path: Path) -> None:
+    file = _image_file(tmp_path, "絵.jpg")
+    fake.on("POST", f"{API}/comprehensives/58/images",
+            lambda request: httpx.Response(201, json={"attachment_id": 7, "html": TAG}))
+    async with mcp_session(fake) as session:
+        result = await call(session, "lj_add_image_from_file", comprehensive_id=58, path=str(file))
+    (upload,) = fake.requests
+    assert upload.headers["Content-Type"] == "image/jpeg"
+    assert upload.headers["X-Filename"] == "%E7%B5%B5.jpg"
+    assert result == {"image": {"attachment_id": 7, "html": TAG}}
+
+
+async def test_add_image_from_file_sends_nothing_it_cannot_place(fake: FakeApi, tmp_path: Path) -> None:
+    file = _image_file(tmp_path)
+    fake.on("GET", f"{API}/comprehensives/58", ITEM | {"markup": "<p>［え］</p><p>［え］</p>"})
+    async with mcp_session(fake) as session:
+        twice = await session.call_tool("lj_add_image_from_file",
+                                        {"comprehensive_id": 58, "path": str(file), "placeholder": "［え］"})
+        missing = await session.call_tool("lj_add_image_from_file",
+                                          {"comprehensive_id": 58, "path": str(file), "placeholder": "［絵］"})
+        width = await session.call_tool("lj_add_image_from_file",
+                                        {"comprehensive_id": 58, "path": str(file), "width": "half"})
+        svg = await session.call_tool("lj_add_image_from_file",
+                                      {"comprehensive_id": 58, "path": str(_image_file(tmp_path, "a.svg"))})
+    assert twice.isError and "2 paragraphs" in twice.content[0].text
+    assert missing.isError and "no paragraph" in missing.content[0].text
+    assert width.isError and "% or px" in width.content[0].text
+    assert svg.isError and "not a PNG" in svg.content[0].text
+    assert [request.method for request in fake.requests] == ["GET", "GET"]
 
 
 async def test_bulk_update_vocabulary_sends_only_the_given_fields(fake: FakeApi) -> None:
