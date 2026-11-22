@@ -1,5 +1,8 @@
 # lj-readings
 
+> Từ ngày 22/11/2026, thư mục `proposals/` không còn được commit: repo này public, mà đề xuất chứa chữ của giáo
+> trình. Các file đề xuất nhắc tới trong README này là bản ghi cũ, vẫn còn trong lịch sử git.
+
 Công cụ đề xuất và ghi **cách đọc** cho các chữ Hán chưa nằm trong dấu `<<漢字 - よみ>>` trong markup của addon
 Odoo `learning_japanese`. Đây là mục QA `kanji_without_reading`: chữ Hán ngoài dấu thì không có furigana.
 

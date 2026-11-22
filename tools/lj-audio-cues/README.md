@@ -1,5 +1,8 @@
 # lj-audio-cues
 
+> Từ ngày 22/11/2026, thư mục `proposals/` không còn được commit: repo này public, mà đề xuất chứa chữ của giáo
+> trình. Các file đề xuất nhắc tới trong README này là bản ghi cũ, vẫn còn trong lịch sử git.
+
 Công cụ đề xuất và ghi **mốc thời gian của audio** (`audio_cues`) cho các bài nghe của addon Odoo `learning_japanese`:
 câu nào trong bài được audio đọc từ mili giây nào tới mili giây nào. NihonGo dùng các mốc này để tô câu đang đọc và
 cho người học nghe lại từ một câu (ADR-055 của NihonGo).
