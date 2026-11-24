@@ -1141,10 +1141,10 @@ components:
 
     Question:
       type: object
-      required: [no, choices, answer, printed, explanation]
+      required: ['no', choices, answer, printed, explanation]
       additionalProperties: false
       properties:
-        no: {type: integer, minimum: 1, maximum: 1000, description: 'Its number in the test, unique in the item.'}
+        'no': {type: integer, minimum: 1, maximum: 1000, description: 'Its number in the test, unique in the item.'}
         choices: {type: integer, enum: [3, 4]}
         answer: {type: integer, minimum: 1, maximum: 4, description: 'From 1 to `choices`.'}
         printed: {type: boolean, description: 'Whether the choices are a numbered list of the item.'}
