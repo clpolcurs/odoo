@@ -277,7 +277,8 @@ def get_comprehensive(env, item_id):
     return serializers.comprehensives(_get(env, COMPREHENSIVE, item_id, "Comprehensive"))[0]
 
 
-_COMPREHENSIVE_KEYS = {"title", "level", "tags", "lesson_ids", "markup", "description", "grammar_patterns"}
+_COMPREHENSIVE_KEYS = {"title", "level", "tags", "lesson_ids", "sequence", "markup", "description", "grammar_patterns"}
+SEQUENCE_MAX = 100_000
 
 
 def _comprehensive_vals(env, body, creating):
@@ -324,6 +325,14 @@ def _comprehensive_vals(env, body, creating):
                 errors.append({"field": "lesson_ids", "message": f"Unknown lessons {sorted(missing)}."})
             else:
                 vals["lesson_ids"] = [Command.set(ids)]
+
+    if "sequence" in body:
+        sequence = body["sequence"]
+        if sequence is not None and (isinstance(sequence, bool) or not isinstance(sequence, int)
+                                     or not 1 <= sequence <= SEQUENCE_MAX):
+            errors.append({"field": "sequence", "message": f"An integer from 1 to {SEQUENCE_MAX}, or null."})
+        else:
+            vals["sequence"] = sequence or 0
 
     if "description" in body:
         if body["description"] is not None and not isinstance(body["description"], str):

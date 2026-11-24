@@ -1158,7 +1158,8 @@ components:
 
     ComprehensiveSummary:
       type: object
-      required: [id, xid, title, title_display, level, tags, lesson_ids, book_ids, published, has_markup, audio, updated_at, version]
+      required: [id, xid, title, title_display, level, tags, lesson_ids, sequence, book_ids, published, has_markup, audio,
+                 updated_at, version]
       properties:
         id: {type: integer}
         xid: {type: string, examples: ['odoo:comprehensive:58']}
@@ -1167,6 +1168,13 @@ components:
         level: {$ref: '#/components/schemas/Level'}
         tags: {type: array, items: {type: string}, examples: [['Listening']]}
         lesson_ids: {type: array, items: {type: integer}}
+        sequence:
+          type: [integer, 'null']
+          minimum: 1
+          description: >-
+            Position of the item in its lessons: NihonGo orders the items of a lesson by it, then by id (NihonGo
+            ADR-101). Null when unset; left out of `version` while null, so the field changed the version of no item
+            that has none.
         book_ids: {type: array, items: {type: integer}}
         published: {type: boolean}
         has_markup: {type: boolean}
@@ -1209,6 +1217,7 @@ components:
         level: {$ref: '#/components/schemas/Level'}
         tags: {type: array, items: {type: string}, description: Existing tag names (see /tags).}
         lesson_ids: {type: array, items: {type: integer}}
+        sequence: {type: [integer, 'null'], minimum: 1, maximum: 100000}
         markup: {type: [string, 'null'], maxLength: 200000}
         description: {type: [string, 'null']}
         grammar_patterns: {type: array, items: {type: string, maxLength: 100}, maxItems: 30}
@@ -1222,6 +1231,7 @@ components:
         level: {$ref: '#/components/schemas/Level'}
         tags: {type: array, items: {type: string}, description: Replaces all tags.}
         lesson_ids: {type: array, items: {type: integer}, description: Replaces all lessons.}
+        sequence: {type: [integer, 'null'], minimum: 1, maximum: 100000, description: Null unsets it.}
         markup: {type: [string, 'null'], maxLength: 200000}
         description: {type: [string, 'null']}
         grammar_patterns: {type: array, items: {type: string, maxLength: 100}, maxItems: 30}

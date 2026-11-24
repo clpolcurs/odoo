@@ -171,6 +171,35 @@ class TestApiV1(HttpCase, LearningJapaneseDataCase):
         again = self.ok("PATCH", path, json={"markup": updated["markup"]}, headers={"If-Match": updated["version"]})
         self.assertEqual(again["version"], updated["version"])
 
+    def test_sequence_orders_an_item_in_its_lessons(self):
+        path = f"/comprehensives/{self.reading.id}"
+        before = self.ok("GET", path, key=self.reader_key)
+        self.assertIsNone(before["sequence"])
+        current = {"If-Match": f'"{before["version"]}"'}
+        for bad in (0, -1, 100_001, "3", 2.5, True):
+            body = self.problem("PATCH", path, 422, "validation-error", json={"sequence": bad}, headers=current)
+            self.assertEqual([e["field"] for e in body["errors"]], ["sequence"])
+
+        updated = self.ok("PATCH", path, json={"sequence": 3}, headers=current)
+        self.assertEqual(updated["sequence"], 3)
+        self.assertNotEqual(updated["version"], before["version"])
+        self.assertEqual(self.reading.sequence, 3)
+        self.assertTrue(self.env["learning_japanese.change_log"].search_count(
+            [("entity", "=", "comprehensive"), ("res_id", "=", self.reading.id), ("op", "=", "update")]))
+        summary = self.ok("GET", "/comprehensives", key=self.reader_key, params={"lesson_id": self.lesson.id})
+        self.assertEqual({i["id"]: i["sequence"] for i in summary["items"]}[self.reading.id], 3)
+
+        # Unset again, the item has the version it had before the field existed.
+        cleared = self.ok("PATCH", path, json={"sequence": None}, headers={"If-Match": f'"{updated["version"]}"'})
+        self.assertIsNone(cleared["sequence"])
+        self.assertEqual(cleared["version"], before["version"])
+        self.assertEqual(self.reading.sequence, 0)
+
+        created = self.ok("POST", "/comprehensives", status=201, json={
+            "title": "問題1", "lesson_ids": [self.lesson.id], "sequence": 7,
+        })
+        self.assertEqual(created["sequence"], 7)
+
     def test_markup_reads_back_as_written(self):
         source = "<p><<夏休 - なつやす>>みに行きます。<br>{{Đi vào <<kỳ nghỉ hè>>.}}</p>"
         item = self.ok("POST", "/comprehensives", status=201, json={

@@ -114,6 +114,7 @@ def comprehensive(item, view="full", audio=None):
         "level": item.level or None,
         "tags": sorted(item.category_ids.mapped("name")),
         "lesson_ids": sorted(item.lesson_ids.ids),
+        "sequence": item.sequence or None,
         "book_ids": sorted(item.book_ids.ids),
         "published": item.nihongo_published,
         "has_markup": markup_lib.has_markup(source),
@@ -129,7 +130,7 @@ def comprehensive(item, view="full", audio=None):
         "created_at": iso(item.create_date),
         "updated_at": iso(item.write_date),
     }
-    with_version(data, unset=("audio_cues",))
+    with_version(data, unset=("audio_cues", "sequence"))
     if view == "summary":
         for key in ("markup", "html_hover", "html_ruby", "is_finalized", "description",
                     "grammar_patterns", "grammar_overrides", "audio_cues", "created_at"):

@@ -68,6 +68,14 @@ class Comprehensive(models.Model):
         string="Level",
     )
     title = fields.Text(string="Title", copy=False)
+    sequence = fields.Integer(
+        string="Thứ tự trong bài học",
+        default=0,
+        copy=False,
+        help="Thứ tự của bài trong bài học của nó: NihonGo xếp các bài của một bài học theo số này, từ nhỏ tới lớn "
+             "(NihonGo ADR-101). 0 là chưa đặt; khi đó NihonGo xếp theo id, tức là theo lúc bài được tạo. Ghi qua "
+             "API v1, trường `sequence`.",
+    )
     audio_file = fields.Binary(string="Audio", copy=False)
     audio_cues = fields.Json(
         string="Mốc thời gian của audio",
