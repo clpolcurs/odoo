@@ -76,6 +76,14 @@ class Comprehensive(models.Model):
              "(NihonGo ADR-101). 0 là chưa đặt; khi đó NihonGo xếp theo id, tức là theo lúc bài được tạo. Ghi qua "
              "API v1, trường `sequence`.",
     )
+    questions = fields.Json(
+        string="Câu hỏi và đáp án",
+        copy=False,
+        help="Câu hỏi của bài trong bộ đề của NihonGo, theo thứ tự trong bài: số câu, số phương án, đáp án, phương án "
+             "có in trong bài không, và giải thích bằng tiếng Việt, tiếng Anh, tiếng Trung. NihonGo dùng cho chế độ "
+             "làm đề (NihonGo ADR-102). Ghi qua API v1, trường `questions`; tools/lj-jlpt của NihonGo ghi từ nguồn "
+             "của bộ đề.",
+    )
     audio_file = fields.Binary(string="Audio", copy=False)
     audio_cues = fields.Json(
         string="Mốc thời gian của audio",

@@ -19,6 +19,7 @@ Hợp đồng đầy đủ nằm ở [`static/api/openapi.yaml`](static/api/open
 | **Nghĩa tiếng Anh**, **Nghĩa tiếng Trung** trên Từ vựng | Trường `english`, `chinese`; API `meaning_en`, `meaning_zh`. |
 | **Mốc thời gian của audio** trên bài nghe | Trường JSON `audio_cues`: câu nào của bài được audio đọc từ ms nào tới ms nào, kèm sha1 của file audio. Ghi bằng `PUT /comprehensives/{id}/audio-cues` (`tools/lj-audio-cues` đề xuất); NihonGo dùng để tô câu đang đọc. Không hiện trên form. |
 | **Thứ tự trong bài học** | Trường số `sequence` của bài: NihonGo xếp các bài của một bài học theo số này, từ nhỏ tới lớn, rồi theo id (NihonGo ADR-101). 0 là chưa đặt, khi đó NihonGo xếp theo id như trước. Ghi bằng API v1 (`sequence` của `POST`/`PATCH /comprehensives`); bộ đề NihonGo JLPT đặt theo thứ tự của đề thật (`tools/lj-jlpt` của NihonGo). Hiện trên form, cạnh bài học. |
+| **Câu hỏi và đáp án** của bài trong bộ đề | Trường JSON `questions`: các câu của bài theo thứ tự, mỗi câu có số, số phương án (3 hay 4), đáp án, phương án có in trong bài không, và giải thích tiếng Việt, tiếng Anh, tiếng Trung. NihonGo dùng cho chế độ làm đề (NihonGo ADR-102). Ghi bằng API v1 (`questions` của `POST`/`PATCH /comprehensives`, `null` để bỏ); `tools/lj-jlpt` của NihonGo ghi từ nguồn của bộ đề. Không hiện trên form, không có trong bản tóm tắt của danh sách. |
 | Quyền | Hai nhóm sẵn có được ghi vào CSV: *Learning Japanese Read Only* (đọc), *Learning Japanese Admin* (đọc + ghi). |
 
 ## Cài lên server

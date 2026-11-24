@@ -1130,6 +1130,33 @@ components:
           type: string
           description: The `<img>` tag to put in the markup; NihonGo finds the image by `data-attachment-id`.
 
+    Questions:
+      type: [array, 'null']
+      minItems: 1
+      maxItems: 60
+      description: >-
+        In the order of the item. The k-th question whose choices are printed has the k-th numbered list of the item
+        as its choices; the others (choices only in the audio, or in a picture) are answered by number.
+      items: {$ref: '#/components/schemas/Question'}
+
+    Question:
+      type: object
+      required: [no, choices, answer, printed, explanation]
+      additionalProperties: false
+      properties:
+        no: {type: integer, minimum: 1, maximum: 1000, description: 'Its number in the test, unique in the item.'}
+        choices: {type: integer, enum: [3, 4]}
+        answer: {type: integer, minimum: 1, maximum: 4, description: 'From 1 to `choices`.'}
+        printed: {type: boolean, description: 'Whether the choices are a numbered list of the item.'}
+        explanation:
+          type: object
+          required: [vi]
+          additionalProperties: false
+          properties:
+            vi: {type: string, minLength: 1, maxLength: 4000}
+            en: {type: [string, 'null'], maxLength: 4000}
+            zh: {type: [string, 'null'], maxLength: 4000}
+
     AudioCues:
       type: [object, 'null']
       required: [audio_sha1, cues]
@@ -1187,7 +1214,7 @@ components:
         - $ref: '#/components/schemas/ComprehensiveSummary'
         - type: object
           required: [markup, html_hover, html_ruby, is_finalized, description, grammar_patterns, grammar_overrides,
-                     audio_cues, created_at]
+                     audio_cues, questions, created_at]
           properties:
             markup:
               type: [string, 'null']
@@ -1206,6 +1233,12 @@ components:
               description: >-
                 Set with PUT /comprehensives/{id}/audio-cues. Left out of `version` while null, so the field changed
                 the version of no item that has none.
+            questions:
+              $ref: '#/components/schemas/Questions'
+              description: >-
+                The questions of an item of NihonGo's tests, for its test mode (NihonGo ADR-102). Left out of
+                `version` while null, so the field changed the version of no item that has none. Not in the summary
+                view.
             created_at: {type: string, format: date-time}
 
     ComprehensiveCreate:
@@ -1218,6 +1251,7 @@ components:
         tags: {type: array, items: {type: string}, description: Existing tag names (see /tags).}
         lesson_ids: {type: array, items: {type: integer}}
         sequence: {type: [integer, 'null'], minimum: 1, maximum: 100000}
+        questions: {$ref: '#/components/schemas/Questions'}
         markup: {type: [string, 'null'], maxLength: 200000}
         description: {type: [string, 'null']}
         grammar_patterns: {type: array, items: {type: string, maxLength: 100}, maxItems: 30}
@@ -1232,6 +1266,9 @@ components:
         tags: {type: array, items: {type: string}, description: Replaces all tags.}
         lesson_ids: {type: array, items: {type: integer}, description: Replaces all lessons.}
         sequence: {type: [integer, 'null'], minimum: 1, maximum: 100000, description: Null unsets it.}
+        questions:
+          $ref: '#/components/schemas/Questions'
+          description: Replaces all questions; null unsets them.
         markup: {type: [string, 'null'], maxLength: 200000}
         description: {type: [string, 'null']}
         grammar_patterns: {type: array, items: {type: string, maxLength: 100}, maxItems: 30}

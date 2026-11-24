@@ -127,13 +127,14 @@ def comprehensive(item, view="full", audio=None):
         "grammar_patterns": patterns_of(item.grammar_patterns),
         "grammar_overrides": grammar_overrides(item),
         "audio_cues": item.audio_cues or None,
+        "questions": item.questions or None,
         "created_at": iso(item.create_date),
         "updated_at": iso(item.write_date),
     }
-    with_version(data, unset=("audio_cues", "sequence"))
+    with_version(data, unset=("audio_cues", "sequence", "questions"))
     if view == "summary":
         for key in ("markup", "html_hover", "html_ruby", "is_finalized", "description",
-                    "grammar_patterns", "grammar_overrides", "audio_cues", "created_at"):
+                    "grammar_patterns", "grammar_overrides", "audio_cues", "questions", "created_at"):
             data.pop(key)
     return data
 

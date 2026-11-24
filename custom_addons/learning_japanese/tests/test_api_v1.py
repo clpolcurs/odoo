@@ -200,6 +200,42 @@ class TestApiV1(HttpCase, LearningJapaneseDataCase):
         })
         self.assertEqual(created["sequence"], 7)
 
+    def test_questions_of_an_item_of_the_tests(self):
+        path = f"/comprehensives/{self.reading.id}"
+        before = self.ok("GET", path, key=self.reader_key)
+        self.assertIsNone(before["questions"])
+        current = {"If-Match": f'"{before["version"]}"'}
+        good = {"no": 1, "choices": 4, "answer": 3, "printed": True,
+                "explanation": {"vi": "Giải thích mẫu.", "en": "A sample explanation.", "zh": "示例说明。"}}
+        bad_values = (
+            [], "x", [good, good], [{**good, "answer": 5}], [{**good, "choices": 5}], [{**good, "choices": 3, "answer": 4}],
+            [{**good, "no": 0}], [{**good, "no": True}], [{**good, "printed": 1}], [{**good, "extra": 1}],
+            [{k: v for k, v in good.items() if k != "printed"}], [{**good, "explanation": {"en": "only en"}}],
+            [{**good, "explanation": {"vi": " "}}], [{**good, "explanation": {"vi": "x", "ko": "y"}}],
+            [{**good, "explanation": {"vi": "x" * 4001}}], [{**good, "no": n} for n in range(1, 62)],
+        )
+        for bad in bad_values:
+            body = self.problem("PATCH", path, 422, "validation-error", json={"questions": bad}, headers=current)
+            self.assertEqual([e["field"] for e in body["errors"]], ["questions"])
+
+        listening = {"no": 2, "choices": 3, "answer": 1, "printed": False, "explanation": {"vi": "Chỉ có tiếng Việt."}}
+        updated = self.ok("PATCH", path, json={"questions": [good, listening]}, headers=current)
+        self.assertEqual(updated["questions"], [good, listening])
+        self.assertNotEqual(updated["version"], before["version"])
+        self.assertEqual(self.reading.questions, [good, listening])
+        summary = self.ok("GET", "/comprehensives", key=self.reader_key, params={"lesson_id": self.lesson.id})
+        self.assertNotIn("questions", {i["id"]: i for i in summary["items"]}[self.reading.id])
+
+        # Unset again, the item has the version it had before the field existed.
+        cleared = self.ok("PATCH", path, json={"questions": None}, headers={"If-Match": f'"{updated["version"]}"'})
+        self.assertIsNone(cleared["questions"])
+        self.assertEqual(cleared["version"], before["version"])
+
+        created = self.ok("POST", "/comprehensives", status=201, json={
+            "title": "問題1", "lesson_ids": [self.lesson.id], "questions": [good],
+        })
+        self.assertEqual(created["questions"], [good])
+
     def test_markup_reads_back_as_written(self):
         source = "<p><<夏休 - なつやす>>みに行きます。<br>{{Đi vào <<kỳ nghỉ hè>>.}}</p>"
         item = self.ok("POST", "/comprehensives", status=201, json={

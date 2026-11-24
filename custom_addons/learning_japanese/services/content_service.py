@@ -277,8 +277,54 @@ def get_comprehensive(env, item_id):
     return serializers.comprehensives(_get(env, COMPREHENSIVE, item_id, "Comprehensive"))[0]
 
 
-_COMPREHENSIVE_KEYS = {"title", "level", "tags", "lesson_ids", "sequence", "markup", "description", "grammar_patterns"}
+_COMPREHENSIVE_KEYS = {"title", "level", "tags", "lesson_ids", "sequence", "questions", "markup", "description",
+                       "grammar_patterns"}
 SEQUENCE_MAX = 100_000
+QUESTIONS_MAX = 60
+QUESTION_NO_MAX = 1000
+EXPLANATION_MAX = 4000
+_QUESTION_KEYS = {"no", "choices", "answer", "printed", "explanation"}
+_EXPLANATION_LANGS = ("vi", "en", "zh")
+
+
+def _is_int(value):
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
+def questions_error(value):
+    """What is wrong with `value` as the questions of an item (NihonGo ADR-102), or None when nothing is.
+
+    A list in the order of the item: each question has its number `no` (unique in the item), `choices` (3 or 4),
+    `answer` (1 to `choices`), `printed` (the choices are a numbered list of the item, the k-th list for the k-th
+    printed question) and `explanation`, with `vi` and, when written, `en` and `zh`."""
+    if not isinstance(value, list) or not 0 < len(value) <= QUESTIONS_MAX:
+        return f"A list of 1 to {QUESTIONS_MAX} questions, or null."
+    seen = set()
+    for k, question in enumerate(value, 1):
+        where = f"Question {k}: "
+        if not isinstance(question, dict) or set(question) != _QUESTION_KEYS:
+            return where + "an object with exactly no, choices, answer, printed and explanation."
+        no, choices, answer = question["no"], question["choices"], question["answer"]
+        if not _is_int(no) or not 1 <= no <= QUESTION_NO_MAX:
+            return where + f"no is an integer from 1 to {QUESTION_NO_MAX}."
+        if no in seen:
+            return where + f"no {no} comes twice."
+        seen.add(no)
+        if not _is_int(choices) or choices not in (3, 4):
+            return where + "choices is 3 or 4."
+        if not _is_int(answer) or not 1 <= answer <= choices:
+            return where + "answer is an integer from 1 to choices."
+        if not isinstance(question["printed"], bool):
+            return where + "printed is true or false."
+        explanation = question["explanation"]
+        if (not isinstance(explanation, dict) or not set(explanation) <= set(_EXPLANATION_LANGS)
+                or not isinstance(explanation.get("vi"), str) or not explanation["vi"].strip()):
+            return where + "explanation is an object with a non-empty vi, and en and zh when written."
+        for lang in _EXPLANATION_LANGS:
+            text = explanation.get(lang)
+            if text is not None and (not isinstance(text, str) or len(text) > EXPLANATION_MAX):
+                return where + f"explanation.{lang} is a string of at most {EXPLANATION_MAX} characters."
+    return None
 
 
 def _comprehensive_vals(env, body, creating):
@@ -333,6 +379,14 @@ def _comprehensive_vals(env, body, creating):
             errors.append({"field": "sequence", "message": f"An integer from 1 to {SEQUENCE_MAX}, or null."})
         else:
             vals["sequence"] = sequence or 0
+
+    if "questions" in body:
+        questions = body["questions"]
+        error = None if questions is None else questions_error(questions)
+        if error:
+            errors.append({"field": "questions", "message": error})
+        else:
+            vals["questions"] = questions or False
 
     if "description" in body:
         if body["description"] is not None and not isinstance(body["description"], str):
