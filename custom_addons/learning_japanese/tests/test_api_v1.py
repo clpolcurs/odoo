@@ -200,6 +200,32 @@ class TestApiV1(HttpCase, LearningJapaneseDataCase):
         })
         self.assertEqual(created["sequence"], 7)
 
+    def test_short_meaning_of_a_grammar_point_in_english_and_chinese(self):
+        """NihonGo ADR-104: description_en and description_zh beside the Vietnamese description."""
+        path = f"/comprehensives/{self.grammar.id}"
+        before = self.ok("GET", path, key=self.reader_key)
+        self.assertEqual((before["description"], before["description_en"], before["description_zh"]),
+                         ("coi N1 là N2", None, None))
+        current = {"If-Match": f'"{before["version"]}"'}
+        for bad in (1, ["x"], {"en": "x"}, True):
+            body = self.problem("PATCH", path, 422, "validation-error", json={"description_en": bad}, headers=current)
+            self.assertEqual([e["field"] for e in body["errors"]], ["description_en"])
+
+        updated = self.ok("PATCH", path, json={"description_en": "regard N1 as N2", "description_zh": "把N1当作N2"},
+                          headers=current)
+        self.assertEqual((updated["description_en"], updated["description_zh"]), ("regard N1 as N2", "把N1当作N2"))
+        self.assertEqual(updated["description"], "coi N1 là N2")
+        self.assertNotEqual(updated["version"], before["version"])
+        self.assertEqual((self.grammar.description_en, self.grammar.description_zh), ("regard N1 as N2", "把N1当作N2"))
+        summary = self.ok("GET", "/comprehensives", key=self.reader_key, params={"lesson_id": self.lesson.id})
+        self.assertNotIn("description_en", {i["id"]: i for i in summary["items"]}[self.grammar.id])
+
+        # Unset again, the item has the version it had before the fields existed.
+        cleared = self.ok("PATCH", path, json={"description_en": None, "description_zh": None},
+                          headers={"If-Match": f'"{updated["version"]}"'})
+        self.assertEqual((cleared["description_en"], cleared["description_zh"]), (None, None))
+        self.assertEqual(cleared["version"], before["version"])
+
     def test_questions_of_an_item_of_the_tests(self):
         path = f"/comprehensives/{self.reading.id}"
         before = self.ok("GET", path, key=self.reader_key)

@@ -278,7 +278,9 @@ def get_comprehensive(env, item_id):
 
 
 _COMPREHENSIVE_KEYS = {"title", "level", "tags", "lesson_ids", "sequence", "questions", "markup", "description",
-                       "grammar_patterns"}
+                       "description_en", "description_zh", "grammar_patterns"}
+# The short meaning of a grammar point in Vietnamese, and in English and Chinese (NihonGo ADR-104).
+_DESCRIPTION_KEYS = ("description", "description_en", "description_zh")
 SEQUENCE_MAX = 100_000
 QUESTIONS_MAX = 60
 QUESTION_NO_MAX = 1000
@@ -388,11 +390,12 @@ def _comprehensive_vals(env, body, creating):
         else:
             vals["questions"] = questions or False
 
-    if "description" in body:
-        if body["description"] is not None and not isinstance(body["description"], str):
-            errors.append({"field": "description", "message": "A string or null."})
-        else:
-            vals["description"] = body["description"] or False
+    for key in _DESCRIPTION_KEYS:
+        if key in body:
+            if body[key] is not None and not isinstance(body[key], str):
+                errors.append({"field": key, "message": "A string or null."})
+            else:
+                vals[key] = body[key] or False
 
     if "grammar_patterns" in body:
         patterns = body["grammar_patterns"]

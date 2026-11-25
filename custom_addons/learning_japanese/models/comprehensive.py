@@ -93,6 +93,18 @@ class Comprehensive(models.Model):
              "để tô câu đang đọc, và chỉ khi audio_sha1 trùng với file audio hiện có của bài.",
     )
     description = fields.Text(string="Description", copy=False)
+    description_en = fields.Text(
+        string="Description (tiếng Anh)",
+        copy=False,
+        help="Nghĩa ngắn của điểm ngữ pháp bằng tiếng Anh, cạnh Description tiếng Việt. NihonGo hiện nó ở giao diện "
+             "tiếng Anh (NihonGo ADR-104).",
+    )
+    description_zh = fields.Text(
+        string="Description (tiếng Trung)",
+        copy=False,
+        help="Nghĩa ngắn của điểm ngữ pháp bằng tiếng Trung. NihonGo lưu sẵn, cho tới khi có giao diện tiếng Trung "
+             "(NihonGo ADR-104).",
+    )
     deadline = fields.Date(string="Deadline", copy=False)
     category_ids = fields.Many2many(
         comodel_name="learning_japanese.comprehensive_tag",

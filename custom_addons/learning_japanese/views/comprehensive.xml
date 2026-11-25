@@ -69,6 +69,8 @@
                                 <field name="is_writing_or_speaking" invisible="1"/>
 
                                 <field name="description" invisible="not is_grammar"/>
+                                <field name="description_en" invisible="not is_grammar"/>
+                                <field name="description_zh" invisible="not is_grammar"/>
                                 <field name="grammar_patterns" invisible="not is_grammar"
                                        placeholder="Mỗi dòng một mẫu dạng từ điển, ví dụ ようとする"/>
                             </group>

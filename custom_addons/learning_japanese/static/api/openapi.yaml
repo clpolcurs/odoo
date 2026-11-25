@@ -1213,8 +1213,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/ComprehensiveSummary'
         - type: object
-          required: [markup, html_hover, html_ruby, is_finalized, description, grammar_patterns, grammar_overrides,
-                     audio_cues, questions, created_at]
+          required: [markup, html_hover, html_ruby, is_finalized, description, description_en, description_zh,
+                     grammar_patterns, grammar_overrides, audio_cues, questions, created_at]
           properties:
             markup:
               type: [string, 'null']
@@ -1222,7 +1222,18 @@ components:
             html_hover: {type: [string, 'null'], description: HTML with the reading in a tooltip (tab "Nội dung").}
             html_ruby: {type: [string, 'null'], description: HTML with <ruby> readings (tab "Chú thích kanji").}
             is_finalized: {type: boolean}
-            description: {type: [string, 'null']}
+            description: {type: [string, 'null'], description: The short meaning of a grammar point, in Vietnamese.}
+            description_en:
+              type: [string, 'null']
+              description: >-
+                The short meaning in English, shown by NihonGo in its English interface (NihonGo ADR-104). Left out
+                of `version` while null, so the field changed the version of no item that has none. Not in the
+                summary view.
+            description_zh:
+              type: [string, 'null']
+              description: >-
+                The short meaning in Chinese, kept by NihonGo for a Chinese interface (NihonGo ADR-104). Left out of
+                `version` while null. Not in the summary view.
             grammar_patterns:
               type: array
               items: {type: string}
@@ -1254,6 +1265,8 @@ components:
         questions: {$ref: '#/components/schemas/Questions'}
         markup: {type: [string, 'null'], maxLength: 200000}
         description: {type: [string, 'null']}
+        description_en: {type: [string, 'null']}
+        description_zh: {type: [string, 'null']}
         grammar_patterns: {type: array, items: {type: string, maxLength: 100}, maxItems: 30}
 
     ComprehensivePatch:
@@ -1271,6 +1284,8 @@ components:
           description: Replaces all questions; null unsets them.
         markup: {type: [string, 'null'], maxLength: 200000}
         description: {type: [string, 'null']}
+        description_en: {type: [string, 'null'], description: Null unsets it.}
+        description_zh: {type: [string, 'null'], description: Null unsets it.}
         grammar_patterns: {type: array, items: {type: string, maxLength: 100}, maxItems: 30}
 
     VerbForms:

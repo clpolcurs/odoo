@@ -124,6 +124,8 @@ def comprehensive(item, view="full", audio=None):
         "html_ruby": _html(item.content),
         "is_finalized": item.is_finalized,
         "description": item.description or None,
+        "description_en": item.description_en or None,
+        "description_zh": item.description_zh or None,
         "grammar_patterns": patterns_of(item.grammar_patterns),
         "grammar_overrides": grammar_overrides(item),
         "audio_cues": item.audio_cues or None,
@@ -131,10 +133,10 @@ def comprehensive(item, view="full", audio=None):
         "created_at": iso(item.create_date),
         "updated_at": iso(item.write_date),
     }
-    with_version(data, unset=("audio_cues", "sequence", "questions"))
+    with_version(data, unset=("audio_cues", "sequence", "questions", "description_en", "description_zh"))
     if view == "summary":
-        for key in ("markup", "html_hover", "html_ruby", "is_finalized", "description",
-                    "grammar_patterns", "grammar_overrides", "audio_cues", "questions", "created_at"):
+        for key in ("markup", "html_hover", "html_ruby", "is_finalized", "description", "description_en",
+                    "description_zh", "grammar_patterns", "grammar_overrides", "audio_cues", "questions", "created_at"):
             data.pop(key)
     return data
 
